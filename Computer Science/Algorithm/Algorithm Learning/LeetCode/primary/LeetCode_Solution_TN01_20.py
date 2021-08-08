@@ -30,6 +30,7 @@ class Solution(object):
         解释：因为 nums[0] + nums[1] == 9 ，返回 [0, 1] 。
         https://leetcode-cn.com/problems/two-sum/
         """
+
         def twoSumA(self, nums: List[int], target: int) -> List[int]:
             backList: List[int] = []
             itemCountA: int = 0
