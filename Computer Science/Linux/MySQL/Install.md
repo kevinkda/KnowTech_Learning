@@ -178,5 +178,3 @@
       select version();
       ```
 
-   4. 
-
