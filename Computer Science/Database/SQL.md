@@ -32,11 +32,13 @@ DBMS 主要通过数据的保存格式（数据库的种类）来进行分类，
 
 ### RDBMS
 
+#### SQL指令类型
+
 使用 RDBMS 时，最常见的系统结构就是客户端 / 服务器类型（C/S类型）这种结构（图 1-3）
 
 ![img](SQL.assets/O1CN01kROUDI22ITX6Evayf_!!6000000007097-0-tps-567-333.jpg)
 
-#### DDL
+##### DDL
 
 Data Definition Language，数据定义语言，用来创建或者删除存储数据用的数据库以及数据库中的表等对象。DDL 包含以下几种指令。
 
@@ -44,9 +46,7 @@ Data Definition Language，数据定义语言，用来创建或者删除存储�
 - DROP ： 删除数据库和表等对象
 - ALTER ： 修改数据库和表等对象的结构
 
- 
-
-#### DML
+##### DML
 
 Data Manipulation Language，数据操纵语言，用来查询或者变更表中的记录。DML 包含以下几种指令。
 
@@ -55,7 +55,7 @@ Data Manipulation Language，数据操纵语言，用来查询或者变更表中
 - UPDATE ：更新表中的数据
 - DELETE ：删除表中的数据
 
-#### DCL
+##### DCL
 
 Data Control Language，数据控制语言，用来确认或者取消对数据库中的数据进行的变更。除此之外，还可以对 RDBMS 的用户是否有权限操作数据库中的对象（数据库表等）进行设定。DCL 包含以下几种指令。
 
@@ -63,3 +63,4 @@ Data Control Language，数据控制语言，用来确认或者取消对数据�
 - ROLLBACK ： 取消对数据库中的数据进行的变更
 - GRANT ： 赋予用户操作权限
 - REVOKE ： 取消用户的操作权限
+
