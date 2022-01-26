@@ -68,7 +68,7 @@ Data Control Language，数据控制语言，用来确认或者取消对数据�
 
 ##### SQL子句执行顺序
 
-**FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY**
+**FROM → WHERE → GROUP BY → HAVING → SELECT (Subquery → Current Level Query) → ORDER BY**
 
 
 
@@ -146,6 +146,8 @@ ORDER BY product_type;
 
 *在 MySQL中视图的定义是允许使用 ORDER BY 语句的，但是若从特定视图进行选择，而该视图使用了自己的 ORDER BY 语句，则视图定义中的 ORDER BY 将被忽略。*
 
+
+
 ##### 更新视图内容
 
 因为视图是一个虚拟表，所以对视图的操作就是对底层基础表的操作，所以在修改时只有满足底层基本表的定义才能成功修改。
@@ -160,3 +162,83 @@ ORDER BY product_type;
 - FROM 子句中包含多个表。
 
 视图归根结底还是从表派生出来的，因此，如果原表可以更新，那么 视图中的数据也可以更新。反之亦然，如果视图发生了改变，而原表没有进行相应更新的话，就无法保证数据的一致性了。
+
+
+
+#### 子查询
+
+子查询指一个查询语句嵌套在另一个查询语句内部的查询，这个特性从 MySQL 4.1 开始引入，在 SELECT 子句中先计算子查询，子查询结果作为外层另一个查询的过滤条件，查询可以基于一个表或者多个表。
+
+##### 子查询和视图的关系
+
+子查询就是将用来定义视图的 SELECT 语句直接用于 FROM 子句当中。其中AS studentSum可以看作是子查询的名称，而且由于子查询是一次性的，所以子查询不会像视图那样保存在存储介质中， 而是在 SELECT 语句执行之后就消失了。
+
+**虽然嵌套子查询可以查询出结果，但是随着子查询嵌套的层数的叠加，SQL语句不仅会难以理解而且执行效率也会很差，所以要尽量避免这样的使用。**
+
+##### 标量子查询
+
+标量就是单一的意思，那么标量子查询也就是单一的子查询，那什么叫做单一的子查询呢？
+
+###### 标量子查询有什么用
+
+由于标量子查询的特性，导致标量子查询不仅仅局限于 WHERE 子句中，通常任何可以使用单一值的位置都可以使用。也就是说， 能够使用常数或者列名的地方，无论是 SELECT 子句、GROUP BY 子句、HAVING 子句，还是 ORDER BY 子句，几乎所有的地方都可以使用。
+
+##### 关联子查询
+
+###### 什么是关联子查询
+
+关联子查询既然包含关联两个字那么一定意味着查询与子查询之间存在着联系。这种联系是如何建立起来的呢？
+
+```sql
+SELECT product_type, product_name, sale_price
+FROM product AS p1
+WHERE sale_price > (
+  SELECT AVG(sale_price)
+  FROM product AS p2
+  WHERE p1.product_type = p2.product_type
+  GROUP BY product_type
+);
+```
+
+通过上面的例子我们大概可以猜到吗，关联子查询就是通过一些标志将内外两层的查询连接起来起到过滤数据的目的，接下来我们就一起看一下关联子查询的具体内容吧。
+
+###### 关联子查询与子查询的联系
+
+还记得我们之前的那个例子么`查询出销售单价高于平均销售单价的商品`，这个例子的SQL语句如下
+
+```sql
+SELECT product_id, product_name, sale_price
+FROM product
+WHERE sale_price > (
+  SELECT AVG(sale_price) 
+  FROM product
+);
+```
+
+我们再来看一下这个需求`选取出各商品种类中高于该商品种类的平均销售单价的商品`。SQL语句如下：
+
+```sql
+SELECT product_type, product_name, sale_price
+FROM product AS p1
+WHERE sale_price > (
+  SELECT AVG(sale_price)
+  FROM product AS p2
+  WHERE p1.product_type = p2.product_type
+  GROUP BY product_type
+);
+```
+
+可以看出上面这两个语句的区别吗？
+在第二条SQL语句也就是关联子查询中我们将外面的product表标记为p1，将内部的product设置为p2，而且通过WHERE语句连接了两个查询。
+
+但是如果刚接触的话一定会比较疑惑关联查询的执行过程，这里有一个[博客](https://zhuanlan.zhihu.com/p/41844742)讲的比较清楚。在这里我们简要的概括为：
+
+1. 首先执行不带WHERE的主查询
+2. 根据主查询讯结果匹配product_type，获取子查询结果
+3. 将子查询结果再与主查询结合执行完整的SQL语句
+
+*在子查询中像标量子查询，嵌套子查询或者关联子查询可以看作是子查询的一种操作方式即可。*
+
+
+
+> 视图和子查询是数据库操作中较为基础的内容，对于一些复杂的查询需要使用子查询加一些条件语句组合才能得到正确的结果。但是无论如何对于一个SQL语句来说都不应该设计的层数非常深且特别复杂，不仅可读性差而且执行效率也难以保证，所以尽量有简洁的语句来完成需要的功能。
