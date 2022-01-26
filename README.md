@@ -14,3 +14,5 @@
     - [MySQL](Computer_Science/Linux/MySQL)
       - [MySQL Install.md](Computer_Science/Linux/MySQL/Install.md)
   - [System Architecture](Computer_Science/System_Architecture)
+    - [System Architecture Alternative Solutions.xmind](Computer_Science/System_Architecture/System Architecture Alternative Solutions.xmind)
+
