@@ -1,66 +1,81 @@
-const VDOM = <h1>Hello, React.</h1>
+class Proper extends React.Component {
+    constructor() {
+        super();
+        this.meter = {
+            value: 0
+        };
+        this.state = {
+            meter: 1,
+            millimeter: 1000
+        };
+    }
 
-function meterToMillimeter(meter) {
-    return meter * 1000;
+
+    meterToMillimeter(meter) {
+        // document.getElementById('result').style.display = 'block';
+        this.setState({
+            meter: meter.target.value,
+            millimeter: meter.target.value * 1000
+        });
+    }
+
+    millimeterToMeter(millimeter) {
+        // document.getElementById('result').style.display = 'block';
+        this.setState({
+            meter: millimeter.target.value / 1000,
+            millimeter: millimeter.target.value
+        });
+    }
+
+    render() {
+        // return this.htmlCode;
+        return (
+            <div id="body-wrapper">
+                <div id="head-wrapper">
+                    <h3>Amount</h3>
+                    <hr/>
+                </div>
+
+                <div id="center-wrapper">
+                    <table>
+                        <tr>
+                            <td><span className="word">From</span></td>
+                            <td colSpan="2"><span className="word">To</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" name={"meter"} value={this.state.meter} placeholder={"1"} required
+                                       onChange={this.meterToMillimeter.bind(this)}
+                                />
+                            </td>
+                            <td>
+                                <input type="text" name={"millimeter"} value={this.state.millimeter} required
+                                       onChange={this.millimeterToMeter.bind(this)}
+                                />
+                            </td>
+                            <td>
+                                <button id="btn-convert" className={"btn"}
+                                    // onClick={this.meterToMillimeter(document.getElementById('meter'))}
+                                >
+                                    CONVERT
+                                </button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                {/*<br/>*/}
+                <div id="footer-wrapper">
+                    <p id="result" className={"result word"}>
+                        <span className="result-num">{this.state.meter}</span>m is <span
+                        className="result-num">{this.state.millimeter}</span>mm.
+                    </p>
+                </div>
+            </div>
+        )
+    }
 }
 
-function formatOutput(meter) {
-    return meter + 'm is ' + meterToMillimeter(meter) + 'mm';
-}
-
-// //监控文本框的change事件
-// numChange = (e) => {
-//     console.log(this.refs.txt.value)
-//     console.log(e)
-//     const newVal = e.target.value
-//     this.setState({
-//         mydata: newVal
-//     })
-// }
-
-
-const htmlCode = (
-    <div id="center-wrapper">
-        <h3>Amount</h3>
-        <hr/>
-        <table>
-            <tr>
-                <td>From</td>
-                <td colSpan="2">To</td>
-            </tr>
-            <tr>
-                <td><input type="text" id="input-orginal"/></td>
-                <td>
-                    {/*<input ref="txt" onChange={(e) => this.numChange(e)} type="text" style={{width: '100%'}}*/}
-                    {/*       // id="input-orginal"*/}
-                    {/*       value={this.state.mydata}/>*/}
-                </td>
-                <td>
-                    <input type="text" id="input-new"/>
-                </td>
-                <td>
-                    <button id="btn-convert">CONVERT</button>
-                </td>
-            </tr>
-        </table>
-        <br/>
-        <div>
-            <p id="result">{formatOutput(document.getElementById("input-orginal"))}</p>
-        </div>
-    </div>
+ReactDOM.render(
+    <Proper/>,
+    document.getElementById('wrapper')
 )
-
-
-// let btnConvert;
-//     < btnConvert
-// color = "blue"
-// shadowSize = {2} >
-//     CONVERT
-//     < /btnConvert>
-
-// ReactDOM.render(VDOM, wrapper);
-// ReactDOM.render(VDOM, document.getElementById('wrapper'));
-ReactDOM.render(htmlCode, document.getElementById('wrapper'));
-// React.createElement(
-//     btnConvert
-// )
