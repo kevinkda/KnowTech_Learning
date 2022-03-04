@@ -1,7 +1,31 @@
-#result{
-    display: none;
+#center-wrapper {
+    margin: 1.5em 0;
 }
 
-body{
-    background-color: #fafafa;
+#footer-wrapper {
+    margin-top: 1.5em;
+}
+
+.split {
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+
+.word {
+    font-weight: bold;
+}
+
+.btn {
+    color: white;
+    background: dodgerblue;
+    border: 0;
+    padding: 0.4em 1em;
+}
+
+.result {
+    color: dodgerblue;
+}
+
+.result-num {
+    color: orange;
 }
