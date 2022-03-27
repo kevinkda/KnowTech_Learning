@@ -1,0 +1,14 @@
+version: '3'
+services:
+  sqlserver:
+    container_name: mssql-02
+    image: microsoft/mssql-server-linux:latest
+    restart: always
+    ports:
+      - 1433:1433
+    volumes:
+      - ./mssql-02:/var/opt/mssql
+      - /etc/localtime:/etc/localtime
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=123QWEasd
