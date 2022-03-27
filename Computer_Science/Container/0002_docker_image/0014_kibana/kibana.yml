@@ -1,0 +1,16 @@
+# kibana.yml 
+
+# 设置控制台为中文
+i18n.locale: "zh-CN"
+
+server.name: kibana
+server.host: 0.0.0.0
+elasticsearch.hosts: ["http://192.168.80.128:9200"]
+elasticsearch.username: "kibana_system"
+elasticsearch.password: "Hyq0901."
+xpack.graph.enabled : true
+xpack.ml.enabled : true
+xpack.monitoring.enabled : true
+xpack.reporting.enabled : true
+xpack.security.enabled : true
+xpack.watcher.enabled : true
