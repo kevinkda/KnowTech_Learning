@@ -1,0 +1,22 @@
+version: '3.7'
+services:
+  jenkins:
+    container_name: jenkins-01
+    image: jenkins/jenkins:lts
+    user: root
+    restart: always
+    privileged: true
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./jenkins-01:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+      - /usr/lib/x86_64-linux-gnu/libltdl.so.7:/usr/lib/x86_64-linux-gnu/libltdl.so.7
+      - /etc/localtime:/etc/localtime
+    ports:
+      - 10240:8080
+      - 10241:50000
+    expose:
+      - 8080
+      - 50000
