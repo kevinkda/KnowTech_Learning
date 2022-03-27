@@ -1,0 +1,41 @@
+version: '2'
+services:
+  rmqnamesrv:
+    container_name: rmqnamesrv-01
+    image: rocketmqinc/rocketmq:latest
+    hostname: mqnamesrv
+    restart: always
+    environment:
+      MAX_POSSIBLE_HEAP: 100000000
+    volumes:
+      - $REMOTE_DATA/rocketmq/rocketmq-01/data/namesrv/logs:/root/logs
+      - $REMOTE_DATA/rocketmq/rocketmq-01/data/namesrv/store:/root/store
+    ports:
+      - 9876:9876
+  rmqbroker:
+    container_name: rmqbroker-01
+    image: rocketmqinc/rocketmq
+    hostname: mqbroker
+    restart: always
+    environment:
+      NAMESRV_ADDR: namesrv:9876
+      MAX_POSSIBLE_HEAP: 200000000
+    volumes:
+      - $REMOTE_DATA/rocketmq/rocketmq-01/data/broker/logs:/root/logs
+      - $REMOTE_DATA/rocketmq/rocketmq-01/data/broker/store:/root/store
+      - $REMOTE_DATA/rocketmq/rocketmq-01/conf/broker.conf:/opt/rocketmq-4.4.0/conf/broker.conf
+    ports:
+      - 10911:10911
+      - 10909:10909
+  rmqadmin:
+    container_name: rmqadmin-01
+    image: pangliang/rocketmq-console-ng
+    hostname: rabbitmq
+    restart: always
+    environment:
+      - JAVA_OPTS="-Drocketmq.namesrv.addr=10.21.0.31:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false"
+    volumes:
+      - $REMOTE_DATA/rabbitmq/data:/var/lib/rabbitmq
+      - $REMOTE_DATA/rabbitmq/log:/var/log/rabbitmq/log
+    ports:
+      - 9999:8080

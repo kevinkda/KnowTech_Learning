@@ -1,0 +1,38 @@
+version: '2'
+services:
+  elastic-search:
+    container_name: elastic-search-01
+    image: elasticsearch:7.12.1
+    # hostname: elasticsearch
+    restart: always
+    environment:
+      ES_JAVA_OPTS: "-Xms256m -Xmx256m"
+      discovery.type: single-node
+    volumes:
+      - $REMOTE_DATA/elastic/search-01/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - $REMOTE_DATA/elastic/search-01/data:/usr/share/elasticsearch/data
+      - $REMOTE_DATA/elastic/search-01/plugins:/usr/share/elasticsearch/plugins
+      - $REMOTE_DATA/elastic/search-01/logs:/usr/share/elasticsearch/logs
+    ports:
+      - 9200:9200
+      - 9300:9300
+  kibana:
+    container_name: kibana-01
+    image: kibana:7.12.1
+    # hostname: kibana
+    restart: always
+    # environment:
+    volumes:
+      - $REMOTE_DATA/elastic/kibana-01/kibana.yml:/usr/share/kibana/config/kibana.yml
+    ports:
+      - 5601:5601
+  logstash:
+    container_name: logstash-01
+    image: rabbitmq:management
+    # hostname: logstash
+    restart: always
+    # environment:
+    volumes:
+      - $REMOTE_DATA/elastic/logstash-01/logstash.yml:/usr/share/logstash/config/logstash.yml
+    ports:
+      - 4369:4369

@@ -1,0 +1,13 @@
+version: '3'
+services:
+  sqlserver:
+    container_name: redis-01
+    image: redis-server
+    restart: always
+    privileged: true
+    ports:
+      - 6379:6379
+    volumes:
+      - $REMOTE_DATA/redis/redis-01/data:/data
+      - $REMOTE_DATA/redis/redis-01/conf/redis.conf:/etc/redis/redis.conf
+    # environment:
