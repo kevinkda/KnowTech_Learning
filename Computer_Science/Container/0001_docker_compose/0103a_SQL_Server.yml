@@ -7,7 +7,7 @@ services:
     ports:
       - 1433:1433
     volumes:
-      - ./mssql-02:/var/opt/mssql
+      - $REMOTE_DATA/mssql/mssql-02:/var/opt/mssql
       - /etc/localtime:/etc/localtime
     environment:
       - ACCEPT_EULA=Y

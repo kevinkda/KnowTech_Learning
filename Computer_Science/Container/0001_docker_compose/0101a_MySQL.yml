@@ -19,12 +19,12 @@ services:
     ports:
       - 3307:3306
     volumes:
-      - ./mysql-env-01/conf/my.cnf:/etc/mysql/conf.d/mysqld.cnf
-      # - ./mysql-env-01/conf:/etc/mysql/conf.d
-      - ./mysql-env-01/data:/var/lib/mysql
-      - ./mysql-env-01/mysql-file:/var/lib/mysql-file
-      - ./mysql-env-01/log:/var/log/mysql
-      - ./mysql-env-01/sock/:/var/run/mysqld
+      - $REMOTE_DATA/mysql/mysql-env-01/conf/my.cnf:/etc/mysql/conf.d/mysqld.cnf
+      # - $REMOTE_DATA/mysql/mysql-env-01/conf:/etc/mysql/conf.d
+      - $REMOTE_DATA/mysql/mysql-env-01/data:/var/lib/mysql
+      - $REMOTE_DATA/mysql/mysql-env-01/mysql-file:/var/lib/mysql-file
+      - $REMOTE_DATA/mysql/mysql-env-01/log:/var/log/mysql
+      - $REMOTE_DATA/mysql/mysql-env-01/sock/:/var/run/mysqld
     # networks:
     #   - safety-net
   mysql-env-02:
@@ -44,13 +44,13 @@ services:
     #   --lower_case_table_names=1
     #   --max_allowed_packet=128M;
     ports:
-      - 3307:3306
+      - 3308:3306
     volumes:
-      - ./mysql-env-02/conf/my.cnf:/etc/mysql/conf.d/mysqld.cnf
-      # - ./mysql-env-02/conf:/etc/mysql/conf.d
-      - ./mysql-env-02/data:/var/lib/mysql
-      - ./mysql-env-02/mysql-file:/var/lib/mysql-file
-      - ./mysql-env-02/log:/var/log/mysql
-      - ./mysql-env-02/sock/:/var/run/mysqld
+      - $REMOTE_DATA/mysql/mysql-env-02/conf/my.cnf:/etc/mysql/conf.d/mysqld.cnf
+      # - $REMOTE_DATA/mysql/mysql-env-02/conf:/etc/mysql/conf.d
+      - $REMOTE_DATA/mysql/mysql-env-02/data:/var/lib/mysql
+      - $REMOTE_DATA/mysql/mysql-env-02/mysql-file:/var/lib/mysql-file
+      - $REMOTE_DATA/mysql/mysql-env-02/log:/var/log/mysql
+      - $REMOTE_DATA/mysql/mysql-env-02/sock/:/var/run/mysqld
     # networks:
     #   - safety-net

@@ -10,4 +10,4 @@ services:
     ports:
       - 1521:1521
     volumes:
-      - ./oracle-01/data/:/u01/app/oracle/
+      - $REMOTE_DATA/oracle/oracle-01/data/:/u01/app/oracle/

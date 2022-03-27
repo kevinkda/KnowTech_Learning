@@ -11,8 +11,8 @@
 #       LDAP_ADMIN_PASSWORD: 123456
 #       LDAP_CONFIG_PASSWORD: 123456
 #     volumes:
-#       - ./openldap-01/data:/var/lib/ldap
-#       - ./openldap-01/config:/etc/ldap/slapd.d
+#       - $REMOTE_DATA/openldap/openldap-01/data:/var/lib/ldap
+#       - $REMOTE_DATA/openldap/openldap-01/config:/etc/ldap/slapd.d
 #     ports:
 #       - 389:389
 #   phpldapadmin:
@@ -37,8 +37,8 @@
 #       - 389:389
 #       - 636:636
 #     volumes:
-#       - ./openldap-01/ldap:/var/lib/ldap
-#       - ./openldap-01/slapd.d:/etc/ldap/slapd.d
+#       - $REMOTE_DATA/openldap/openldap-01/ldap:/var/lib/ldap
+#       - $REMOTE_DATA/openldap/openldap-01/slapd.d:/etc/ldap/slapd.d
 #   phpldapadmin:
 #     container_name: phpldapadmin
 #     image: osixia/phpldapadmin:latest
@@ -58,7 +58,7 @@
   #   ports:
   #     - "8081:80"
   #   volumes:
-  #     - ./config.inc.php:/var/www/html/conf/config.inc.php
+  #     - $REMOTE_DATA/openldap/config.inc.php:/var/www/html/conf/config.inc.php
 
 
 version: '2.3'
@@ -82,8 +82,8 @@ services:
         max-size: "10m"
         max-file: "10"
     volumes:
-      - ./openldap-01/ldap:/var/lib/ldap
-      - ./openldap-01/slapd.d:/etc/ldap/slapd.d
+      - $REMOTE_DATA/openldap/openldap-01/ldap:/var/lib/ldap
+      - $REMOTE_DATA/openldap/openldap-01/slapd.d:/etc/ldap/slapd.d
   php:
     image: osixia/phpldapadmin
     container_name: phpopenldap
