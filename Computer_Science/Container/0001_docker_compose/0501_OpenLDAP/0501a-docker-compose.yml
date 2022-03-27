@@ -1,0 +1,105 @@
+# version: "3"
+# services:
+#   # 1.安装openldap
+#   openldap:
+#     container_name: openldap
+#     image: osixia/openldap:latest
+#     restart: always
+#     environment:
+#       LDAP_ORGANISATION: KevinKDA
+#       LDAP_DOMAIN: kevinkda.cn
+#       LDAP_ADMIN_PASSWORD: 123456
+#       LDAP_CONFIG_PASSWORD: 123456
+#     volumes:
+#       - ./openldap-01/data:/var/lib/ldap
+#       - ./openldap-01/config:/etc/ldap/slapd.d
+#     ports:
+#       - 389:389
+#   phpldapadmin:
+#     container_name: phpldapadmin-01
+#     image: osixia/phpldapadmin:latest
+#     restart: always
+#     environment:
+#       PHPLDAPADMIN_HTTPS: "false"
+#       PHPLDAPADMIN_LDAP_HOSTS: openldap
+#     ports:
+#       - 30004:80
+#     depends_on:
+#       - openldap
+
+# version: '3'
+# services:
+#   openldap:
+#     container_name: openldap
+#     image: osixia/openldap:latest
+#     restart: always
+#     ports:
+#       - 389:389
+#       - 636:636
+#     volumes:
+#       - ./openldap-01/ldap:/var/lib/ldap
+#       - ./openldap-01/slapd.d:/etc/ldap/slapd.d
+#   phpldapadmin:
+#     container_name: phpldapadmin
+#     image: osixia/phpldapadmin:latest
+#     ports:
+#       - 8080:80
+#     environment:
+#       - PHPLDAPADMIN_HTTPS="false"
+#       - PHPLDAPADMIN_LDAP_HOSTS=openldap
+#     links:
+#       - openldap
+#     depends_on:
+#       - openldap
+  # openldap1:
+  #   container_name: self-service-password
+  #   image: kadimasolutions/self-service-password
+  #   restart: always
+  #   ports:
+  #     - "8081:80"
+  #   volumes:
+  #     - ./config.inc.php:/var/www/html/conf/config.inc.php
+
+
+version: '2.3'
+services:
+  openldap:
+    image: osixia/openldap
+    container_name: openldap
+    environment:
+      - TZ=Asia/Shanghai
+      #- LDAP_ORGANISATION="my-company"
+      #- LDAP_DOMAIN="my-company.com"
+      #- LDAP_ADMIN_PASSWORD="123456"
+    ports:
+      - 389:389
+      - 636:636
+    command: [--copy-service,  --loglevel, debug]
+    # volumes:
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "10"
+    volumes:
+      - ./openldap-01/ldap:/var/lib/ldap
+      - ./openldap-01/slapd.d:/etc/ldap/slapd.d
+  php:
+    image: osixia/phpldapadmin
+    container_name: phpopenldap
+    environment:
+      - TZ=Asia/Shanghai
+      - PHPLDAPADMIN_HTTPS="false"
+      - PHPLDAPADMIN_LDAP_HOSTS=openldap
+    ports:
+      - 10004:80
+    depends_on: 
+      - openldap
+    links:
+      - openldap
+    # volumes:
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "10"
