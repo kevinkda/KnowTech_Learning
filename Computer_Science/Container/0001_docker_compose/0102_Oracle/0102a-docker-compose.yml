@@ -1,0 +1,13 @@
+version: '3'
+services:
+  oracle11:
+    container_name: oracle-11-01
+    image: oracleinanutshell/oracle-xe-11g
+    restart: always
+    privileged: true
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - 1521:1521
+    volumes:
+      - ./oracle-01/data/:/u01/app/oracle/
