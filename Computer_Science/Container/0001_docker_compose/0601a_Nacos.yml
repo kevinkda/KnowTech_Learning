@@ -1,0 +1,17 @@
+version: '2'
+services:
+  nacos:
+    container_name: nacos-01
+    image: nacos/nacos-server:latest
+    privileged: true
+    restart: always
+    environment:
+      JVM_XMS: 256m
+      JVM_XMX: 256m
+      MODE: standalone
+      PREFER_HOST_MODE: hostname
+    volumes:
+      - $REMOTE_DATA/nacos/nacos-01/application.properties:/home/nacos/conf/application.properties
+      - $REMOTE_DATA/nacos/nacos-01/logs:/home/nacos/logs
+    ports:
+      - 8848:8848
