@@ -19,6 +19,7 @@
 - [Reference G - YubiKey](https://support.yubico.com/hc/en-us/articles/360013761339-Resetting-the-OpenPGP-Application-on-the-YubiKey)
 - [Reference H](https://blog.csdn.net/nyist_zxp/article/details/107597626)
 - [Reference I](https://www.dandelioncloud.cn/article/details/1497379405814140930)
+- [Reference J](https://blog.csdn.net/willingtolove/article/details/122362705)
 
 
 
@@ -493,6 +494,9 @@ $ gpg -ao 6AD1D8AFEB92668CCE9E3558022117DA20445FA7_0DF307E13A4CF6FB_rsa_sub_encr
 
 ```shell
 gpg --keyserver hkp://pgp.mit.edu --send-keys 6AD1D8AFEB92668CCE9E3558022117DA20445FA7
+gpg --keyserver keyring.debian.org --send-keys 6AD1D8AFEB92668CCE9E3558022117DA20445FA7
+gpg --keyserver keyserver.ubuntu.com --send-keys 6AD1D8AFEB92668CCE9E3558022117DA20445FA7
+gpg --keyserver keys.openpgp.org --send-keys 6AD1D8AFEB92668CCE9E3558022117DA20445FA7
 ```
 
 
