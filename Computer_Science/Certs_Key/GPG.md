@@ -27,7 +27,7 @@
 
 [gnupg.org](https://www.gnupg.org/)
 
-
+[Kleopatra](https://gpg4win.org/download.html)
 
 <br/>
 
