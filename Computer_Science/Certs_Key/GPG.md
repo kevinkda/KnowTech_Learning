@@ -41,7 +41,9 @@
 
 ### 创建主密钥
 
-首先，输入 `gpg --expert --full-generate-key` 开始生成 GPG 证书，不要将主密钥设置为过期
+首先，输入 `gpg --expert --full-generate-key` 开始生成 GPG 证书，不要将主密钥设置为过期。
+
+建议使用`Git Bush`程序执行后续命令。
 
 ```shell
 $ gpg --expert --full-generate-key
@@ -93,7 +95,7 @@ You selected this USER-ID:
 Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? o
 ```
 
-接下来会要求输入密码，请务必记住此密码。
+接下来会要求输入密码，请务必记住此密码。此处生成的`*.rev`文件是证书吊销文件，需小心保管。
 
 ```shell
 We need to generate a lot of random bytes. It is a good idea to perform
