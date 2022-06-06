@@ -4,7 +4,7 @@
 
 ## Git Path
 
-[]()
+[GitHub KnowTech_Learning](https://github.com/kevinkda/KnowTech_Learning/blob/main/Computer_Science/Certs_Key/GPG.md)
 
 
 
