@@ -633,7 +633,23 @@ git config --global commit.gpgsign true
 git config --global tag.forceSignAnnotated true
 ```
 
+当前用户目录下创建配置文件`~/.gnupg/gpg-agent.conf`，并根据需要配置
+
+[Reference](https://www.it1352.com/2098134.html)
+
+```properties
+# 告诉gpg-agent将密码短语存储1小时
+default-cache-ttl 3600
+
+# 告诉gpg-agent将密码短语存储24小时
+default-cache-ttl 86400
+```
+
+
+
 <br/>
+
+
 
 ### 故障解决
 
