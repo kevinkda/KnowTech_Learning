@@ -14,6 +14,11 @@
 - [Reference B](https://www.5axxw.com/wiki/content/vty5cc)
 - [Reference C](https://blog.csdn.net/caiwenzhe/article/details/124559900)
 - [Reference D](https://haoyu.love/blog523.html)
+- [Reference E - YubiKey](https://www.wenjiangs.com/doc/tkg8bhlwg)
+- [Reference F - YubiKey](https://haoyu.love/blog523.html)
+- [Reference G - YubiKey](https://support.yubico.com/hc/en-us/articles/360013761339-Resetting-the-OpenPGP-Application-on-the-YubiKey)
+- [Reference H](https://blog.csdn.net/nyist_zxp/article/details/107597626)
+- [Reference I](https://www.dandelioncloud.cn/article/details/1497379405814140930)
 
 
 
@@ -320,6 +325,67 @@ ssb   nistp521/0DF307E13A4CF6FB 2022-06-06 [E] [expires: 2027-06-05]
 ssb>  rsa4096/6E3CE54AE79A0E16 2022-06-06 [E] [expires: 2027-06-05]
 ```
 
+#### 将电子邮件与 GPG 密钥关联
+
+1. 使用 `gpg --list-secret-keys --keyid-format=long` 命令列出您拥有其公钥和私钥的长形式 GPG 密钥。 签名提交或标记需要私钥。
+
+   ```shell
+   $ gpg --list-secret-keys --keyid-format=long
+   ```
+
+   **注：**Linux上的一些 GPG 安装可能需要使用 `gpg2 --list-keyid-form LONG` 查看您现有密钥的列表。 在这种情况下，您还需要运行 `git config --global gpg.program gpg2` 来配置 Git 使用 `git gpg2`。
+
+2. 从 GPG 密钥列表中复制您想要使用的 GPG 密钥 ID 的长形式。 在此例中，GPG 密钥 ID 是 `3AA5C34371567BD2`：
+
+   ```shell
+   $ gpg --list-secret-keys --keyid-format=long
+   /Users/hubot/.gnupg/secring.gpg
+   ------------------------------------
+   sec   4096R/3AA5C34371567BD2 2016-03-10 [expires: 2017-03-10]
+   uid                          Hubot 
+   ssb   4096R/42B317FD4BA89E7A 2016-03-10
+   ```
+
+3. 输入 `gpg --edit-key GPG key ID`，替换要使用的 GPG 密钥 ID。 在以下示例中，GPG 密钥 ID 是 `3AA5C34371567BD2`：
+
+   ```shell
+   $ gpg --edit-key 3AA5C34371567BD2
+   ```
+
+4. 输入 `gpg> adduid` 以添加用户 ID 详细信息。
+
+   ```shell
+   $ gpg> adduid
+   ```
+
+5. 按照提示提供您的真实姓名、电子邮件地址和任何注释。 您可以选择 `N`、`C` 或 `E` 来修改各个条目。 要保持您的电子邮件地址私密，请使用 GitHub 提供的 `no-reply` 电子邮件地址。 更多信息请参阅“[设置提交电子邮件地址](https://docs.github.com/cn/articles/setting-your-commit-email-address)”。
+
+   ```shell
+   Real Name: Octocat
+     Email address: octocat@github.com
+     Comment: GitHub key
+     Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit?
+   ```
+
+6. 输入 `O` 以确认选择。
+
+7. 输入密钥的密码。
+
+8. 输入 `gpg> save` 以保存更改
+
+   ```shell
+   $ gpg> save
+   ```
+
+9. 输入 `gpg --armor --export GPG key ID`，替换要使用的 GPG 密钥 ID。 在以下示例中，GPG 密钥 ID 是 `3AA5C34371567BD2`：
+
+   ```shell
+   $ gpg --armor --export 3AA5C34371567BD2
+   # Prints the GPG key, in ASCII armor format
+   ```
+
+
+
 
 
 ### 修改主密钥有效期
@@ -451,6 +517,20 @@ save
 # 再次查看设备状态，可以看到相关槽位有密钥信息了。
 $ gpg --card-status
 ```
+
+
+
+
+
+<br/>
+
+---
+
+
+
+## 新增 GPG 密钥到 GitHub 帐户
+
+[新增 GPG 密钥到 GitHub 帐户](https://docs.github.com/cn/authentication/managing-commit-signature-verification/adding-a-new-gpg-key-to-your-github-account)
 
 
 
@@ -624,6 +704,30 @@ gpg> key 1
 
 
 ## 设置 Git commit/tag 时使用 GPG 签名
+
+### 单次使用GPG签名提交
+
+#### commit
+
+当本地分支中的提交更改时，请将 S 标志添加到 git commit 命令
+
+```shell
+$ git commit -S -m "your commit message"
+# Creates a signed commit
+$ git push
+# Pushes your local commits to the remote repository
+```
+
+#### tag
+
+要对标记签名，请将 `-s` 添加到您的 `git tag` 命令
+
+```shell
+$ git tag -s mytag
+# Creates a signed tag
+$ git tag -v mytag
+# Verifies the signed tag
+```
 
 ### 配置Git使用公钥检查提交签名
 
