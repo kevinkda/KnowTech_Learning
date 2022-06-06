@@ -501,7 +501,30 @@ gpg --keyserver keys.openpgp.org --send-keys 6AD1D8AFEB92668CCE9E3558022117DA204
 
 
 
-### 导入OpenPGP Card
+### 删除密钥
+
+#### 删除公钥
+
+```shell
+gpg --delete-keys 6C8A15CECD3DCC2741A7C590AB38BACE635A064C
+```
+
+#### 删除私钥
+
+```shell
+gpg --delete-secret-keys 6C8A15CECD3DCC2741A7C590AB38BACE635A064C
+```
+
+
+
+
+<br/>
+
+---
+
+
+
+## 导入OpenPGP Card
 
 ```shell
 # 查看智能卡设备状态
@@ -521,6 +544,78 @@ save
 # 再次查看设备状态，可以看到相关槽位有密钥信息了。
 $ gpg --card-status
 ```
+
+
+
+<br/>
+
+---
+
+## 导入GPG密钥
+
+`gpg --import public-file.key / private-file.key` : 导入公钥或私钥，其中，导入私钥需要输入保护私钥的密码；
+
+```shell
+$ gpg --import public-file.key
+gpg: 密钥 E6730F4374866065：公钥"Search2016 (Search2016) <Search2016@163.com>"已导入
+gpg: 合计被处理的数量：1
+gpg:           已导入：1
+$ gpg -k
+/root/.gnupg/pubring.kbx
+------------------------
+pub   rsa2048 2020-07-27 [SC]
+      8AC0AB86C34ADC6ED110A5A9E6730F4374866065
+uid           [ 未知 ] Search2016 (Search2016) <Search2016@163.com>
+$ gpg --import private-file.key
+gpg: 密钥 E6730F4374866065："Search2016 (Search2016) <Search2016@163.com>"未改变
+gpg: 密钥 E6730F4374866065：私钥已导入
+gpg: 合计被处理的数量：1
+gpg:           未改变：1
+gpg:       读取的私钥：1
+gpg:       导入的私钥：1
+$
+```
+
+### 在对私钥进行操作时，避免弹窗输入密码
+
+GPG 在新的版本中，在对私钥进行操作的时候（签名、导入等）需要输入密钥的密码，但是有时候我们并不希望弹框输入密码，更希望是通过脚本等方式执行 GPG 的一些操作，方法如下：
+
+#### 直接输入密码
+
+```shell
+gpg --import  --pinentry-mode loopback --batch --passphrase password  private-file.key
+```
+
+```shell
+$ gpg --import --pinentry-mode loopback --batch --passphrase 123456 private-file.key
+gpg: 密钥 E6730F4374866065：“Search2016 (Search2016) <Search2016@163.com>”未改变
+gpg: 密钥 E6730F4374866065：私钥已导入
+gpg: 合计被处理的数量：1
+gpg:           未改变：1
+gpg:       读取的私钥：1
+gpg:       导入的私钥：1
+$ 
+```
+
+#### 将密码输入到文件里
+
+```shell
+gpg --import --pinentry-mode loopback --batch --passphrase-file password-file  private-file.key
+```
+
+```shell
+$ gpg --import --pinentry-mode loopback --batch --passphrase-file password-file private-file.key
+gpg: 密钥 E6730F4374866065：“Search2016 (Search2016) <Search2016@163.com>”未改变
+gpg: 密钥 E6730F4374866065：私钥已导入
+gpg: 合计被处理的数量：1
+gpg:           未改变：1
+gpg:       读取的私钥：1
+gpg:       导入的私钥：1
+$
+```
+
+
+文件`password-file`第一行为设置的密码，这两种方式都不提倡使用，如果真要使用建议使用第二中。
 
 
 
