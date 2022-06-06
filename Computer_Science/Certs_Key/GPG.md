@@ -572,9 +572,19 @@ gpg: 密钥 E6730F4374866065：私钥已导入
 gpg: 合计被处理的数量：1
 gpg:           未改变：1
 gpg:       读取的私钥：1
+
 gpg:       导入的私钥：1
-$
+$ 
 ```
+
+您可能还需要运行`gpg --expert --edit-key <fingerprint>`，然后键入`trust`以证明您的**是您信任的某人(您自己)。
+
+```shell
+$ gpg --expert --edit-key 6AD1D8AFEB92668CCE9E3558022117DA20445FA7
+gpg> trust
+```
+
+
 
 ### 在对私钥进行操作时，避免弹窗输入密码
 
