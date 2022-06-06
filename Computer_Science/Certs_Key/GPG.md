@@ -25,6 +25,20 @@
 
 
 
+## GPG 官网
+
+[gnupg.org](https://www.gnupg.org/)
+
+
+
+<br/>
+
+---
+
+<br/>
+
+
+
 ## 生成 GPG 证书
 
 ### 创建主密钥
