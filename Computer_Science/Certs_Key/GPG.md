@@ -485,9 +485,9 @@ $ gpg -ao 6AD1D8AFEB92668CCE9E3558022117DA20445FA7_A6636E8ACFDE69F7_rsa_sub_sign
 $ gpg -ao 6AD1D8AFEB92668CCE9E3558022117DA20445FA7_E3CC27DD82C72825_rsa_sub_auth_key.asc --export-secret-key E3CC27DD82C72825!
 $ gpg -ao 6AD1D8AFEB92668CCE9E3558022117DA20445FA7_6E3CE54AE79A0E16_rsa_sub_encr_key.asc --export-secret-key 6E3CE54AE79A0E16!
 # ECC
-$ gpg -ao 6AD1D8AFEB92668CCE9E3558022117DA20445FA7_33B00D0F04A46C0D_rsa_sub_sign_key.asc --export-secret-key 33B00D0F04A46C0D!
-$ gpg -ao 6AD1D8AFEB92668CCE9E3558022117DA20445FA7_3B511124247F7819_rsa_sub_auth_key.asc --export-secret-key 3B511124247F7819!
-$ gpg -ao 6AD1D8AFEB92668CCE9E3558022117DA20445FA7_0DF307E13A4CF6FB_rsa_sub_encr_key.asc --export-secret-key 0DF307E13A4CF6FB!
+$ gpg -ao 6AD1D8AFEB92668CCE9E3558022117DA20445FA7_33B00D0F04A46C0D_ecc_sub_sign_key.asc --export-secret-key 33B00D0F04A46C0D!
+$ gpg -ao 6AD1D8AFEB92668CCE9E3558022117DA20445FA7_3B511124247F7819_ecc_sub_auth_key.asc --export-secret-key 3B511124247F7819!
+$ gpg -ao 6AD1D8AFEB92668CCE9E3558022117DA20445FA7_0DF307E13A4CF6FB_ecc_sub_encr_key.asc --export-secret-key 0DF307E13A4CF6FB!
 ```
 
 
@@ -516,7 +516,6 @@ gpg --delete-keys 6C8A15CECD3DCC2741A7C590AB38BACE635A064C
 ```shell
 gpg --delete-secret-keys 6C8A15CECD3DCC2741A7C590AB38BACE635A064C
 ```
-
 
 
 
@@ -735,7 +734,7 @@ gpg/card> q
 输入 `gpg --expert --edit-key`
 
 ```shell
-edison@edison-pc ~> gpg --expert --edit-key W4IJICKJLQPX8CMB9IYZMVPSMCCJIHOTGSM2QFGP
+$ gpg --expert --edit-key W4IJICKJLQPX8CMB9IYZMVPSMCCJIHOTGSM2QFGP
 gpg (GnuPG) 2.2.19; Copyright (C) 2019 Free Software Foundation, Inc.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
