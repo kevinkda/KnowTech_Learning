@@ -1,1 +1,8 @@
 .DS_Store
+
+# Office
+~$*.xls*
+~$*.doc*
+~$*.ppt*
+~*.tmp
+
