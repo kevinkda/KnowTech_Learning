@@ -1,0 +1,116 @@
+{
+  "resource": {
+    "url": "/api/marketplaces/AAHKV2X7AFYLW/products/B0050N5EVC?merchantId=A3TEGLC21NOO5Y",
+    "types": [
+      "product.mini/v1",
+      "product/v2",
+      "product/v1",
+      "product.offer-comparison-experience/v1"
+    ]
+  },
+  "type": "product/v2",
+  "entity": {
+    "asin": "B0050N5EVC",
+    "buyingOptions": [
+      {
+        "globalStore": {
+          "resource": {
+            "url": "/api/marketplaces/AAHKV2X7AFYLW/products/B0050N5EVC/buying-options/My0XOcSkC4ufDb1ULHSFOV3pHMi8CnSgpodK21JYrJ0%3D/global-store",
+            "types": [
+              "product.global-store/v1"
+            ]
+          },
+          "type": "product.global-store/v1",
+          "entity": {
+            "badge": {
+              "image": {
+                "extension": "png",
+                "physicalId": "010pElvRcOL",
+                "width": 81,
+                "height": 17
+              }
+            },
+            "sourceMarketplaceId": "A1F83G8C2ARO7P",
+            "infoBullets": {
+              "header": "亚马逊海外购",
+              "messages": [
+                {
+                  "text": "由境外网站所在的原销售地的品牌商提供售后保修，可能不覆盖中国，详询品牌商售后。"
+                },
+                {
+                  "fragments": [
+                    {
+                      "link": {
+                        "url": "https://www.amazon.cn/b?ie=UTF8&node=2339012071",
+                        "content": {
+                          "text": "尺码对照"
+                        }
+                      }
+                    },
+                    {
+                      "text": "\n 购买海外购商品需要提供身份证信息用于清关（清关时间延长有可能影响部分订单的实际送达日期）。"
+                    }
+                  ]
+                },
+                {
+                  "fragments": [
+                    {
+                      "text": "商品的尺码/适龄/标签和说明书的语言等可能与本地不同。"
+                    },
+                    {
+                      "link": {
+                        "url": "https://www.amazon.cn/gp/browse.html?node=2107741071",
+                        "content": {
+                          "text": "了解更多"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "fragments": [
+                    {
+                      "text": "受亚马逊海外购使用条件及销售者住所地所在国法律约束。"
+                    },
+                    {
+                      "link": {
+                        "url": "https://www.amazon.cn/gp/help/customer/display.html/ref=dp_ags_ddm_cou?ie=UTF8&nodeId=201625060",
+                        "content": {
+                          "text": "了解更多"
+                        }
+                      }
+                    },
+                    {
+                      "text": "。"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "importDetails": {
+          "resource": {
+            "url": "/api/marketplaces/AAHKV2X7AFYLW/products/B0050N5EVC/buying-options/My0XOcSkC4ufDb1ULHSFOV3pHMi8CnSgpodK21JYrJ0%3D/import-details",
+            "types": [
+              "product.import-details/v1"
+            ]
+          },
+          "type": "product.import-details/v1",
+          "entity": {
+            "programType": "GLOBAL_STORE",
+            "shippingFee": {
+              "amount": "102.16",
+              "currencyCode": "CNY"
+            },
+            "fee": {
+              "amount": "39.6",
+              "currencyCode": "CNY"
+            }
+          }
+        },
+        "type": "NEW"
+      }
+    ]
+  }
+}
