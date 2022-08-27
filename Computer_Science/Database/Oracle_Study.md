@@ -52,7 +52,7 @@
 
 ##### 优点
 
-- 格式灵活：存储数据的格式可以是key,value形式、文档形式、图片形式等等；
+- 格式灵活：存储数据的格式可以是key, value形式、文档形式、图片形式等等；
 - 高扩展性：基于键值对，数据没有耦合性，容易扩展；
 - 速度快：无需经过SQL层的解析，读写性能很高；
 
@@ -338,3 +338,75 @@ create tablespace 永久表空间名称 datafile '永久表空间物理文件位
 #### 创建用户
 
 ##### 通过PL/SQL Developer 工具创建用户
+
+![image-20220828002545260](Oracle_Study.assets/image-20220828002545260.png)
+
+![image-20220828002653718](Oracle_Study.assets/image-20220828002653718.png)
+
+![image-20220828002926712](Oracle_Study.assets/image-20220828002926712.png)
+
+![image-20220828002443680](Oracle_Study.assets/image-20220828002443680.png)
+
+#### 分配用户权限
+
+![image-20220828003058205](Oracle_Study.assets/image-20220828003058205.png)
+
+##### 对象权限[Object privileges)
+
+对象权限是指在指定的表视图序列上制定执行动作的权限或权利。
+
+##### 角色权限(Role privileges)
+
+角色是可以授予用户的相关权限的组，该方法使权限的授予撤回更加容易管理。
+
+##### 系统权限[System privileges)
+
+为用户分配创建表、创建用户、创建视图、创建存储过程等权限。
+
+#### 分配链接权限
+
+为当前用户分配一个connect链接角色
+
+![image-20220828003702537](Oracle_Study.assets/image-20220828003702537.png)
+
+#### 分配系统权限
+
+![image-20220828004232657](Oracle_Study.assets/image-20220828004232657.png)
+
+![image-20220828004502571](Oracle_Study.assets/image-20220828004502571.png)
+
+![image-20220828004555256](Oracle_Study.assets/image-20220828004555256.png)
+
+![image-20220828004727574](Oracle_Study.assets/image-20220828004727574.png)
+
+### Oracle 的链接配置
+
+#### 文件位置
+
+`Oracle目录\product\11.2.0\dbhome_1\NETWORK\ADMIN`
+
+#### sqlnet.ora
+
+名称解析。通过这个文件来决定怎么样找-一个连接中出现的连接字符串。
+如： `sqlplus bjsxt/oracle@orcl`
+`NAMES.DIRECTORY_PATH=(TNSNAMES, EZCONNECT)`
+
+#### tnsnames.ora
+
+用在oracle client端，用户配置连接数据库的别名参数就像系统中的hosts文件- -样。
+
+##### ORCL
+
+客户端连接服务器端使用的服务别名。注意一定要顶行书写，否则会无法识别服务别名。
+
+##### PROTOCOL
+
+客户端与服务器端通讯的协议，一般为TCP,该内容一般不用改。
+
+##### HOST
+
+ORACLE服务器端IP地址或者`hostname`。确保服务器端的监听启动正常。
+
+##### Port
+
+数据库侦听正在侦听的端口，此处port的值一定要与数据库侦听正在侦听的端口一样。
