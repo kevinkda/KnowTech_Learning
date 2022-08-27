@@ -249,7 +249,7 @@ Restricted（防止运行没有数字签名的脚本），要设置成remotesign
 
 
 
-### 4、ORA-01922: 必须指定 CASCADE 以删除 'AUTO_NCC_NEW'
+### 4、Oracle删除用户时必须指定 CASCADE
 
 #### 问题描述
 
@@ -262,6 +262,27 @@ Restricted（防止运行没有数字签名的脚本），要设置成remotesign
 #### 解决方法
 
 - 在删除语句后加上一个`cascade`即可解决问题(如果数据比较多得话就会比较慢。)
+
+
+
+### 5、Oracle删除用户时无法删除
+
+#### 问题描述
+
+- `ORA-01940: cannot drop a user that is currently connected`
+
+#### 原因
+
+- 该用户已经被连接了，所以删除不了
+
+#### 解决方案
+
+```sql
+#找到连接的sid和端口号
+select sid,serial# from v$session where username='XMH';
+#杀死正在连接的session
+alter system kill session '40,2121';
+```
 
 
 

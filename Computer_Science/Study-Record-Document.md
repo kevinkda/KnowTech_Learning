@@ -535,7 +535,7 @@ select * from students procedure analyse(16,256);
 
 
 
-### 5、Oracle管理相关SQL
+### 5、Oracle管理
 
 #### 相关链接
 
@@ -563,6 +563,18 @@ CDB与PDB是Oracle 12C引入的新特性，在ORACLE 12C数据库引入的多租
   - CDB中可以有一个或多个PDBS，PDBS向后兼容，可以像以前在数据库中那样操作PDBS，这里指大多数常规操作。
 
 这些组件中的每一个都可以被称为一个容器。因此，ROOT(根)是一个容器，Seed(种子)是一个容器，每个PDB是一个容器。每个容器在CDB中都有一个独一无二的的ID和名称。
+
+#### Oracle角色说明
+
+- connect（连接角色）
+  - 这种角色下只可以登录Oracle，不可用创建实体，也不可用创建数据库结构，即只能对其他人创建的表中的数据进行操作。
+
+- resource(资源角色)
+  - 该角色可以创建实体，但是不可以创建数据库结构。 可以创建表、序列（sequence）、运算符(operator)、过程(procedure)、触发器(trigger)、索引(index)、类型(type)和簇(cluster)。
+
+- dba（数据库管理员权限）
+  - 该角色拥有系统最高权限，只有DBA才可以创建数据库结构。包括无限制的空间限额和给其他用户授予各种权限的能力，system由dba用户拥有。
+    对于普通用户来说，授予connect和resource权限即可，只对dba授予connect、resource和dba权限。
 
 #### SqlPlus命令
 
@@ -676,6 +688,30 @@ alter pluggable database testrac close immediate;
 drop pluggable database testrac including datafiles;
 ```
 
+- 创建一个模式
+
+Oracle是不支持创建自定义模式的，想要创建模式的话只能新建一个用户，每个用户会有一个默认的和用户名相同的模式
+
+```sql
+CREATE SCHEMA "svc_bitbucket" AUTHORIZATION SYSTEM;
+```
+
+- 创建角色
+
+创建的角色可以由表或系统权限或者两者的组合构成
+
+```sql
+-- 创建角色
+create role myRole;
+-- 授权角色
+-- 如使myRole获得了在mytable中使用select进行查询的权限
+grant select on mytable to myRole;
+-- 再比如为角色赋予创建会话的权限
+grant create session to myRole;
+-- 删除角色
+drop role myRole;
+```
+
 
 
 ##### 用户相关
@@ -683,12 +719,21 @@ drop pluggable database testrac including datafiles;
 - 创建用户，对于普通用户名，用户创建的普通用户名必须以C##（或c##）开头。
 
 ```sql
-create user c##svc_res identified by q7JoPpEHb2RkettV;
+create user c##svc_res identified by 123;
 ```
+- 更改用户
+
+```sql
+alter user pdb identified by 321
+```
+
 - 授权
 
 ```sql
+-- 授权
 grant connect, resource to c##svc_res;
+-- 撤销授权
+revoke connect, resource from C##SVC_res;
 ```
 - 查看当前用户
 
