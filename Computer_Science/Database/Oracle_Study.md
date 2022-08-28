@@ -616,3 +616,31 @@ Oracle在创建表时，表名会自动转换大写。Oracle 对表名大小写�
 ##### 多对多
 
 需要建立一个中间表，中间表里放两个表的主键，然后需要用这两个列作为这个表的联合主键，然后每个列在作为外键参照各自的表的主键
+
+![image-20220828224853968](Oracle_Study.assets/image-20220828224853968.png)
+
+- T_ORDER
+
+  ![image-20220828225322130](Oracle_Study.assets/image-20220828225322130.png)
+
+  ![image-20220828225421312](Oracle_Study.assets/image-20220828225421312.png)
+
+  ![image-20220828225443373](Oracle_Study.assets/image-20220828225443373.png)
+
+- T_ORDER_ITEM
+
+  ![image-20220828225520865](Oracle_Study.assets/image-20220828225520865.png)
+
+  ![image-20220828225559474](Oracle_Study.assets/image-20220828225559474.png)
+
+  ![image-20220828225635886](Oracle_Study.assets/image-20220828225635886.png)
+
+- T_ITEM
+
+  ![image-20220828225747934](Oracle_Study.assets/image-20220828225747934.png)
+
+  ![image-20220828225806854](Oracle_Study.assets/image-20220828225806854.png)
+
+  ![image-20220828225911778](Oracle_Study.assets/image-20220828225911778.png)
+
+### 
