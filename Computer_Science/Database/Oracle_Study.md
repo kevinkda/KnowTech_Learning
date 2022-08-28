@@ -395,18 +395,92 @@ create tablespace 永久表空间名称 datafile '永久表空间物理文件位
 
 用在oracle client端，用户配置连接数据库的别名参数就像系统中的hosts文件- -样。
 
-##### ORCL
+- ORCL
+  - 客户端连接服务器端使用的服务别名。注意一定要顶行书写，否则会无法识别服务别名。
+- PROTOCOL
+  - 客户端与服务器端通讯的协议，一般为TCP,该内容一般不用改。
+- HOST
+  - ORACLE服务器端IP地址或者`hostname`。确保服务器端的监听启动正常。
+- Port
+  - 数据库侦听正在侦听的端口，此处port的值一定要与数据库侦听正在侦听的端口一样。
 
-客户端连接服务器端使用的服务别名。注意一定要顶行书写，否则会无法识别服务别名。
+#### listener.ora
 
-##### PROTOCOL
+用在oracle server端，可配置Oracle的监听端口
 
-客户端与服务器端通讯的协议，一般为TCP,该内容一般不用改。
+- LISTENER
+  - 监听名称，可以配置多个监听,多个监听的端口号要区分开来。
+- PROTOCOL
+  - 监听协议，一般都使用TCP。
+- HOST
+  - 本机IP地址或者localhostname
+- PORT
+  - 监听的端口号
 
-##### HOST
+### Net Configuration Assistant工具
 
-ORACLE服务器端IP地址或者`hostname`。确保服务器端的监听启动正常。
+![image-20220828010632029](Oracle_Study.assets/image-20220828010632029.png)
 
-##### Port
+#### 配置监听程序
 
-数据库侦听正在侦听的端口，此处port的值一定要与数据库侦听正在侦听的端口一样。
+![image-20220828012645819](Oracle_Study.assets/image-20220828012645819.png)
+
+![image-20220828012750970](Oracle_Study.assets/image-20220828012750970.png)
+
+![image-20220828012815210](Oracle_Study.assets/image-20220828012815210.png)
+
+![image-20220828012855053](Oracle_Study.assets/image-20220828012855053.png)
+
+![image-20220828012926885](Oracle_Study.assets/image-20220828012926885.png)
+
+![image-20220828013018080](Oracle_Study.assets/image-20220828013018080.png)
+
+![image-20220828013136091](Oracle_Study.assets/image-20220828013136091.png)
+
+![image-20220828013210500](Oracle_Study.assets/image-20220828013210500.png)
+
+#### Oracle本地网络服务配置
+
+##### 1配置本地网络服务要求:
+
+1. 防火墙需要关闭
+2. 相互是可ping通的
+
+##### 配置方式
+
+![image-20220828013511144](Oracle_Study.assets/image-20220828013511144.png)
+
+![image-20220828013547721](Oracle_Study.assets/image-20220828013547721.png)
+
+![image-20220828013621180](Oracle_Study.assets/image-20220828013621180.png)
+
+![image-20220828013651782](Oracle_Study.assets/image-20220828013651782.png)
+
+![image-20220828013733513](Oracle_Study.assets/image-20220828013733513.png)
+
+![image-20220828013811935](Oracle_Study.assets/image-20220828013811935.png)
+
+![image-20220828013932069](Oracle_Study.assets/image-20220828013932069.png)
+
+![image-20220828014006831](Oracle_Study.assets/image-20220828014006831.png)
+
+![image-20220828014122176](Oracle_Study.assets/image-20220828014122176.png)
+
+![image-20220828014213959](Oracle_Study.assets/image-20220828014213959.png)
+
+### Oracle 基本操作
+
+#### Oracle 中的数据类型
+
+##### 字符类型
+
+字符串数据类型还可以依据存储空间分为固定长度类型(CHAR)和可变长度类型(VARCHAR2/NVARCHAR2)两种。
+
+- CHAR类型
+  - CHAR类型，定长字符串,会用空格填充来达到其最大长度。非NULL的CHAR(12)总是包含12字节信息。CHAR字段最多可以存储2000字节的信息。如果创建表时，不指定CHAR长度，则默认为1。
+- VARCHAR2类型
+  - 变长字符串，与CHAR类型不同，它不会使用空格填充至最大长度。VARCHAR2最多可以存储4000字节的信息。
+- NVARCHAR2类型
+  - 这是一个包含UNICODE格式数据的变长字符串。NVARCHAR2 最多可以存储4000字节的信息。
+
+##### 数字类型
