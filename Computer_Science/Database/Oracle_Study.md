@@ -643,4 +643,276 @@ Oracle在创建表时，表名会自动转换大写。Oracle 对表名大小写�
 
   ![image-20220828225911778](Oracle_Study.assets/image-20220828225911778.png)
 
-### 
+# SQL Structured Query Language
+
+## SQL语言基础
+
+### 什么是SQL
+
+结构化查询语言(Structured Query Language)简称SQL(发音：sequal [‘si:kwəl])， 是一种数据库查询和程序设计语言，用于存取数据以及查询、更新和管理关系数库系统；同时也是数据库脚本文件的扩展名。
+
+### SQL能做什么?
+
+SQL面向数据库执行查 询
+SQL可从数据库取回数据
+SQL可在数据库中插入新的记录
+SQL可更新数据库中的数据
+SQL可从数据库删除记录
+SQL可创建新数据库
+SQL可在数据库中创建新表
+SQL可在数据库中创建存储过程
+SQL可在数据库中创建视图
+SQL可以设置表、存储过程和视图的权限
+
+### SQL 标准
+
+SQL是1986年10月由美国国家标准局(ANSI)通过的数据库语言美国标准，接着，国际标准化组织(ISO)颁布了SQL正式国际标准。1989 年4月，ISO提出了具有完整性特征的SQL89标准，1992年11月又公布了SQL92标准，在此标准中，把数据库分为三个级别：基本集、标准集和完全集。在1999年推出99版标准。最新版本为SQL2016版。
+比较有代表性的几个版本：SQL86、SQL92、 SQL99。
+除了SQL标准之外，大部分SQL数据库程序都拥有它们自己的私有扩展
+
+### SQL语言结构
+
+#### 数据查询语言(DQL: Data Query Language)
+
+其语句，也称为”数据检索语句“，用以从表中获得数据，确定数据怎样在应用程序给出。关键字SELECT是DQL(也是所有SQL)用得最多的动词，其他DQL常用的关键字有WHERE，ORDER BY，GROUP BY和HAVING。这些DQL关键字常与其他类型的SQL语句一起使用。
+
+```sql
+select ... from ... where ... 查询数据
+```
+
+#### 数据操作语言(DML: Data Manipulation Language)
+
+其语句包括动词INSERT, UPDATE和DELETE。它们分别用于添加，修改和删除表中的行。
+
+```sql
+insert ... 插入一条数据
+update ... 更新一条数据
+delete ... 删除一条数据
+```
+
+#### 事务处理语言(TCL: Transaction Control Language)
+
+它的语句能确保被DML语句影响的表的所有行及时得以更新。
+
+```sql
+commit ... 事物提交
+rollback ... 事物回滚
+savepoint ... 设置回滚点
+```
+
+#### 数据控制语言(DCL: Data Control Language)
+
+它的语句通过GRANT或REVOKE获得许可，确定单个用户和用户组对数据库对象的
+访问。
+
+```sql
+grant ... 授予用户权限
+revork ... 撤销用户权限
+```
+
+#### 数据定义语言(DDL: Data Definition Language)
+
+```sql
+定义数据库对象语言，其语句包括动词CREATE和DROP等。
+create ... 创建数据库对象
+drop ... 删除数据库对象
+alter ... 修改数据库对象
+rename ... 修改数据库对象名称
+
+```
+
+## Oracle中的HR用户介绍
+
+HR用户是Oracle自带的一个示例用户。在该用户下提供了可供我们练习数据库操作时所使用的表与数据。
+
+### 使用HR用户步骤
+
+1. 通过sys或system用户登录。
+
+2. 在Users中找到HR用户并设置登录密码。
+
+   ![image-20220829001008401](SQL_Language.assets/image-20220829001008401.png)
+
+   ![image-20220829003223047](SQL_Language.assets/image-20220829003223047.png) 
+
+3. 切换HR用户登录
+
+4. 查看该用户下的表结构
+
+   ![image-20220829003323760](SQL_Language.assets/image-20220829003323760.png)
+
+   ![image-20220829003519388](SQL_Language.assets/image-20220829003519388.png)
+
+# SQL Structured Query Language
+
+## SQL语言基础
+
+### 什么是SQL
+
+结构化查询语言(Structured Query Language)简称SQL(发音：sequal [‘si:kwəl])， 是一种数据库查询和程序设计语言，用于存取数据以及查询、更新和管理关系数库系统；同时也是数据库脚本文件的扩展名。
+
+### SQL能做什么?
+
+SQL面向数据库执行查 询
+SQL可从数据库取回数据
+SQL可在数据库中插入新的记录
+SQL可更新数据库中的数据
+SQL可从数据库删除记录
+SQL可创建新数据库
+SQL可在数据库中创建新表
+SQL可在数据库中创建存储过程
+SQL可在数据库中创建视图
+SQL可以设置表、存储过程和视图的权限
+
+### SQL 标准
+
+SQL是1986年10月由美国国家标准局(ANSI)通过的数据库语言美国标准，接着，国际标准化组织(ISO)颁布了SQL正式国际标准。1989 年4月，ISO提出了具有完整性特征的SQL89标准，1992年11月又公布了SQL92标准，在此标准中，把数据库分为三个级别：基本集、标准集和完全集。在1999年推出99版标准。最新版本为SQL2016版。
+比较有代表性的几个版本：SQL86、SQL92、 SQL99。
+除了SQL标准之外，大部分SQL数据库程序都拥有它们自己的私有扩展
+
+### SQL语言结构
+
+#### 数据查询语言(DQL: Data Query Language)
+
+其语句，也称为”数据检索语句“，用以从表中获得数据，确定数据怎样在应用程序给出。关键字SELECT是DQL(也是所有SQL)用得最多的动词，其他DQL常用的关键字有WHERE，ORDER BY，GROUP BY和HAVING。这些DQL关键字常与其他类型的SQL语句一起使用。
+
+```sql
+select ... from ... where ... 查询数据
+```
+
+#### 数据操作语言(DML: Data Manipulation Language)
+
+其语句包括动词INSERT, UPDATE和DELETE。它们分别用于添加，修改和删除表中的行。
+
+```sql
+insert		插入一条数据
+update		更新一条数据
+delete		删除一条数据
+```
+
+#### 事务处理语言(TCL: Transaction Control Language)
+
+它的语句能确保被DML语句影响的表的所有行及时得以更新。
+
+```sql
+commit		事物提交
+rollback	事物回滚
+savepoint	设置回滚点
+```
+
+#### 数据控制语言(DCL: Data Control Language)
+
+它的语句通过GRANT或REVOKE获得许可，确定单个用户和用户组对数据库对象的
+访问。
+
+```sql
+grant		授予用户权限
+revork		撤销用户权限
+```
+
+#### 数据定义语言(DDL: Data Definition Language)
+
+```sql
+定义数据库对象语言，其语句包括动词CREATE和DROP等。
+create		创建数据库对象
+drop		删除数据库对象
+alter		修改数据库对象
+rename		修改数据库对象名称
+
+```
+
+## Oracle中的HR用户介绍
+
+HR用户是Oracle自带的一个示例用户。在该用户下提供了可供我们练习数据库操作时所使用的表与数据。
+
+### 使用HR用户步骤
+
+1. 通过sys或system用户登录。
+
+2. 在Users中找到HR用户并设置登录密码。
+
+   ![image-20220829001008401](Oracle_Study.assets/image-20220829001008401.png)
+
+   ![image-20220829003223047](Oracle_Study.assets/image-20220829003223047.png) 
+
+3. 切换HR用户登录
+
+4. 查看该用户下的表结构
+
+   ![image-20220829003323760](Oracle_Study.assets/image-20220829003323760.png)
+
+   ![image-20220829003519388](SQL_Language.assets/image-20220829003519388.png)
+
+## DQL语言
+
+### 编写基本SELECT语句
+
+SELECT语句的作用是从数据库中返回信息。
+
+#### SELECT语句作用
+
+- 列选择(投影操作)
+  - 能够使用SELECT语句的列选择功能选择表中的列，这些列是我们想要用查询返回的。当我们查询时，可在选择查询的表中指定的列。
+- 行选择(选择操作)
+  - 能够使用SELECT语句的行选择功能选择表中的行，这些行是我们想要用查询返回的。能够使用不同的标准限制所看见的行。
+- 连接(多表操作)
+  - 能够使用SELECT语句的连接功能来集合数据，这些数据虽然被存储在不同的表中，但是我们可以通过连接查询到该数据。
+
+#### SELECT语句基本结构
+
+```sql
+SELECT *|{[DISTINCT] column|expression [alias], ... } FROM table;
+
+SELECT	确定哪些列
+FROM	确定哪张表
+```
+
+- 基本SELECT语句
+  - 在最简单的形式中，SELECT语句必须包含下面的内容:
+    - 一个SELECT 子句，指定被显示的列
+    - 一个FROM子句，指定表，该表包含SELECT 子句中的字段列表
+- 在语法中
+  - `SELECT`是一个或多个字段的列表
+  - `*` 选择所有的列
+  - `DISTINCT`关键字表示禁止重复
+  - `column|expression`选择指定的字段或表达式
+  - `alias`给所选择的列不同的标题
+  - `FROM table`指定包含列的表
+
+#### 选择操作[投影操作]
+
+- 选择所有列
+
+  ```sql
+  SELECT * FROM table;
+  ```
+
+- 选择指定的列
+  ```sql
+  SELECT columnName, columnName FROM table;
+  ```
+#### SQL语句语法要求
+
+- SQL语句对大小写不敏感
+- SQL语句可以写成一-行或多行
+- 关键字不能简写或分开折行
+- 子句通常放在不同的行
+- 缩进用于增强可读性
+
+#### SELECT语句中的算术表达式
+
+用算术运算符创建数字和日期数据的表达式。(+-*/)
+注意：如果对日期进行计算，我们只能对DATE和TIMESTAMP数据类型使用加和减操作。
+
+- 运算符的优先级
+
+  ![image-20220829015014704](Oracle_Study.assets/image-20220829015014704.png)
+
+  - 乘法和除法比加法和减法的优先级高
+  - 相同优先级的运算符从左到右计算
+  - 圆括号用于强制优先计算，并且使语句更清晰
+
+- 示例
+
+  - 计算employees表中的员工全年薪水加100以后的薪水是多少?
+  - 计算employees表中的员工薪水加100以后的全年薪水是多少?
