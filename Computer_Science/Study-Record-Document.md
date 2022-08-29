@@ -717,6 +717,58 @@ drop role myRole;
 
 
 
+##### 角色相关
+
+Oracle三种标准角色，connect role(连接角色)、resource role(资源角色)、dba role(数据库管理员角色)
+
+1. connect role：临时用户，特指不需要建表的用户，通常只赋予他们connect role。
+
+   connect是使用oracle简单权限，这种权限只对其他用户的表有访问权限，包括select/insert/update和delete等。
+
+   拥有connect role 的用户还能够创建表、视图、序列(sequence)、簇(cluster)、同义词(synonym)、回话(session)和其他 数据的链(link)
+
+2. resource role：更可靠和正式的数据库用户可以授予resource role。
+
+   resource提供给用户另外的权限以创建他们自己的表、序列、过程(procedure)、触发器(trigger)、索引(index)和簇(cluster)。
+
+3. dba role：dba role拥有所有的系统权限
+
+   包括无限制的空间限额和给其他用户授予各种权限的能力。system由dba用户拥有
+
+- 授予用户角色
+
+```sql
+-- 切换到对应的PDB下
+alter session set container=PDB1;
+show pdbs;
+-- 授予dba、resource、connect角色
+grant dba,resource,connect to pdb1;
+-- 收回某个用户的某个角色
+revoke dba,resource,connect from pdb1;
+-- 查看用户角色
+select * from dba_role_privs where grantee = 'PDB1' and granted_role in ('DBA','RESOURCE','CONNECT')
+```
+
+- 授予角色权限
+
+```sql
+-- create seesion 用户登陆会话权限
+-- create table 用户建表权限
+-- create sequence 用户创建序列权限
+-- create view 用户创建视图权限
+-- create procedure 用户创建存储过程权限
+-- create tablespace 用户创建表空间权限
+grant create session,create table to role_name;
+```
+
+- 撤销角色权限
+
+```sql
+revoke create table from role_name;
+```
+
+
+
 ##### 用户相关
 
 - 创建用户，对于普通用户名，用户创建的普通用户名必须以C##（或c##）开头。
@@ -724,20 +776,12 @@ drop role myRole;
 ```sql
 create user c##svc_res identified by 123;
 ```
-- 更改用户
+- 更改用户密码
 
 ```sql
 alter user pdb identified by 321
 ```
 
-- 授权
-
-```sql
--- 授权
-grant connect, resource to c##svc_res;
--- 撤销授权
-revoke connect, resource from C##SVC_res;
-```
 - 查看当前用户
 
 ```sql
@@ -749,6 +793,19 @@ show user;
 -- cascade操作需要谨慎，cascade代表代表着联级删除用户名下所有的表和视图
 drop user c##svc_res cascade;
 ```
+- 授予用户权限
+
+```sql
+-- create seesion 用户登陆会话权限
+-- create table 用户建表权限
+-- create sequence 用户创建序列权限
+-- create view 用户创建视图权限
+-- create procedure 用户创建存储过程权限
+-- create tablespace 用户创建表空间权限
+-- unlimited teblespace 用户无限表空间使用权限
+grant create session,create table to user_name;
+```
+
 - 查看当前有哪些用户正在使用数据
 
 ```sql
@@ -756,18 +813,27 @@ SELECT osuser, a.username,cpu_time/executions/1000000||'s', sql_fulltext,machine
 from v$session a, v$sqlarea b
 where a.sql_address =b.address order by cpu_time/executions desc;
 ```
-- 用户授权，开启密码校验
+- 锁定与解锁用户
 
 ```sql
--- 切换到对应的PDB下
-alter session set container=PDB1;
-show pdbs;
--- 授予dba、resource、connect角色权限
-grant dba,resource,connect to pdb1;
--- 查看用户角色
-select * from dba_role_privs where grantee = 'PDB1' and granted_role in ('DBA','RESOURCE','CONNECT')
+alter user itcast account lock;
+alter user itcast account unlock;
+```
+
+- 开启密码校验
+
+```sql
 -- 开启PDB下的用户密码校验
 @?/rdbms/admin/utlpwdmg.sql
+```
+
+- 设置用户空间
+
+```sql
+-- 设置用户的空间配额
+-- quota 容量的意思
+-- unlimited 无限制
+alter user itcast quota unlimited on pdb1;
 ```
 
 - 设置用户失效
