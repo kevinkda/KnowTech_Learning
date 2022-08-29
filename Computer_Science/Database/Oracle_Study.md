@@ -98,6 +98,8 @@
 - Oracle 10g
 - Oracle 11g
 - Oracle 12c
+- Oracle 18c
+- Oracle 19c
 
 
 
@@ -395,18 +397,522 @@ create tablespace 永久表空间名称 datafile '永久表空间物理文件位
 
 用在oracle client端，用户配置连接数据库的别名参数就像系统中的hosts文件- -样。
 
-##### ORCL
+- ORCL
+  - 客户端连接服务器端使用的服务别名。注意一定要顶行书写，否则会无法识别服务别名。
+- PROTOCOL
+  - 客户端与服务器端通讯的协议，一般为TCP,该内容一般不用改。
+- HOST
+  - ORACLE服务器端IP地址或者`hostname`。确保服务器端的监听启动正常。
+- Port
+  - 数据库侦听正在侦听的端口，此处port的值一定要与数据库侦听正在侦听的端口一样。
 
-客户端连接服务器端使用的服务别名。注意一定要顶行书写，否则会无法识别服务别名。
+#### listener.ora
 
-##### PROTOCOL
+用在oracle server端，可配置Oracle的监听端口
 
-客户端与服务器端通讯的协议，一般为TCP,该内容一般不用改。
+- LISTENER
+  - 监听名称，可以配置多个监听,多个监听的端口号要区分开来。
+- PROTOCOL
+  - 监听协议，一般都使用TCP。
+- HOST
+  - 本机IP地址或者localhostname
+- PORT
+  - 监听的端口号
 
-##### HOST
+### Net Configuration Assistant工具
 
-ORACLE服务器端IP地址或者`hostname`。确保服务器端的监听启动正常。
+![image-20220828010632029](Oracle_Study.assets/image-20220828010632029.png)
 
-##### Port
+#### 配置监听程序
 
-数据库侦听正在侦听的端口，此处port的值一定要与数据库侦听正在侦听的端口一样。
+![image-20220828012645819](Oracle_Study.assets/image-20220828012645819.png)
+
+![image-20220828012750970](Oracle_Study.assets/image-20220828012750970.png)
+
+![image-20220828012815210](Oracle_Study.assets/image-20220828012815210.png)
+
+![image-20220828012855053](Oracle_Study.assets/image-20220828012855053.png)
+
+![image-20220828012926885](Oracle_Study.assets/image-20220828012926885.png)
+
+![image-20220828013018080](Oracle_Study.assets/image-20220828013018080.png)
+
+![image-20220828013136091](Oracle_Study.assets/image-20220828013136091.png)
+
+![image-20220828013210500](Oracle_Study.assets/image-20220828013210500.png)
+
+#### Oracle本地网络服务配置
+
+##### 1配置本地网络服务要求:
+
+1. 防火墙需要关闭
+2. 相互是可ping通的
+
+##### 配置方式
+
+![image-20220828013511144](Oracle_Study.assets/image-20220828013511144.png)
+
+![image-20220828013547721](Oracle_Study.assets/image-20220828013547721.png)
+
+![image-20220828013621180](Oracle_Study.assets/image-20220828013621180.png)
+
+![image-20220828013651782](Oracle_Study.assets/image-20220828013651782.png)
+
+![image-20220828013733513](Oracle_Study.assets/image-20220828013733513.png)
+
+![image-20220828013811935](Oracle_Study.assets/image-20220828013811935.png)
+
+![image-20220828013932069](Oracle_Study.assets/image-20220828013932069.png)
+
+![image-20220828014006831](Oracle_Study.assets/image-20220828014006831.png)
+
+![image-20220828014122176](Oracle_Study.assets/image-20220828014122176.png)
+
+![image-20220828014213959](Oracle_Study.assets/image-20220828014213959.png)
+
+### Oracle 基本操作
+
+#### Oracle 中的数据类型
+
+##### 字符类型
+
+字符串数据类型还可以依据存储空间分为固定长度类型(CHAR)和可变长度类型(VARCHAR2/NVARCHAR2)两种。
+
+- CHAR类型
+  - CHAR类型，定长字符串，会用空格填充来达到其最大长度。非NULL的CHAR(12)总是包含12字节信息。CHAR字段最多可以存储2000字节的信息。如果创建表时，不指定CHAR长度，则默认为1。
+- VARCHAR2类型
+  - 变长字符串，与CHAR类型不同，它不会使用空格填充至最大长度。VARCHAR2最多可以存储4000字节的信息。
+- NVARCHAR2类型
+  - 这是一个包含UNICODE格式数据的变长字符串。NVARCHAR2 最多可以存储4000字节的信息。
+
+##### 数字类型
+
+- NUMBER类型
+  - NUMBER(P,S)是最常见的数字类型。
+  - P是Precision的英文缩写，即精度缩写，表示有效数字的位数，最多不能超过38个有效数字。
+  - S是Scale的英文缩写，表示小数点数字的位数。
+- INTEGER类型
+  - INTEGER是NUMBER的子类型，它等同于NUMBER (38,0) ，用来存储整数。若插入、更新的数值有小数，则会被四舍五入。
+
+##### 浮点数
+
+- BINARY_FLOAT类型
+  - BINARY_FLOAT是32位、单精度浮点数字数据类型。可以支持至少6位精度每个BINARY_FLOAT的值需要5个字节，包括长度字节。
+- BINA RY DOUBLE
+  - BINARY_DOUBLE是为64位，双精度浮点数字数据类型。每个BINARY_DOUBLE的值需要9个字节，包括长度字节。
+
+##### 日期类型
+
+- DATE类型
+  - DATE是最常用的数据类型，日期数据类型存储日期和时间信息。虽然可以用字符或数字类型表示日期和时间信息，但是日期数据类型具有特殊关联的属性。为每个日期值，Oracle存储以下信息：世纪、年、月、日期、小时、分钟和秒。一般占用7个字节的存储空间。
+- TIMESTAMP类型
+  - 这是一个7字节或12字节的定宽日期时间数据类型。它与DATE数据类型不同，因为TIMESTAMP可以包含小数秒，带小数秒的TIMESTAMP在小数点右边最多可以保留9位。
+- TIMESTAMP WITH TIME ZONE类型
+  - 这是TIMESTAMP类型的变种，它包含了时区偏移量的值。
+- TIMESTAMP WITH LOCAL TIME ZONE类型
+  - 将时间数据以数据库时区进行规范化后进行存储
+
+##### LOB类型
+
+- CLOB类型(Character Large Object)
+  - 二进制数据，存储单字节和多字节字符数据。最大长度4G。
+
+- BLOB类型(Binary Large Object)
+  - 它存储非结构化的二进制数据大对象，它可以被认为是没有字符集语义的比特流，一般是图像、声音、视频等文件。最大长度4G。
+- NCLOB数据类型
+  - 存储UNICODE类型的数据，最大长度4G。
+
+##### LONG & RAW & LONG RAW类型
+
+- LONG类型
+  - 它存储变长字符串(超长字符串),最多达2G的字符数据(2GB是指2千兆字节，而不是2千兆字符)。
+- LONG RAW类型
+  - 能存储2GB的原始二进制数据，可存放多媒体图象声音等。
+- RAW类型
+  - 用于存储二进制或字符类型数据,必须制定长度。这种数据类型存储的数据不会发生字符集转换。可存放多媒体图象声音等。
+
+#### 在Oracle中创建表
+
+##### Oracle表名命名规则
+
+- 必须以字母开头
+- 长度不能超过30个字符
+- 避免使用Oracle的关键字
+- 只能使用A-Z、a-z、0-9、#$
+
+##### 使用带有特殊符号的表名
+
+Oracle在创建表时，表名会自动转换大写。Oracle 对表名大小写不敏感。
+如果在定义表名时含有特殊符号，或者用小写字母来定义表名则需要在表名两侧添加双引号。
+
+#### 数据库中的约束
+
+##### 约束的作用
+
+约束用于规定表中的数据规则，如果存在违反约束的数据行为，行为会被约束终止。
+
+##### 约束类型
+
+- 主键约束(Primary Key Constraint)
+  - 唯一性，非空性。
+- 唯一约束(Unique Constraint)
+  - 唯一性，可以空，但只能有一个。
+- 检查约束(Check Constraint)
+  - 对该列数据的范围、格式的限制(如：年龄、性别等)。
+- 非空约束(Not Null Constraint)
+  - 该列不允许包含空值。
+- 外键约束(Foreign Key Constraint)
+  - 需要建立两表间的关系并引用主表的列。
+
+#### 数据库中表关系
+
+设计关系数据库的一个重要部分是将数据元素划分为相关的表，我们可以根据数据本身的关联性，将不同表之间的数据聚合在一起。 注意：无论在表与表之间建立了什么样的关系，决定数据之间是否有关系的不是表，而是数据本身。
+表与表之间一般存在三种关系，即一对一，一对多，多对多关系。
+
+##### 一对多
+
+一对多关系是建立在两张表之间的关系。一个表中的一条数据可以对应另一个表中的多条数据。记住：外键永远在多方。外键允许重复，允许含有空值。
+
+![image-20220828105200420](Oracle_Study.assets/image-20220828105200420.png)
+
+- T_CLASSROOM
+
+  ![image-20220828182257045](Oracle_Study.assets/image-20220828182257045.png)
+
+  ![image-20220828182413564](Oracle_Study.assets/image-20220828182413564.png)
+
+  ![image-20220828182513362](Oracle_Study.assets/image-20220828182513362.png)
+
+- T_STUDENT
+
+  ![image-20220828182614664](Oracle_Study.assets/image-20220828182614664.png)
+
+  ![image-20220828182715034](Oracle_Study.assets/image-20220828182715034.png)
+
+  ![image-20220828182852586](Oracle_Study.assets/image-20220828182852586.png)
+
+##### 一对一
+
+一对一关系是建立在一对多的基础之上，外键可以在任何一方，需要让外键一方具备唯一约束
+
+![image-20220828183100472](Oracle_Study.assets/image-20220828183100472.png)
+
+- T_USER
+
+  ![image-20220828183258219](Oracle_Study.assets/image-20220828183258219.png)
+
+  ![image-20220828183309115](Oracle_Study.assets/image-20220828183309115.png)
+
+  ![image-20220828183339093](Oracle_Study.assets/image-20220828183339093.png)
+
+- T_ROLE
+
+  ![image-20220828183502879](Oracle_Study.assets/image-20220828183502879.png)
+
+  ![image-20220828183522696](Oracle_Study.assets/image-20220828183522696.png)
+
+  ![image-20220828183955990](Oracle_Study.assets/image-20220828183955990.png)
+
+##### 多对多
+
+需要建立一个中间表，中间表里放两个表的主键，然后需要用这两个列作为这个表的联合主键，然后每个列在作为外键参照各自的表的主键
+
+![image-20220828224853968](Oracle_Study.assets/image-20220828224853968.png)
+
+- T_ORDER
+
+  ![image-20220828225322130](Oracle_Study.assets/image-20220828225322130.png)
+
+  ![image-20220828225421312](Oracle_Study.assets/image-20220828225421312.png)
+
+  ![image-20220828225443373](Oracle_Study.assets/image-20220828225443373.png)
+
+- T_ORDER_ITEM
+
+  ![image-20220828225520865](Oracle_Study.assets/image-20220828225520865.png)
+
+  ![image-20220828225559474](Oracle_Study.assets/image-20220828225559474.png)
+
+  ![image-20220828225635886](Oracle_Study.assets/image-20220828225635886.png)
+
+- T_ITEM
+
+  ![image-20220828225747934](Oracle_Study.assets/image-20220828225747934.png)
+
+  ![image-20220828225806854](Oracle_Study.assets/image-20220828225806854.png)
+
+  ![image-20220828225911778](Oracle_Study.assets/image-20220828225911778.png)
+
+# SQL Structured Query Language
+
+## SQL语言基础
+
+### 什么是SQL
+
+结构化查询语言(Structured Query Language)简称SQL(发音：sequal [‘si:kwəl])， 是一种数据库查询和程序设计语言，用于存取数据以及查询、更新和管理关系数库系统；同时也是数据库脚本文件的扩展名。
+
+### SQL能做什么?
+
+SQL面向数据库执行查 询
+SQL可从数据库取回数据
+SQL可在数据库中插入新的记录
+SQL可更新数据库中的数据
+SQL可从数据库删除记录
+SQL可创建新数据库
+SQL可在数据库中创建新表
+SQL可在数据库中创建存储过程
+SQL可在数据库中创建视图
+SQL可以设置表、存储过程和视图的权限
+
+### SQL 标准
+
+SQL是1986年10月由美国国家标准局(ANSI)通过的数据库语言美国标准，接着，国际标准化组织(ISO)颁布了SQL正式国际标准。1989 年4月，ISO提出了具有完整性特征的SQL89标准，1992年11月又公布了SQL92标准，在此标准中，把数据库分为三个级别：基本集、标准集和完全集。在1999年推出99版标准。最新版本为SQL2016版。
+比较有代表性的几个版本：SQL86、SQL92、 SQL99。
+除了SQL标准之外，大部分SQL数据库程序都拥有它们自己的私有扩展
+
+### SQL语言结构
+
+#### 数据查询语言(DQL: Data Query Language)
+
+其语句，也称为”数据检索语句“，用以从表中获得数据，确定数据怎样在应用程序给出。关键字SELECT是DQL(也是所有SQL)用得最多的动词，其他DQL常用的关键字有WHERE，ORDER BY，GROUP BY和HAVING。这些DQL关键字常与其他类型的SQL语句一起使用。
+
+```sql
+select ... from ... where ... 查询数据
+```
+
+#### 数据操作语言(DML: Data Manipulation Language)
+
+其语句包括动词INSERT, UPDATE和DELETE。它们分别用于添加，修改和删除表中的行。
+
+```sql
+insert ... 插入一条数据
+update ... 更新一条数据
+delete ... 删除一条数据
+```
+
+#### 事务处理语言(TCL: Transaction Control Language)
+
+它的语句能确保被DML语句影响的表的所有行及时得以更新。
+
+```sql
+commit ... 事物提交
+rollback ... 事物回滚
+savepoint ... 设置回滚点
+```
+
+#### 数据控制语言(DCL: Data Control Language)
+
+它的语句通过GRANT或REVOKE获得许可，确定单个用户和用户组对数据库对象的
+访问。
+
+```sql
+grant ... 授予用户权限
+revork ... 撤销用户权限
+```
+
+#### 数据定义语言(DDL: Data Definition Language)
+
+```sql
+定义数据库对象语言，其语句包括动词CREATE和DROP等。
+create ... 创建数据库对象
+drop ... 删除数据库对象
+alter ... 修改数据库对象
+rename ... 修改数据库对象名称
+
+```
+
+## Oracle中的HR用户介绍
+
+HR用户是Oracle自带的一个示例用户。在该用户下提供了可供我们练习数据库操作时所使用的表与数据。
+
+### 使用HR用户步骤
+
+1. 通过sys或system用户登录。
+
+2. 在Users中找到HR用户并设置登录密码。
+
+   ![image-20220829001008401](SQL_Language.assets/image-20220829001008401.png)
+
+   ![image-20220829003223047](SQL_Language.assets/image-20220829003223047.png) 
+
+3. 切换HR用户登录
+
+4. 查看该用户下的表结构
+
+   ![image-20220829003323760](SQL_Language.assets/image-20220829003323760.png)
+
+   ![image-20220829003519388](SQL_Language.assets/image-20220829003519388.png)
+
+# SQL Structured Query Language
+
+## SQL语言基础
+
+### 什么是SQL
+
+结构化查询语言(Structured Query Language)简称SQL(发音：sequal [‘si:kwəl])， 是一种数据库查询和程序设计语言，用于存取数据以及查询、更新和管理关系数库系统；同时也是数据库脚本文件的扩展名。
+
+### SQL能做什么?
+
+SQL面向数据库执行查 询
+SQL可从数据库取回数据
+SQL可在数据库中插入新的记录
+SQL可更新数据库中的数据
+SQL可从数据库删除记录
+SQL可创建新数据库
+SQL可在数据库中创建新表
+SQL可在数据库中创建存储过程
+SQL可在数据库中创建视图
+SQL可以设置表、存储过程和视图的权限
+
+### SQL 标准
+
+SQL是1986年10月由美国国家标准局(ANSI)通过的数据库语言美国标准，接着，国际标准化组织(ISO)颁布了SQL正式国际标准。1989 年4月，ISO提出了具有完整性特征的SQL89标准，1992年11月又公布了SQL92标准，在此标准中，把数据库分为三个级别：基本集、标准集和完全集。在1999年推出99版标准。最新版本为SQL2016版。
+比较有代表性的几个版本：SQL86、SQL92、 SQL99。
+除了SQL标准之外，大部分SQL数据库程序都拥有它们自己的私有扩展
+
+### SQL语言结构
+
+#### 数据查询语言(DQL: Data Query Language)
+
+其语句，也称为”数据检索语句“，用以从表中获得数据，确定数据怎样在应用程序给出。关键字SELECT是DQL(也是所有SQL)用得最多的动词，其他DQL常用的关键字有WHERE，ORDER BY，GROUP BY和HAVING。这些DQL关键字常与其他类型的SQL语句一起使用。
+
+```sql
+select ... from ... where ... 查询数据
+```
+
+#### 数据操作语言(DML: Data Manipulation Language)
+
+其语句包括动词INSERT, UPDATE和DELETE。它们分别用于添加，修改和删除表中的行。
+
+```sql
+insert		插入一条数据
+update		更新一条数据
+delete		删除一条数据
+```
+
+#### 事务处理语言(TCL: Transaction Control Language)
+
+它的语句能确保被DML语句影响的表的所有行及时得以更新。
+
+```sql
+commit		事物提交
+rollback	事物回滚
+savepoint	设置回滚点
+```
+
+#### 数据控制语言(DCL: Data Control Language)
+
+它的语句通过GRANT或REVOKE获得许可，确定单个用户和用户组对数据库对象的
+访问。
+
+```sql
+grant		授予用户权限
+revork		撤销用户权限
+```
+
+#### 数据定义语言(DDL: Data Definition Language)
+
+```sql
+定义数据库对象语言，其语句包括动词CREATE和DROP等。
+create		创建数据库对象
+drop		删除数据库对象
+alter		修改数据库对象
+rename		修改数据库对象名称
+
+```
+
+## Oracle中的HR用户介绍
+
+HR用户是Oracle自带的一个示例用户。在该用户下提供了可供我们练习数据库操作时所使用的表与数据。
+
+### 使用HR用户步骤
+
+1. 通过sys或system用户登录。
+
+2. 在Users中找到HR用户并设置登录密码。
+
+   ![image-20220829001008401](Oracle_Study.assets/image-20220829001008401.png)
+
+   ![image-20220829003223047](Oracle_Study.assets/image-20220829003223047.png) 
+
+3. 切换HR用户登录
+
+4. 查看该用户下的表结构
+
+   ![image-20220829003323760](Oracle_Study.assets/image-20220829003323760.png)
+
+   ![image-20220829003519388](SQL_Language.assets/image-20220829003519388.png)
+
+## DQL语言
+
+### 编写基本SELECT语句
+
+SELECT语句的作用是从数据库中返回信息。
+
+#### SELECT语句作用
+
+- 列选择(投影操作)
+  - 能够使用SELECT语句的列选择功能选择表中的列，这些列是我们想要用查询返回的。当我们查询时，可在选择查询的表中指定的列。
+- 行选择(选择操作)
+  - 能够使用SELECT语句的行选择功能选择表中的行，这些行是我们想要用查询返回的。能够使用不同的标准限制所看见的行。
+- 连接(多表操作)
+  - 能够使用SELECT语句的连接功能来集合数据，这些数据虽然被存储在不同的表中，但是我们可以通过连接查询到该数据。
+
+#### SELECT语句基本结构
+
+```sql
+SELECT *|{[DISTINCT] column|expression [alias], ... } FROM table;
+
+SELECT	确定哪些列
+FROM	确定哪张表
+```
+
+- 基本SELECT语句
+  - 在最简单的形式中，SELECT语句必须包含下面的内容:
+    - 一个SELECT 子句，指定被显示的列
+    - 一个FROM子句，指定表，该表包含SELECT 子句中的字段列表
+- 在语法中
+  - `SELECT`是一个或多个字段的列表
+  - `*` 选择所有的列
+  - `DISTINCT`关键字表示禁止重复
+  - `column|expression`选择指定的字段或表达式
+  - `alias`给所选择的列不同的标题
+  - `FROM table`指定包含列的表
+
+#### 选择操作[投影操作]
+
+- 选择所有列
+
+  ```sql
+  SELECT * FROM table;
+  ```
+
+- 选择指定的列
+  ```sql
+  SELECT columnName, columnName FROM table;
+  ```
+#### SQL语句语法要求
+
+- SQL语句对大小写不敏感
+- SQL语句可以写成一-行或多行
+- 关键字不能简写或分开折行
+- 子句通常放在不同的行
+- 缩进用于增强可读性
+
+#### SELECT语句中的算术表达式
+
+用算术运算符创建数字和日期数据的表达式。(+-*/)
+注意：如果对日期进行计算，我们只能对DATE和TIMESTAMP数据类型使用加和减操作。
+
+- 运算符的优先级
+
+  ![image-20220829015014704](Oracle_Study.assets/image-20220829015014704.png)
+
+  - 乘法和除法比加法和减法的优先级高
+  - 相同优先级的运算符从左到右计算
+  - 圆括号用于强制优先计算，并且使语句更清晰
+
+- 示例
+
+  - 计算employees表中的员工全年薪水加100以后的薪水是多少?
+  - 计算employees表中的员工薪水加100以后的全年薪水是多少?
