@@ -651,7 +651,10 @@ select name
 from V$DATAFILE;
 ```
 - 创建一个新的PDB
+
 - 密码大小写是否敏感可以在CDB下查看该参数: show parameter sensitive
+
+- `file_name_convert`参数参数格式：`/opt/oracle/oradata/${SID}/pdbseed, /opt/oracle/oradata/${SID}/${PDB_Name}`
 
 ```sql
 create pluggable database dev admin user dev identified by 123 file_name_convert =('/opt/oracle/oradata/ORCLCDB/pdbseed','/opt/oracle/oradata/orcl_root_dev');
