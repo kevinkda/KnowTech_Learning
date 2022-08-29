@@ -665,7 +665,7 @@ create pluggable database dev admin user dev identified by 123 file_name_convert
 alter pluggable database dev open;
 alter pluggable database pdb1 close;
 ```
-- 通过sqlplus使用传统的startup和shutdown命令来启动和关闭PDB
+- 切换到指定PDB
 
 ```sql
 alter session set container=pdb1;
