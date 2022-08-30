@@ -793,6 +793,14 @@ show user;
 -- cascade操作需要谨慎，cascade代表代表着联级删除用户名下所有的表和视图
 drop user c##svc_res cascade;
 ```
+- 查询所有的用户级别权限
+
+```sql
+select *
+from system_privilege_map
+order by name;
+```
+
 - 授予用户权限
 
 ```sql
