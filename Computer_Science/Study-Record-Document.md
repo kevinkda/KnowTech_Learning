@@ -1576,3 +1576,30 @@ services:
 更改密码，执行命令：**alter user 用户 identified by 密码;**
 设置密码永不过期，执行命令：**alter profile default limit password_life_time unlimited;**
 解锁用户，执行命令：**alter user 用户 account unlock**
+
+
+
+### 17、Linux下创建swap文件
+
+1. 创建一个足够大的文件
+
+   `dd if=/dev/sdb1 of=/www/swapfile bs=1024 count=4096000`
+
+   (count的值等于1024 x 你想要的文件大小, 4096000是4G)
+
+2. 把这个文件变成swap文件.
+
+   `mkswap /www/swapfile`
+
+3. 启用这个swap文件
+
+   `swapon /www/swapfile`
+
+4. 在每次开机的时候自动加载swap文件, 需要在 /etc/fstab 文件中增加一行
+
+   `/www/swapfile swap swap defaults 0 0`
+
+5. 查看swap
+
+   `cat /proc/swaps`
+
