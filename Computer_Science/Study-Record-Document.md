@@ -713,6 +713,36 @@ Oracle三种标准角色，connect role(连接角色)、resource role(资源角�
 
    包括无限制的空间限额和给其他用户授予各种权限的能力。system由dba用户拥有
 
+- 查看所有角色
+
+```sql
+select * from dba_roles;
+```
+
+- 查看当前用户被激活的全部角色
+
+```sql
+select * from session_roles;
+```
+
+- 查看当前用户被授予的角色和信息
+
+```sql
+select * from user_role_privs;
+```
+
+- 查看某个用户所拥有的角色
+
+```sql
+select * from dba_role_privs where grantee = 'username';
+```
+
+- 查看某个角色所拥有的权限
+
+```sql
+select * from dba_sys_privs where grantee = 'CONNECT';
+```
+
 - 创建角色
 
 创建的角色可以由表或系统权限或者两者的组合构成
@@ -765,6 +795,18 @@ revoke create table from role_name;
 
 ##### 用户相关
 
+- 查看所有用户信息
+
+```sql
+select * from all_users;
+```
+
+- 查看当前用户的信息
+
+```sql
+select * from user_users;
+```
+
 - 创建用户，对于普通用户名，用户创建的普通用户名必须以C##（或c##）开头。
 
 ```sql
@@ -787,27 +829,6 @@ show user;
 -- cascade操作需要谨慎，cascade代表代表着联级删除用户名下所有的表和视图
 drop user c##svc_res cascade;
 ```
-- 查询所有的用户级别权限
-
-```sql
-select *
-from system_privilege_map
-order by name;
-```
-
-- 授予用户权限
-
-```sql
--- create seesion 用户登陆会话权限
--- create table 用户建表权限
--- create sequence 用户创建序列权限
--- create view 用户创建视图权限
--- create procedure 用户创建存储过程权限
--- create tablespace 用户创建表空间权限
--- unlimited teblespace 用户无限表空间使用权限
-grant create session,create table to user_name;
-```
-
 - 创建一个模式
 
 Oracle是不支持创建自定义模式的，想要创建模式的话只能新建一个用户，每个用户会有一个默认的和用户名相同的模式
@@ -852,6 +873,80 @@ alter user itcast quota unlimited on pdb1;
 ```sql
 alter user testrac password expire;
 select username,account_status from dba_users where oracle_maintained='N';
+```
+
+
+
+##### 权限相关
+
+- 基本权限查询
+
+```sql
+--当前用户所拥有的全部权限
+select * from session_privs;
+--当前用户的系统权限
+select * from user_sys_privs;
+--当前用户的对象权限
+select * from user_tab_privs;
+--查询某个用户所拥有的系统权限
+select * from dba_sys_privs where grantee='DBA';
+--查看角色(只能查看登陆用户拥有的角色)所包含的权限
+select * from role_sys_privs;
+```
+
+- 查看哪些用户有`sysdba`或`sysoper`系统权限(查询时需要相应权限)
+
+```sql
+select * from v$pwfile_users;
+```
+
+- 查询所有的用户级别权限
+
+```sql
+select *
+from system_privilege_map
+order by name;
+```
+
+- 授予用户权限
+
+```sql
+-- create seesion 用户登陆会话权限
+-- create table 用户建表权限
+-- create sequence 用户创建序列权限
+-- create view 用户创建视图权限
+-- create procedure 用户创建存储过程权限
+-- create tablespace 用户创建表空间权限
+-- unlimited teblespace 用户无限表空间使用权限
+grant create session,create table to user_name;
+```
+
+- 查看Oracle提供的系统权限
+
+```sql
+select name from sys.system_privilege_map
+```
+
+- 查看一个用户的所有系统权限(包含角色的系统权限)
+
+```sql
+select privilege from dba_sys_privs where grantee='SCOTT'
+union
+select privilege from dba_sys_privs where grantee in (
+	select granted_role from dba_role_privs where grantee = 'SCOTT'
+);
+```
+
+- 查看当前用户可以访问的所有数据字典的视图
+
+```sql
+select * from dict where comments like '%grant%';
+```
+
+- 查看当前数据库全称
+
+```sql
+select * from global_name;
 ```
 
 
