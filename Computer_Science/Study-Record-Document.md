@@ -585,8 +585,10 @@ CDB与PDB是Oracle 12C引入的新特性，在ORACLE 12C数据库引入的多租
 ```sql
 select *
 from V$VERSION;
-重启数据库
-​```sql
+```
+- 重启数据库
+
+```sql
 shutdown immediate;
 startup;
 ```
@@ -691,30 +693,6 @@ alter pluggable database testrac close immediate;
 drop pluggable database testrac including datafiles;
 ```
 
-- 创建一个模式
-
-Oracle是不支持创建自定义模式的，想要创建模式的话只能新建一个用户，每个用户会有一个默认的和用户名相同的模式
-
-```sql
-CREATE SCHEMA "svc_bitbucket" AUTHORIZATION SYSTEM;
-```
-
-- 创建角色
-
-创建的角色可以由表或系统权限或者两者的组合构成
-
-```sql
--- 创建角色
-create role myRole;
--- 授权角色
--- 如使myRole获得了在mytable中使用select进行查询的权限
-grant select on mytable to myRole;
--- 再比如为角色赋予创建会话的权限
-grant create session to myRole;
--- 删除角色
-drop role myRole;
-```
-
 
 
 ##### 角色相关
@@ -734,6 +712,22 @@ Oracle三种标准角色，connect role(连接角色)、resource role(资源角�
 3. dba role：dba role拥有所有的系统权限
 
    包括无限制的空间限额和给其他用户授予各种权限的能力。system由dba用户拥有
+
+- 创建角色
+
+创建的角色可以由表或系统权限或者两者的组合构成
+
+```sql
+-- 创建角色
+create role myRole;
+-- 授权角色
+-- 如使myRole获得了在mytable中使用select进行查询的权限
+grant select on mytable to myRole;
+-- 再比如为角色赋予创建会话的权限
+grant create session to myRole;
+-- 删除角色
+drop role myRole;
+```
 
 - 授予用户角色
 
@@ -812,6 +806,14 @@ order by name;
 -- create tablespace 用户创建表空间权限
 -- unlimited teblespace 用户无限表空间使用权限
 grant create session,create table to user_name;
+```
+
+- 创建一个模式
+
+Oracle是不支持创建自定义模式的，想要创建模式的话只能新建一个用户，每个用户会有一个默认的和用户名相同的模式
+
+```sql
+CREATE SCHEMA "svc_bitbucket" AUTHORIZATION SYSTEM;
 ```
 
 - 查看当前有哪些用户正在使用数据
