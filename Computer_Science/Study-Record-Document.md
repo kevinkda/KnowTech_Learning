@@ -1700,3 +1700,19 @@ services:
 
    `cat /proc/swaps`
 
+
+
+### 18、docker设置镜像加速器
+
+```shell
+#修改/etc/docker/daemon.json文件
+vi /etc/docker/daemon.json
+#输入以下内容
+{
+  "registry-mirrors": [
+    "https://emt7vast.mirror.aliyuncs.com",
+    "https://docker.mirrors.ustc.edu.cn/",
+    "https://hub-mirror.c.163.com/"
+  ]
+}
+```
