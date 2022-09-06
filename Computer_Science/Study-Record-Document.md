@@ -1716,3 +1716,26 @@ vi /etc/docker/daemon.json
   ]
 }
 ```
+
+
+
+### 19、Linux安装docker-compose
+
+​	[官网地址](https://docs.docker.com/compose/install/)
+
+1. 安装docker-compose之前，服务器上必须安装好docker。
+
+2. docker-compose安装步骤
+
+   ```shell
+   # 国内加速安装
+   curl -L https://get.daocloud.io/docker/compose/releases/download/1.24.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+   # 对二进制文件应用可执行权限
+   sudo chmod +x /usr/local/bin/docker-compose
+   # 测试安装结果
+   docker-compose --version
+   ```
+
+3. 安装结果截图
+
+![image-20220907010519845](https://image.kevinkda.cn/md/image-20220907010519845.png)
