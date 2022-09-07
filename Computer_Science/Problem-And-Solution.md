@@ -323,3 +323,24 @@ sudo yum update --skip-broken
 - Linux下
   - 再Linux中使用vim编辑器打开脚本
   - 进入以后按Esc键，并输入`set ff =unix
+
+
+
+### 运行docker-compose -v报错
+
+#### 报错:  /usr/local/bin/docker-compose: line 1: {error:Document not found}: command not found
+
+#### 问题原因：
+
+- 安装 docker-compose后，执行docker-compose version时就报错
+- 通过curl的安装方式安装时，在版本位置，漏了字母v
+
+#### 修改方法：
+
+```shell
+# 错误示例
+curl -L https://get.daocloud.io/docker/compose/releases/download/1.24.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+# 正确示例
+curl -L https://get.daocloud.io/docker/compose/releases/download/v1.24.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+```
+
