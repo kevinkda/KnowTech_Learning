@@ -1729,7 +1729,7 @@ vi /etc/docker/daemon.json
 
    ```shell
    # 国内加速安装
-   curl -L https://get.daocloud.io/docker/compose/releases/download/1.24.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+   curl -L https://get.daocloud.io/docker/compose/releases/download/v1.24.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
    # 对二进制文件应用可执行权限
    sudo chmod +x /usr/local/bin/docker-compose
    # 测试安装结果
