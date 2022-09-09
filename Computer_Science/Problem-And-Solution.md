@@ -344,3 +344,41 @@ curl -L https://get.daocloud.io/docker/compose/releases/download/1.24.1/docker-c
 curl -L https://get.daocloud.io/docker/compose/releases/download/v1.24.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
 ```
 
+### CURL请求网页报错缺少CA证书
+
+#### 报错：
+
+```
+If this HTTPS server uses a certificate signed by a CA represented in
+ the bundle, the certificate verification probably failed due to a
+ problem with the certificate (it might be expired, or the name might
+ not match the domain name in the URL).
+```
+
+#### 问题原因：
+
+- 请求这个网址是需要CA证书的，但是你在请求时没有携带上他的CA证书
+
+#### 解决方法：
+
+##### 下载该网页的CA证书
+
+- 点击网页上地址栏上地址前的小按钮(一个小锁或者警告图标)
+
+![image-20220909114252234](https://image.kevinkda.cn/md/image-20220909114444319.png)
+
+![image-20220909114329801](https://image.kevinkda.cn/md/image-20220909114501912.png)
+
+- 下载证书
+
+![image-20220909114444319](https://image.kevinkda.cn/md/image-20220909114252234.png)
+
+![image-20220909114501912](https://image.kevinkda.cn/md/image-20220909114845607.png)
+
+![image-20220909114530636](https://image.kevinkda.cn/md/image-20220909114530636.png)
+
+##### 请求时携带证书
+
+上传到Linux中，然后在请求时使用`curl --cacert ${证书} ${网址}`的形式去请求
+
+![image-20220909114845607](https://image.kevinkda.cn/md/image-20220909114845607.png)
