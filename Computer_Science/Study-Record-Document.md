@@ -113,6 +113,12 @@ $ cnpm run dev
 
 ### 2、后端
 
+#### mod(%)取模运算符的算法
+
+例如a % b
+
+![image-20220909180024124](https://image.kevinkda.cn/md/image-20220909180024124.png)
+
 #### Spring boot 和 Spring Cloud 各个版本对应关系
 
 | spring cloud        | spring boot                                   |
@@ -1739,3 +1745,52 @@ vi /etc/docker/daemon.json
 3. 安装结果截图
 
 ![image-20220907010519845](https://image.kevinkda.cn/md/image-20220907010519845.png)
+
+
+
+### 20、Linux环境下网络测速的方法
+
+1. #### 下载安装包进行测试
+
+   1. 使用wget命令下载一个安装包(例如npm包)
+
+      ```shell
+      wget http://soft.vpser.net/lnmp/lnmp1.7-full.tar.gz
+      ```
+
+      ![image-20220913111903074](https://image.kevinkda.cn/md/image-20220913112232872.png)
+
+2. #### 安装Speedtest进行测试
+
+   Speedtest 是一个用 Python 编写的轻量级 Linux 命令行工具，可基于 Speedtest.net 的基础架构来测量linux服务器网络的上/下行速率！
+
+   1. 安装
+
+      ```shell
+      wget https://raw.github.com/sivel/speedtest-cli/master/speedtest.py
+      chmod a+rx speedtest.py
+      mv speedtest.py /usr/local/bin/speedtest
+      chown root:root /usr/local/bin/speedtest
+      ```
+
+   2. 运行检测
+
+      1. speedtest
+
+      ```shell
+      speedtest
+      ```
+
+      ![image-20220913112232872](https://image.kevinkda.cn/md/image-20220913111903074.png)
+
+      2. speedtest --share
+
+      ```shell
+      speedtest --share
+      ```
+
+      ![image-20220913112447891](https://image.kevinkda.cn/md/image-20220913112447891.png)
+      
+      打开 speedtest 测试结果的连接，可以显示测试结果的图示
+      
+      ![image-20220913112621876](https://image.kevinkda.cn/md/image-20220913112621876.png)
