@@ -701,6 +701,12 @@ drop pluggable database testrac including datafiles;
 
 
 
+##### 表空间相关
+
+
+
+
+
 ##### 角色相关
 
 Oracle三种标准角色，connect role(连接角色)、resource role(资源角色)、dba role(数据库管理员角色)
@@ -953,6 +959,25 @@ select * from dict where comments like '%grant%';
 
 ```sql
 select * from global_name;
+```
+
+
+
+### 6、 Oracle 19C设置PDB自启动
+
+在Oracle 19c中，在启动CDB的时候，PDB 是不会自动启动的，所以每次都要手工启动，故可以使用触发器的方式实现PDB开机自启
+
+```sql
+-- 首先使用管理员账号连接sqlplus
+sqlplus / as sysdba
+-- 创建触发器
+create or replace trigger open_pluggable_db
+-- 写入触发器内容(直接粘贴)
+after startup 
+on database
+begin
+   execute immediate 'alter pluggable database all open';
+end open_pluggable_db;
 ```
 
 
