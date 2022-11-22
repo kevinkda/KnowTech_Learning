@@ -8,17 +8,13 @@ typora-root-url: 16.Document-images\Problem-and-solution
 
 ## 一、代码
 
-### 1、前端
-
-#### Vue
-
-##### 在高版本的nodejs中创建的vue项目不能在低版本的nodejs中运行
+### 1、在高版本的nodejs中创建的vue项目不能在低版本的nodejs中运行
 
 - 重新创建项目或者升级nodejs
 
 
 
-##### vue 项目报错 Module build failed: Error: No PostCSS Config
+### 2、vue 项目报错 Module build failed: Error: No PostCSS Config
 
 - 在src同级目录添加postcss.config.js文件
 
@@ -32,7 +28,7 @@ module.exports = {
 
 
 
-##### Vue项目dist文件夹不能上传至github问题
+### 3、Vue项目dist文件夹不能上传至github问题
 
 - 解决方法：
   找到vue根目录下的`.gitignore`，打开文件
@@ -41,16 +37,14 @@ module.exports = {
 
 
 
-### 2、微信小程序
-
-#### 微信小程序上传至GitHub出现`Github warning: LF will be replaced by CRLF in`的问题
+### 3、微信小程序上传至GitHub出现`Github warning: LF will be replaced by CRLF in`的问题
 
 - 在项目目录下执行以下代码
   - `git config --global core.autocrlf false`
 
 
 
-#### 微信小程序上线以后无法请求后台数据
+### 4、微信小程序上线以后无法请求后台数据
 
 - 问题排查发现后端已部署，通过Postman能请求数据
 
@@ -79,9 +73,7 @@ module.exports = {
 
 
 
-### 3、后端
-
-#### 删除list中的数据发现数据还存在的问题
+### 4、删除list中的数据发现数据还存在的问题
 
 + 循环删除list中特定的一个元素的，可以使用for循环遍历list、增强for循环、Iterator遍历
 
@@ -100,9 +92,47 @@ log.info("list value："+list);
 
 
 
-### 4、nacos搭建问题
+### 5、nacos搭建问题
 
 - 注意Spring boot 和 Spring Cloud 各个版本对应关系
+
+
+
+### 6、Java中@Value取不到值的原因
+
+#### @Value失效的原因
+
+- 使用static或final修饰了tagValue
+
+```java
+private static String tagValue; //错误
+private final String tagValue; //错误
+```
+
+- 类没有加上@Component或者@Service等
+
+```java
+@Component //遗漏
+class TestValue{
+    @Value("${tag}")
+    private String tagValue;
+}
+```
+
+- 类被new新建了实例，而没有使用@Autowired
+
+```java
+@Component 
+class TestValue{
+    @Value("${tag}")
+    private String tagValue;
+}
+
+class Test{
+    ...
+    TestValue testValue = new TestValue()
+}
+```
 
 
 
@@ -257,7 +287,7 @@ Restricted（防止运行没有数字签名的脚本），要设置成remotesign
 
 #### 原因
 
-- 因为**这个数据库只有这一个用户**，删了就没有用户关联了，所以需要用 `cascade`，把没有关联的整个数据库也删掉。
+- 因为**这个数据库只有这一个用户**，删了就没有用户关联了，所以需要用 `cascade`，把没有关联的整个数据库也删掉。 
 
 #### 解决方法
 
@@ -282,6 +312,56 @@ Restricted（防止运行没有数字签名的脚本），要设置成remotesign
 select sid,serial# from v$session where username='XMH';
 #杀死正在连接的session
 alter system kill session '40,2121';
+```
+
+
+
+### 6、Oracle创建表空间出现：缺少 DATAFILE/TEMPFILE 子句
+
+#### 问题描述
+
+- ` ORA-02199: missing DATAFILE/TEMPFILE clause`
+
+#### 原因
+
+- 没有设置db_create_file_dest的参数
+
+#### 解决方案
+
+```sql
+-- 查看db_create_file_dest参数
+show parameter db_create_file
+-- 设定db_create_file_dest参数
+-- 以下db_create_file_dest参数为演示参数
+ALTER SYSTEM SET db_create_file_dest = '/u01/app/oracle/oradata/orcl';
+```
+
+
+
+### 7、Oracle字符集相关问题设置
+
+#### 问题描述：
+
+- 字符集乱码等问题
+- `ORA-12712: new character set must be a superset of old character set`
+
+#### 原因：
+
+- 设置问题
+
+#### 解决方案
+
+```sql
+-- 中文乱码字符设置：
+sqlplus "/as sysdba"
+shutdown immediate
+startup restrict
+ALTER DATABASE CHARACTER SET ZHS16GBK;
+-- 有时候会遇到如下错误：
+ORA-12712: new character set must be a superset of old character set
+-- 可以执行如下：跳过超集的检查
+ALTER DATABASE character set INTERNAL_USE ZHS16GBK;
+-- 然后重启数据库即可，不过最好先做备份哦！
 ```
 
 
@@ -382,3 +462,39 @@ If this HTTPS server uses a certificate signed by a CA represented in
 上传到Linux中，然后在请求时使用`curl --cacert ${证书} ${网址}`的形式去请求
 
 ![image-20220909114845607](https://image.kevinkda.cn/md/image-20220909114845607.png)
+
+
+
+### Docker内tomcat容器启动后无法访问页面
+
+#### 问题：
+
+- tomcat正常启动，容器显示启动正常，但是访问 ip:8080时提示页面未找到
+- ![image-20220918022138765](/../../upload/image-20220918022138765.png)
+
+#### 问题原因：
+
+- webapps目录中为空，没有任何文件，故找不到页面
+
+#### 解决办法
+
+1. 如果映射`webapps`了文件夹到本地，那么需要copy容器中`/usr/local/tomcat/webapps.dist`中的文件到本地webapps中
+
+```shell
+# 复制文件到本地
+docker cp tomcat_01:/usr/local/tomcat/webapps.dist /opt/docker/tomcat/webapps
+# 重启容器
+```
+
+2. 如果没有映射`webapps`到本地，那么需要进入容器中将`webapps.dist`中的文件copy到`webapps`中
+
+```shell
+# 进入容器
+docker exec -it tomcat bash
+# copy文件
+cp /usr/local/tomcat/webapps.dist/* /usr/local/tomcat/webapps
+# 退出容器
+exit
+# 重启容器
+```
+
