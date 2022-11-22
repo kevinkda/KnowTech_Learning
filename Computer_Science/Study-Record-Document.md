@@ -1,4 +1,4 @@
-# 学习记录文档
+![img](https://image.kevinkda.cn/md/image017(10-31-18-03-18).jpg)学习记录文档
 
 [toc]
 
@@ -132,6 +132,48 @@ $ cnpm run dev
 
 
 
+#### 缓存技术之session缓存管控
+
+​	Session是服务器端使用的一种记录客户端状态的机制，一般Session存储在服务器的内存中，tomcat的StandardManager类将session存储在内存中；客户端只保存sessionID到cookie中，而不会保存session，session销毁只能通过invalidate或超时（默认30分钟），关掉浏览器并不会关闭session。当程序需要为某个客户端的请求创建一个session时，服务器首先检查这个客户端的请求里是否包含一个session标识（即sessionID）。如果已经包含一个sessionID说明以前已经为此客户端创建过session，服务器就按照sessionID把这个session检索出来使用。
+
+​	如果客户请求不包含sessionID，则为此客户创建一个session并且生成一个与此session相关的sessionID，这个sessionID将在本次响应中返回给客户端保存。
+
+![img](https://image.kevinkda.cn/md/image017(10-31-18-03-18).jpg)
+
+Session缓存优势明显，在日常开发过程中，大家基于这个优势，不可避免地存在session过度使用的情况，导致缓存未能正确清理，造成其他业务的误使用，从而引发一些业务问题，严重时可导致业务受理异常或业务数据不一致，比如下面的场景：
+
+​	1、由于session缓存的生命周期较长，当操作员同时打开多个tab页时，A业务保存的缓存，B业务也能取到，被错误使用。只对某业务自己使用的信息，直接用同一个key来设值，被其他业务误用：
+
+![img](https://image.kevinkda.cn/md/image018(10-31-18-03-18).jpg)
+
+​	2、缓存使用完后未清理，或者在清理之前业务有异常导致未能正确清理缓存，会有多余的缓存信息残留，被其他业务错误使用。缓存使用完后应该及时清理，并且需要考虑在异常情况下是否也可以正确清理：
+
+![img](https://image.kevinkda.cn/md/image019(10-31-18-03-18).jpg)
+
+​	从使用session导致的问题看，严重时直接造成业务受理不正确，造成业务受理风险甚至生产故障，影响客户满意度。基于以上问题，在页面使用session的过程中，建议遵循以下原则：
+
+​	1、只有页面全局通用的信息，再考虑是否有必要使用session缓存的方式来处理。
+
+​	2、对于具体的业务菜单尽量不要使用，换其他的方式解决：
+
+​		a) （推荐）本业务的所有信息都在handler里面处理，涉及到调用外部方法时，最安全的办法是使用Map传递值。
+
+​		b) （不推荐）如果必须使用session缓存才能实现，缓存key值必须关联号码和菜单ID（建议的key格式XXXX_billId_menuId）。
+
+
+
+#### 在Idea中打包项目
+
++ 打开Project Structure界面(快捷键是F4或者F12)  选择Artifacts一栏
++ 点击＋号后选择`Web Application: Exploded`下的From Modules
++ 点击＋号后选择 `Web Application: Archive`下的For ***
++ 在右侧Name：一栏中修改名字  点击Apply和OK
++ 选择菜单栏上的Build下的Build Artifacts
++ 选择后缀之后War的那一个，之后点击Build，等待完成
++ 再打开Project Structure界面，查看Output directory一栏后的War包所在路径
+
+
+
 ## 二、工具：
 
 ### 1、Postman客户端中文设置
@@ -144,404 +186,371 @@ $ cnpm run dev
 ### 2、windows环境的Redis启动
 
 - 命令行窗口输入`redis-server.exe redis.windows.conf`
-
 - `Redis-cli.exe`用于连接客户端
+
+### 3、Git统计代码行数
+
+```shell
+git log --pretty=tformat: --numstat | awk '{add += $1; subs += $2;loc+=$1 - $2} END { printf "added lines: %s, removed lines: %s, total lines: %s\n", add,subs,loc}'
+```
 
 
 
 ## 三、数据库
 
-### 1、CentOS7 MySql数据库安装配置
-
-#### 系统环境
-
-yum update升级以后的系统版本
-
-`cat /etc/redhat-release`
-
-#### MySql安装
-
-`yum install mysql`
-
-`yum install mysql-server`
-
-`yum install mysql-devel`
-
-#### 在安装mysql-server中若出现安装失败则使用一下两种方法
-
-##### 一.安装mariadb
-
-`yum install mariadb-server mariadb`
-
-mariadb数据库的相关命令：
-
-- systemctl start mariadb  #启动MariaDB
-
-- systemctl stop mariadb  #停止MariaDB
-
-- systemctl restart mariadb  #重启MariaDB
-
-- systemctl enable mariadb  #设置开机启动
-
-##### 启动数据库
-
-`systemctl start mariadb`
-
-`mysql -u root -p` 没有密码
-
-##### 二.官网下载安装mysql-server
-
-`wget http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm`
-
-`rpm -ivh mysql-community-release-el7-5.noarch.rpm`
-
-`yum install mysql-community-server`
-
-安装成功后重启mysql
-
-`service mysqld restart`
-
-进入mysql
-
-`mysql -u root `没有密码
 
 
+### 1、修改账号远程登陆权限
 
-### 2、连接虚拟机中的MySql数据库
+- 方法一：
+  - `use mysql;`
+  - `update user set host='%' where user='root';`
+- 方法二：
+  - `grant all privileges on *.* to 'root'@'%' identififed by '密码' with grant option;`
 
-- 首先在linux中测试本地连接，表示mysql是可以连接的
-- `netstat -apn|grep 3306`,如果显示的是127.0.0.1:3306 则修改 /etc/mysql/mysql.conf.d/mysqld.cnf 中的bind-adress 为127.0.0.1
-- 然后`service mysql restart` 再次 `netstat -apn|grep 3306` 如果显示的是: : 3306则成功
-- 然后修改远程登陆权限
-  - 本地登录mysql
-  - 方法一：
-    - `use mysql;`
-    - `update user set host='%' where user='root';`
-  - 方法二：
-    - `grant all privileges on *.* to 'root'@'%' identififed by '密码' with grant option;`
 - 然后 `flush privileges;` 刷新权限
 
 
 
-### 3、Linux中MySql常用命令：
-
-#### 一、启动相关
-
-1.linux下启动mysql的命令：
-
-- mysqladmin start
-  /ect/init.d/mysql start (前面为mysql的安装路径)
-
-2.linux下重启mysql的命令：
-
-- mysqladmin restart
-  /ect/init.d/mysql restart (前面为mysql的安装路径)
-
-3.linux下关闭mysql的命令：
-
-- mysqladmin shutdown
-  /ect/init.d/mysql shutdown (前面为mysql的安装路径)
-
-4.连接本机上的mysql：
-
-- 进入目录mysql\bin，再键入命令mysql -uroot -p， 回车后提示输入密码。
-  退出mysql命令：exit（回车）
-
-5.修改mysql密码：
-
-- mysqladmin -u用户名 -p旧密码 password 新密码
-  或进入mysql命令行SET PASSWORD FOR root=PASSWORD("root");
-
-6.增加新用户。（注意：mysql环境中的命令后面都带一个分号作为命令结束符）
-
-- grant select on 数据库.* to 用户名@登录主机 identified by "密码"
-  如增加一个用户test密码为123，让他可以在任何主机上登录， 并对所有数据库有查询、插入、修改、删除的权限。首先用以root用户连入mysql，然后键入以下命令：
-  grant select,insert,update,delete on *.* to " Identified by "123";
-
-#### 二、有关mysql数据库方面的操作
-
-必须首先登录到mysql中，有关操作都是在mysql的提示符下进行，而且每个命令以分号结束
-
-1、显示数据库列表。
-
-- `show databases;`
-
-2、显示库中的数据表：
-
-- `use mysql`； // 打开库
-- `show tables;`
-
-3、显示数据表的结构：
-
-- `describe 表名;`
-
-4、建库：
-
-- `create database 库名;`
-- **GBK:** `create database test2 DEFAULT CHARACTER SET gbk COLLATE gbk_chinese_ci;`
-- **UTF8:** CREATE DATABASE `test2` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-
-5、建表：
-
-- `use 库名；`
-- `create table 表名(字段设定列表);`
-
-6、删库和删表:
-
-- `drop database 库名;``
-- ``drop table 表名；`
-
-7、将表中记录清空：
-
-- `delete from 表名;`
-- `truncate table 表名;`
-
-8、显示表中的记录：
-
-- `select * from 表名;`
-
-9、编码的修改
-如果要改变整个mysql的编码格式： 
-启动mysql的时候，`mysqld_safe`命令行加入 
-
-- `--default-character-set=gbk `
-
-如果要改变某个库的编码格式：在mysql提示符后输入命令 
--  `alter database db_name default character set gbk;`
-
-10.重命名表
-
-- `alter table t1 rename t2;`
-
-11.查看sql语句的效率
-
-- `explain < table_name >`
-  例如：`explain select * from t3 where id=3952602;`
-
-12.用文本方式将数据装入数据库表中(例如D:/mysql.txt)
-`LOAD DATA LOCAL INFILE "D:/mysql.txt" INTO TABLE MYTABLE;`
-
-#### 三、数据的导入导出
-
-1、文本数据转到数据库中
-文本数据应符合的格式：字段数据之间用`tab键`隔开，`null值`用来代替。例：
-
-1 name duty 2006-11-23
-数据传入命令 `load data local infile "文件名" into table 表名;`
-
-2、导出数据库和表
-
-- `mysqldump --opt news > news.sql`
-  - 将数据库news中的所有表备份到news.sql文件，news.sql是一个文本文件，文件名任取。
-- `mysqldump --opt news author article > author.article.sql`
-  - 将数据库news中的author表和article表备份到author.article.sql文件， author.article.sql是一个文本文件，文件名任取。
-- `mysqldump --databases db1 db2 > news.sql`
-  - 将数据库dbl和db2备份到news.sql文件，news.sql是一个文本文件，文件名任取。
-- `mysqldump -h host -u user -p pass --databases dbname > file.dump`
-  - 就是把host上的以名字user，口令pass的数据库dbname导入到文件file.dump中
-- `mysqldump --all-databases > all-databases.sql`
-  - 将所有数据库备份到all-databases.sql文件，all-databases.sql是一个文本文件，文件名任取。
-
-3、导入数据
-
-- `mysql < all-databases.sql`
-  - 导入数据库
-
-- `mysql>source news.sql;`
-  - 在mysql命令下执行，可导入表
-  - 
-
-### 4、新创建的MySql需要做的
-
-#### 一、连接MySQL 
-
-格式：`mysql -h主机地址 -u用户名 －p用户密码`
-
-1、例1：连接到本机上的MYSQL。
-
-首先在打开DOS窗口，然后进入目录 `mysqlbin`，再键入命令`mysql -uroot -p`，回车后提示你输密码，如果刚安装好`MYSQL`，超级用户`root`是没有密码的，故直接回车即可进入到`MYSQL`中了，`MYSQL`的提示符是： `mysql>`
-
-2、例2：连接到远程主机上的`MYSQL`。假设远程主机的IP为：`110.110.110.110`，用户名为root,密码为`abcd123`。则键入以下命令：
-
-`mysql -h110.110.110.110 -uroot -pabcd123`
-
-（注:u与root可以不用加空格，其它也一样）
-
-3、退出MYSQL命令： `exit` （回车）。
-
-#### 二、修改密码
-
-格式：`mysqladmin -u用户名 -p旧密码 password 新密码`
-
-1、例1：给`root`加个密码`ab12`。首先在DOS下进入目录`mysqlbin`，然后键入以下命令：
-
-`mysqladmin -uroot -password ab12`
-
-注：因为开始时`root`没有密码，所以-p旧密码一项就可以省略了。
-
-2、例2：再将`root`的密码改为`djg345`。
-
-`mysqladmin -uroot -pab12 password djg345`
-
-3、例3：通过sql语句修改
-
-```java
--- 格式：mysql> 
-set password for 用户名@localhost = password(‘新密码’);
--- 例子：mysql> 
-set password for root@localhost = password(‘abc123456’);
-```
-
-#### 三、增加新用户。（注意：和上面不同，下面的因为是MySQL环境中的命令，所以后面都带一个分号作为命令结束符）
-
-格式：`grant select on 数据库.* to 用户名@登录主机 identified by "密码"`
-
-**例1**、增加一个用户`test1`密码为`abc`，让他可以在任何主机上登录，并对所有数据库有查询、插入、修改、删除的权限。首先用以`root`用户连入`MySQL`，然后键入以下命令：
+### 2、MySQL管理：
+
+#### 优化相关建议
+
+- MySQL会使用索引的操作符号
+
+    - <,<=,>=,>,=,between
+    - 不带%或者_开头的like
+    
+- 使用索引的缺点
+
+    - 减慢增删改数据的速度；
+    - 占用磁盘空间；
+    - 增加查询优化器的负担；
+    - 当查询优化器生成执行计划时，会考虑索引，太多的索引会给查询优化器增加工作量，导致无法选择最优的查询方案；
+    
+- 分析索引效率
+
+  - 方法：在一般的SQL语句前加上explain；
+  - 分析结果的含义：
+    - table：表名；
+    - type：连接的类型，(ALL/Range/Ref)。其中ref是最理想的
+    - possible_keys：查询可以利用的索引名
+    - key：实际使用的索引
+    - key_len：索引中被使用部分的长度（字节）
+    - ref：显示列名字或者"const"
+    - rows：显示MySQL认为在找到正确结果之前必须扫描的行数
+    - extra：MySQL的建议；
+- 数据表使用较短的定长列
+  - 尽可能使用较短的数据类型；
+  - 尽可能使用定长数据类型；
+    - 用char代替varchar，固定长度的数据处理比变长的快些；
+    - 对于频繁修改的表，磁盘容易形成碎片，从而影响数据库的整体性能；
+    - 万一出现数据表崩溃，使用固定长度数据行的表更容易重新构造。使用固定长度的数据行，每个记录的开始位置都是固定记录长度的倍数，可以很容易被检测到，但是使用可变长度的数据行就不一定了；
+    - 对于MyISAM类型的数据表，虽然转换成固定长度的数据列可以提高性能，但是占据的空间也大；
+
+- 使用not null和enum
+
+  - 尽量将列定义为not null，这样可使数据的出来更快，所需的空间更少，而且在查询时，MySQL不需要检查是否存在特例，即null值，从而优化查询；
+
+  - 如果一列只含有有限数目的特定值，如性别，是否有效或者入学年份等，在这种情况下应该考虑将其转换为enum列的值，MySQL处理的更快，因为所有的enum值在系统内都是以标识数值来表示的；
+
+
+- 使用optimize table
+  - 对于经常修改的表，容易产生碎片，使在查询数据库时必须读取更多的磁盘块，降低查询性能。
+  - 具有可变长的表都存在磁盘碎片问题，这个问题对blob数据类型更为突出，因为其尺寸变化非常大。
+  - 可以通过使用optimize table来整理碎片，保证数据库性能不下降，优化那些受碎片影响的数据表。 
+  - optimize table可以用于MyISAM和BDB类型的数据表。实际上任何碎片整理方法都是用mysqldump来转存数据表，然后使用转存后的文件并重新建数据表；
+
+- 使用procedure analyse()
+  - 使用procedure analyse()显示最佳类型的建议，使用很简单，在select语句后面加上procedure analyse()就可以了；例如：
+    - select * from students procedure analyse();
+    - select * from students procedure analyse(16,256);
+  - 第二条语句要求procedure analyse()不要建议含有多于16个值，或者含有多于256字节的enum类型，如果没有限制，输出可能会很长；
+
+- 使用查询缓存
+  - 查询缓存的工作方式：
+    第一次执行某条select语句时，服务器记住该查询的文本内容和查询结果，存储在缓存中，下次碰到这个语句时，直接从缓存中返回结果；当更新数据表后，该数据表的任何缓存查询都变成无效的，并且会被丢弃。
+  - 配置缓存参数：
+    变量：query_cache _type，查询缓存的操作模式。有3中模式，0：不缓存；1：缓存查询，除非与 select sql_no_cache开头；2：根据需要只缓存那些以select sql_cache开头的查询； query_cache_size：设置查询缓存的最大结果集的大小，比这个值大的不会被缓存。
+
+- 调整硬件
+  - 在机器上装更多的内存；
+  - 增加更快的硬盘以减少I/O等待时间；
+    寻道时间是决定性能的主要因素，逐字地移动磁头是最慢的，一旦磁头定位，从磁道读则很快；
+  - 在不同的物理硬盘设备上重新分配磁盘活动；
+  - 如果可能，应将最繁忙的数据库存放在不同的物理设备上，这跟使用同一物理设备的不同分区是不同的，因为它们将争用相同的物理资源（磁头）。
+
+
+
+#### MySQL命令
+
+##### 系统相关
+
+- 查询时间
 
 ```mysql
-grant select,insert,update,
-delete on *.* to test1@"%" Identified by "abc";
+select now();
 ```
 
-但例1增加的用户是十分危险的，你想如某个人知道test1的密码，那么他就可以在internet上的任何一台电脑上登录你的MySQL数据库并对你的数据可以为所欲为了，解决办法见例2。
-
-**例2**、增加一个用户`test2`密码为`abc`,让他只可以在`localhost`上登录，并可以对数据库`mydb`进行查询、插入、修改、删除的操作 (`localhost`指本地主机，即`MySQL`数据库所在的那台主机)，这样用户即使用知道`test2`的密码，他也无法从`internet`上直接访问数据 库，只能通过`MySQL`主机上的web页来访问。
+- 查询当前用户
 
 ```mysql
-grant select,insert,update,
-delete on mydb.* to test2@localhost identified by "abc";
+select user();
 ```
 
-如果你不想`test2`有密码，可以再打一个命令将密码消掉。
+- 查询数据库版本：
 
 ```mysql
-grant select,insert,update,delete on mydb.* to test2@localhost identified by "";
+select version();
 ```
 
-启动：`net start mySql;`
-进入：`mysql -u root -p/mysql -h localhost -u root -p databaseName;`
-列出数据库：`show databases;`
-选择数据库：`use databaseName;`
-列出表格：`show tables；`
-显示表格列的属性：`show columns from tableName；`
-建立数据库：`source fileName.txt;`
-匹配字符：可以用通配符_代表任何一个字符，％代表任何字符串;
-增加一个字段：`alter table tabelName add column fieldName dateType;`
-增加多个字段：`alter table tabelName add column fieldName1 dateType,add columns fieldName2 dateType;`
-多行命令输入: 注意不能将单词断开;当插入或更改数据时，不能将字段的字符串展开到多行里，否则硬回车将被储存到数据中;
-增加一个管理员帐户：`grant all on *.* to user@localhost identified by "password";`
-每条语句输入完毕后要在末尾填加分号';'，或者填加'\g'也可以；
-查询时间：`select now();`
-查询当前用户：`select user();`
-查询数据库版本：`elect version();`
-查询当前使用的数据库：`select database();`
+- 查询当前使用的数据库：
 
-1、删除student_course数据库中的students数据表：
-rm -f student_course/students.*
+```mysql
+select database();
+```
 
-2、备份数据库：(将数据库test备份)
-mysqldump -u root -p test>c:\test.txt
-备份表格：(备份test数据库下的mytable表格)
-mysqldump -u root -p test mytable>c:\test.txt
-将备份数据导入到数据库：(导回test数据库)
-mysql -u root -p test
+- 查看sql查询效率
 
-3、创建临时表：(建立临时表zengchao)
-create temporary table zengchao(name varchar(10));
+```mysql
+explain select * from t3 where id=3952602;
+```
 
-4、创建表是先判断表是否存在
-create table if not exists students(……);
+- 列出数据库
 
-5、从已经有的表中复制表的结构
-create table table2 select * from table1 where 1<>1;
+```mysql
+show databases;
+```
 
-6、复制表
-create table table2 select * from table1;
+- 选择数据库
 
-7、对表重新命名
-alter table table1 rename as table2;
+```mysql
+use databaseName;
+```
 
-8、修改列的类型
-alter table table1 modify id int unsigned;//修改列id的类型为int unsigned
-alter table table1 change id sid int unsigned;//修改列id的名字为sid，而且把属性修改为int unsigned
+- 列出表格
 
-9、创建索引
+```mysql
+show tables;
+```
+
+
+
+##### 查询相关
+
+- 联合字符或者多个列(将列id与":"和列name和"="连接)
+
+```mysql
+select concat(id,':',name,'=') from students;
+```
+
+- limit：选出10到20条
+
+```mysql
+select * from students order by id limit 9,10;
+```
+
+
+
+##### 索引相关
+
+- 创建索引
+
+```mysql
 alter table table1 add index ind_id (id);
 create index ind_id on table1 (id);
-create unique index ind_id on table1 (id);//建立唯一性索引
+-- 建立唯一性索引
+create unique index ind_id on table1 (id);
+```
 
-10、删除索引
+- 删除索引
+
+```mysql
 drop index idx_id on table1;
 alter table table1 drop index ind_id;
-
-11、联合字符或者多个列(将列id与":"和列name和"="连接)
-select concat(id,':',name,'=') from students;
-
-12、limit(选出10到20条)<第一个记录集的编号是0>
-select * from students order by id limit 9,10;
-
-13、MySQL不支持的功能
-事务，视图，外键和引用完整性，存储过程和触发器
-
-
-14、MySQL会使用索引的操作符号
-<,<=,>=,>,=,between,in,不带%或者_开头的like
-
-15、使用索引的缺点
-1)减慢增删改数据的速度；
-2）占用磁盘空间；
-3）增加查询优化器的负担；
-当查询优化器生成执行计划时，会考虑索引，太多的索引会给查询优化器增加工作量，导致无法选择最优的查询方案；
-
-16、分析索引效率
-方法：在一般的SQL语句前加上explain；
-分析结果的含义：
-1）table：表名；
-2）type：连接的类型，(ALL/Range/Ref)。其中ref是最理想的；
-3）possible_keys：查询可以利用的索引名；
-4）key：实际使用的索引；
-5）key_len：索引中被使用部分的长度（字节）；
-6）ref：显示列名字或者"const"（不明白什么意思）；
-7）rows：显示MySQL认为在找到正确结果之前必须扫描的行数；
-8）extra：MySQL的建议；
-
-17、使用较短的定长列
-1）尽可能使用较短的数据类型；
-2）尽可能使用定长数据类型；
-a）用char代替varchar，固定长度的数据处理比变长的快些；
-b）对于频繁修改的表，磁盘容易形成碎片，从而影响数据库的整体性能；
-c）万一出现数据表崩溃，使用固定长度数据行的表更容易重新构造。使用固定长度的数据行，每个记录的开始位置都是固定记录长度的倍数，可以很容易被检测到，但是使用可变长度的数据行就不一定了；
-d）对于MyISAM类型的数据表，虽然转换成固定长度的数据列可以提高性能，但是占据的空间也大；
-
-18、使用not null和enum
-尽量将列定义为not null，这样可使数据的出来更快，所需的空间更少，而且在查询时，MySQL不需要检查是否存在特例，即null值，从而优化查询；
-如果一列只含有有限数目的特定值，如性别，是否有效或者入学年份等，在这种情况下应该考虑将其转换为enum列的值，MySQL处理的更快，因为所有的enum值在系统内都是以标识数值来表示的；
-
-19、使用optimize table
-对于经常修改的表，容易产生碎片，使在查询数据库时必须读取更多的磁盘块，降低查询性能。具有可变长的表都存在磁盘碎片问题，这个问题对blob数据类型更为突出，因为其尺寸变化非常大。可以通过使用optimize table来整理碎片，保证数据库性能不下降，优化那些受碎片影响的数据表。 optimize table可以用于MyISAM和BDB类型的数据表。实际上任何碎片整理方法都是用mysqldump来转存数据表，然后使用转存后的文件并重新建数据表；
-
-20、使用procedure analyse()
-可以使用procedure analyse()显示最佳类型的建议，使用很简单，在select语句后面加上procedure analyse()就可以了；例如：
-select * from students procedure analyse();
-select * from students procedure analyse(16,256);
-第二条语句要求procedure analyse()不要建议含有多于16个值，或者含有多于256字节的enum类型，如果没有限制，输出可能会很长；
-
-21、使用查询缓存
-1）查询缓存的工作方式：
-第一次执行某条select语句时，服务器记住该查询的文本内容和查询结果，存储在缓存中，下次碰到这个语句时，直接从缓存中返回结果；当更新数据表后，该数据表的任何缓存查询都变成无效的，并且会被丢弃。
-2）配置缓存参数：
-变量：query_cache _type，查询缓存的操作模式。有3中模式，0：不缓存；1：缓存查询，除非与 select sql_no_cache开头；2：根据需要只缓存那些以select sql_cache开头的查询； query_cache_size：设置查询缓存的最大结果集的大小，比这个值大的不会被缓存。
-
-22、调整硬件
-1）在机器上装更多的内存；
-2）增加更快的硬盘以减少I/O等待时间；
-寻道时间是决定性能的主要因素，逐字地移动磁头是最慢的，一旦磁头定位，从磁道读则很快；
-3）在不同的物理硬盘设备上重新分配磁盘活动；
-如果可能，应将最繁忙的数据库存放在不同的物理设备上，这跟使用同一物理设备的不同分区是不同的，因为它们将争用相同的物理资源（磁头）。
+```
 
 
 
-### 5、Oracle管理
+##### 用户相关
+
+- 增加新用户
+
+```mysql
+-- 普通创建用户并设置连接方式
+CREATE USER 'test1'@'localhost' IDENTIFIED BY 'test1';
+-- 创建用户并赋予权限
+grant select on 数据库.* to 用户名@登录主机 identified by "密码"
+-- 增加一个用户test密码为123，让他可以在任何主机上登录， 并对所有数据库有查询、插入、修改、删除的权限。
+grant select,insert,update,delete on *.* to test Identified by "123";
+-- 增加一个管理员用户
+grant all on *.* to user@localhost identified by "password";
+```
+
+- 修改密码
+
+```mysql
+-- mysqladmin -u用户名 -p旧密码 password 新密码
+```
+
+
+
+##### 权限相关
+
+
+
+##### 数据表相关
+
+- 修改表名
+
+```mysql
+alter table t1 rename t2;
+```
+
+- 显示数据表结构
+
+```mysql
+desc test;
+show columns from tableName;
+```
+
+- 创建数据表
+
+```mysql
+create table test(
+`id` int NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT ‘主表id’,
+`name` string NOT NULL COMMENT ‘名称’
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+
+- 删除数据表
+
+```mysql
+drop table test;
+```
+
+- 清空数据表记录
+
+```mysql
+-- 这种方式不会重置自动递增的id
+delete from test;
+-- 这种方式则会重置自动递增的id
+truncate table test;
+```
+
+- 增加字段
+
+```mysql
+-- 增加一个字段：
+alter table tabelName add column fieldName dateType;
+-- 增加多个字段：
+alter table tabelName add column fieldName1 dateType,add columns fieldName2 dateType;
+```
+
+- 创建临时表
+
+```mysql
+create temporary table test(name varchar(10));
+```
+
+- 创建表是先判断表是否存在
+
+```mysql
+create table if not exists students(name varchar(10));
+```
+
+- 复制表
+
+```mysql
+create table table2 select * from table1;
+-- 复制表从已经有的表中复制表的结构
+create table table2 select * from table1 where 1<>1;
+```
+
+- 修改列的类型
+
+```mysql
+-- 修改列id的类型为int unsigned
+alter table table1 modify id int unsigned;
+-- 修改列id的名字为sid，而且把属性修改为int unsigned
+alter table table1 change id sid int unsigned;
+```
+
+
+
+##### 数据库相关
+
+- 创建数据库
+
+```mysql
+create database test;
+-- GBK
+create database test DEFAULT CHARACTER SET gbk COLLATE gbk_chinese_ci;
+-- UTF8
+CREATE DATABASE test2 DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+```
+
+- 删除数据库
+
+```mysql
+drop database test;
+```
+
+- 修改数据库编码格式
+
+```mysql
+-- 如果要改变某个库的编码格式：在mysql提示符后输入命令 
+alter database db_name default character set gbk;
+```
+
+
+
+##### 数据导入导出
+
+- 用文本方式将数据装入数据库表中
+
+```mysql
+LOAD DATA LOCAL INFILE "/opt/data/mysql.txt" INTO TABLE test;
+```
+
+- 文本数据转到数据库中
+
+```mysql
+-- 文本数据应符合的格式：字段数据之间用`tab键`隔开，`null值`用来代替。例：
+load data local infile "./mysql.txt" into table test;
+```
+
+- 导出数据库和表
+
+```shell
+mysqldump --opt news > news.sql
+
+# 将数据库news中的author表和article表备份到author.article.sql文件， author.article.sql是一个文本文件，文件名任取。
+mysqldump --opt news author article > author.article.sql
+
+# 将数据库dbl和db2备份到news.sql文件
+mysqldump --databases db1 db2 > news.sql
+
+# 就是把host上的以名字user，口令pass的数据库dbname导入到文件file.dump中
+mysqldump -h host -u user -p pass --databases dbname > file.dump
+
+# 将所有数据库备份到all-databases.sql文件
+mysqldump --all-databases > all-databases.sql
+```
+
+- 导入数据
+
+```mysql
+-- 在mysql命令下执行，可导入表
+-- 导入数据库
+mysql < all-databases.sql
+-- 导入表
+mysql > source news.sql;
+```
+
+
+
+### 4、Oracle管理
 
 #### 相关链接
 
@@ -553,11 +562,17 @@ select * from students procedure analyse(16,256);
 
 #### CDB与PDB
 
-CDB与PDB是Oracle 12C引入的新特性，在ORACLE 12C数据库引入的多租用户环境（Multitenant Environment）中，允许一个数据库容器(CDB)承载多个可插拔数据库(PDB)。CDB全称为Container Database，中文翻译为数据库容器，PDB全称为Pluggable Database，即可插拔数据库。在ORACLE 12C之前，实例与数据库是一对一或多对一关系(RAC)：即一个实例只能与一个数据库相关联，数据库可以被多个实例所加载。而实例与数据库不可能是一对多的关系。当进入ORACLE 12C后，实例与数据库可以是一对多的关系。
+CDB与PDB是Oracle 12C引入的新特性，在ORACLE 12C数据库引入的多租用户环境（Multitenant Environment）中，允许一个数据库容器(CDB)承载多个可插拔数据库(PDB)。
+
+CDB全称为Container Database，中文翻译为数据库容器，PDB全称为Pluggable Database，即可插拔数据库。
+
+在ORACLE 12C之前，实例与数据库是一对一或多对一关系(RAC)：即一个实例只能与一个数据库相关联，数据库可以被多个实例所加载。
+
+而实例与数据库不可能是一对多的关系。当进入ORACLE 12C后，实例与数据库可以是一对多的关系。
 
 ![image-20220828030404818](https://image.kevinkda.cn/md/image-20220828030404818.png)
 
-和SQL Server相对照的话，CDB与PDB是不是感觉和SQL SERVER的单实例多数据库架构是一回事呢。像PDB$SEED可以看成是master、msdb等系统数据库，PDBS可以看成用户创建的数据库。而可插拔的概念与SQL SERVER中的用户数据库的分离、附加其实就是那么一回事。
+和SQL Server相对照的话，CDB与PDB是不是感觉和SQL SERVER的单实例多数据库架构是一回事。像PDB$SEED可以看成是master、msdb等系统数据库，PDBS可以看成用户创建的数据库。而可插拔的概念与SQL SERVER中的用户数据库的分离、附加其实就是那么一回事。
 
 #### CDB组件
 
@@ -582,7 +597,7 @@ CDB与PDB是Oracle 12C引入的新特性，在ORACLE 12C数据库引入的多租
   - 该角色拥有系统最高权限，只有DBA才可以创建数据库结构。包括无限制的空间限额和给其他用户授予各种权限的能力，system由dba用户拥有。
     对于普通用户来说，授予connect和resource权限即可，只对dba授予connect、resource和dba权限。
 
-#### SqlPlus命令
+#### Oracle命令
 
 ##### 系统相关
 
@@ -592,6 +607,18 @@ CDB与PDB是Oracle 12C引入的新特性，在ORACLE 12C数据库引入的多租
 select *
 from V$VERSION;
 ```
+- 查询oracle的SID
+
+```sql
+select instance_name from v$instance;
+```
+
+- 查询db_name
+
+```sql
+select name from v$database;
+```
+
 - 重启数据库
 
 ```sql
@@ -606,7 +633,7 @@ select count(*) from v$process;
 - 数据库允许的最大连接数
 
 ```
-select value from v$parameter where name = 'processes'
+select value from v$parameter where name = 'processes';
 ```
 - 修改最大连接数:
 
@@ -628,6 +655,28 @@ TESTRAC =
 	(SERVER = DEDICATED)
 	(SERVICE_NAME = TESTRAC )
 )
+```
+
+数据库告警阈值设定查看
+
+```sql
+select warning_value, critical_value
+from dba_thresholds
+where metrics_name='Tablespace Space Usage' and object_name is NULL;
+```
+
+数据库当前告警和可用的处理方法
+
+```sql
+select reason,SUGGESTED_ACTION
+from dba_outstanding_alerts
+where object_name='CDATA';
+```
+
+查看系统的编码格式
+
+```sql
+select userenv('language') from dual;
 ```
 
 
@@ -703,7 +752,185 @@ drop pluggable database testrac including datafiles;
 
 ##### 表空间相关
 
+- 查看OMF配置的`db_create_file_dest`
 
+```sql
+show parameter db_create_file_dest;
+```
+
+- 查看表空间
+
+```sql
+select name from v$tablespace;
+-- 查看表空间大小
+SELECT t.tablespace_name, round(SUM(bytes / (1024 * 1024)), 0) ts_size
+FROM dba_tablespaces t, dba_data_files d
+WHERE t.tablespace_name = d.tablespace_name
+GROUP BY t.tablespace_name; 
+```
+
+- 查看表空间下的表
+
+```sql
+select TABLE_NAME,TABLESPACE_NAME from dba_tables where TABLESPACE_NAME='CDATA';
+```
+
+- 查看表空间使用情况
+
+```sql
+select sum(bytes) / (1024 * 1024) as free_space, tablespace_name
+from dba_free_space
+group by tablespace_name
+-- 查看表空间使用情况(注：若表空间未使用或者占满，sys.sm$ts_used、sys.sm$ts_free可能为空)
+SELECT a.tablespace_name,a.bytes total,b.bytes used,c.bytes free,(b.bytes * 100) / a.bytes "% USED ",(c.bytes * 100) / a.bytes "% FREE "
+FROM sys.sm$ts_avail a, sys.sm$ts_used b,sys.sm$ts_free c 
+WHERE a.tablespace_name = b.tablespace_name
+AND a.tablespace_name = c.tablespace_name;
+```
+
+- 查看单个表空间使用情况
+
+```sql
+select df.tablespace_name tablespace, fs.bytes free,
+df.bytes , fs.bytes *100/ df.bytes pct_free
+from dba_data_files df ,dba_free_space fs
+where df.tablespace_name = fs.tablespace_name
+and df.tablespace_name = 'CDATA';
+```
+
+- 查看表空间是否可扩展
+
+```sql
+SELECT T.TABLESPACE_NAME, D.FILE_NAME,  D.AUTOEXTENSIBLE,   D.BYTES,  D.MAXBYTES,   D.STATUS
+FROM DBA_TABLESPACES T,DBA_DATA_FILES D 
+WHERE T.TABLESPACE_NAME = D.TABLESPACE_NAME
+ORDER BY TABLESPACE_NAME, FILE_NAME;
+```
+
+- 设置表空间大小和是否可扩展
+
+```sql
+//设置表空间大小
+alter database datafile '/opt/oracle/oradata/orclpdb3/ORCL/DAD5E8983D36442CE053BF38A8C0BB73/datafile/o1_mf_inventor_k4ykocb9_.dbf' resize 64M;
+//设置表空间是否可扩展s
+alter database datafile '/opt/oracle/oradata/orclpdb3/ORCL/DAD5E8983D36442CE053BF38A8C0BB73/datafile/o1_mf_inventor_k4ykocb9_.dbf' autoextend off;
+```
+
+- 创建表空间
+
+```sql
+-- 最基础的创建表空间
+create tablespace 123;
+-- 创建表空间，指定数据文件位置，指定文件大小，扩宽性，等
+-- 创建表空间时需要保证指定的datafile目录是存在的
+-- 参数说明：
+-- datafile '${data file path}'：数据文件路径
+-- size ${size}：数据文件大小
+-- autoextend on next ${size}：下次自动扩展大小
+-- maxsize unlimited：最大尺寸无限制
+create tablespace 表空间 datafile '/opt/oracle/oradata/orcl/数据文件.dbf' size 200m autoextend on next 10m maxsize unlimited;
+```
+
+- 创建临时表空间
+
+```sql
+-- 创建临时表空间，指定数据文件位置，指定文件大小，扩宽性，等
+-- 创建临时表空间时需要保证指定的datafile目录是存在的
+-- 参数说明：
+-- tempfile '${temp data file path}'：数据文件路径
+-- size ${size}：数据文件大小
+-- autoextend on next ${size}：下次自动扩展大小
+-- maxsize unlimited：最大尺寸无限制
+create temporary tablespace 表空间 tempfile '/opt/oracle/oradata/orcl/数据文件.dbf' size 200m autoextend on next 10m maxsize unlimited;
+```
+
+- 设置表空间自动扩展
+
+```sql
+alter database datafile '/opt/oracle/oradata/oradata/orcl/数据文件.dbf' autoextend on;
+```
+
+- 查看文件位置(表空间等一些文件的位置)
+
+```sql
+select name from v$datafile;
+```
+
+- 查看默认表空间
+
+```sql
+select property_name ,property_value from database_properties where property_name like 'DEFAULT_%TABLE%';
+```
+
+- 设置默认表空间
+
+```sql
+alter database default tablespace 123;
+-- 默认临时表空间
+alter database default temporary tablespace 123;
+```
+
+- 删除表空间
+
+```sql
+drop tablespace 123;
+-- 如果表空间有数据，使用以下命令删除
+drop tablespace 123 including contents and datafiles;
+```
+
+
+
+##### 表空间权限
+
+建用户的时候通常都可以选择一个default tablespace，但是在没有授权的情况下该用户也无法往该表空间写数据，需要进行授权。
+
+授权有全局授权和通过quota限制两种情况（quota配额可以防止某个用户过多使用某个表空间中的空间）
+
+- 授予用户全局表空间权限 - 通过命令的方式
+
+```sql
+grant unlimited tablespace to username;
+```
+
+- 授予用户全局表空间权限 - 通过角色的方式
+
+```sql
+-- 查看resource角色底下带的权限，没有unlimited tablespace权限
+SELECT * from Dba_Sys_Privs s WHERE s.grantee='RESOURCE';
+-- 把resource角色授予用户
+grant resource to username;
+--查看用户拥有的权限，可以发现自己带上了unlimited tablespace（另外这个时候可以去看dba_ts_quotas，这样授权的用户没有体现出来）
+SELECT * from Dba_Sys_Privs s WHERE s.grantee='USERNAME' ;
+```
+
+- 授予某个用户完全访问某个表空间权限
+
+```sql
+-- 授权
+alter user ${username} quota unlimited on ${tablespace};
+-- 在授予完权限后查看dba_ts_quotas表
+-- max_bytes = -1，代表不受限制
+SELECT * from Dba_Ts_Quotas z WHERE z.username='USERNAME';
+```
+
+- 授予某个用户有限的访问某个表空间权限
+
+```sql
+-- 授权
+ALTER USER username QUOTA 1M ON rcat;
+-- 在授予完权限后查看dba_ts_quotas表
+-- max_bytes = 1M
+SELECT * from Dba_Ts_Quotas z WHERE z.username='USERNAME';
+```
+
+- 删除用户表空间权限
+
+```sql
+-- 全局
+revoke unlimited tablespace from username;
+-- 个别表空间
+ALTER USER username  QUOTA 0 ON rcat 
+```
 
 
 
@@ -823,6 +1050,10 @@ select * from user_users;
 
 ```sql
 create user c##svc_res identified by 123;
+-- 创建用户并指定表空间
+-- default tablespace ${tablespace}：默认表空间
+-- temporary tablespace ${talbespace}：临时表空间
+create user tssh identified by "XXXXX" default tablespace TSSH_15_DATA_MIN temporary tablespace TEMP;
 ```
 - 更改用户密码
 
@@ -963,7 +1194,39 @@ select * from global_name;
 
 
 
-### 6、 Oracle 19C设置PDB自启动
+##### 其他设置
+
+- 查看表字段
+
+```sql
+#desc ${table_name}
+```
+
+- 命令行相关设置
+
+```sql
+-- 显示一行多少字符
+show line
+-- 设置一行多少字符
+set linesize 1000
+-- 设置是否显示报表标题
+set hea on
+-- 显示每页行数
+show pages
+-- 设置每页显示行数
+set pages 50
+-- 设置输出结果是否滚动
+set pause on/off
+-- 设置滚动时自定义的提示
+set pause 'Press <Enter> to continue'
+
+```
+
+
+
+
+
+### 5、 Oracle 19C设置PDB自启动
 
 在Oracle 19c中，在启动CDB的时候，PDB 是不会自动启动的，所以每次都要手工启动，故可以使用触发器的方式实现PDB开机自启
 
@@ -1059,64 +1322,7 @@ find /home/xxx/pyscripts/AutoCreate/rg_task/files/ -name "*" -mtime +2 -exec rm 
 
 
 
-
-### 3、安装JDK
-
-#### 过程
-
-+ 查看yum库中是否有java安装包 `yum -y list java*`
-+ 安装版本为1.6.X的jdk `yum -y install java-1.6.0-openjdk*`
-+ 安装完成后查看版本 `java -version`
-
-
-
-### 4、部署Tomcat
-
-#### 过程
-
-[Tomcat网址](https://tomcat.apache.org/download-90.cgi)
-
-+ 下载Tomcat：
-
-​		`wget https://mirrors.tuna.tsinghua.edu.cn/apache/tomcat/tomcat-9/v9.0.50/bin/apache-tomcat-9.0.50.tar.gz`（注：此链接为Tomcat压缩包的地址）
-
-+ 解压：
-
-​		`tar -xvf apache-tomcat-9.0.50.tar.gz`
-
-+ 进入到Tomcat下的bin目录中：
-
-​		`cd /apache-tomcat-9.0.50.tar.gz/bin`
-
-+ 启动：
-
-​		`./startup.sh`
-
-+ 验证：
-
-​		在浏览器输入地址:127.0.0.1:8080
-
-+ 停止服务:
-
-​	`	./shutdown.sh`
-
-
-
-### 5、在Idea中打包项目
-
-#### 过程
-
-+ 打开Project Structure界面(快捷键是F4或者F12)  选择Artifacts一栏
-+ 点击＋号后选择`Web Application: Exploded`下的From Modules
-+ 点击＋号后选择 `Web Application: Archive`下的For ***
-+ 在右侧Name：一栏中修改名字  点击Apply和OK
-+ 选择菜单栏上的Build下的Build Artifacts
-+ 选择后缀之后War的那一个，之后点击Build，等待完成
-+ 再打开Project Structure界面，查看Output directory一栏后的War包所在路径
-
-
-
-### 6、Systemctl 常用命令
+### 3、Systemctl 常用命令
 
 查看全部服务命令：
 
@@ -1162,7 +1368,7 @@ systemctl disable name.service
 
 
 
-### 7、linux中的Tomcat 命令
+### 4、Tomcat
 
 - 日志类
   - `nohup ./startup.sh`  用nohup启动tomcat
@@ -1224,7 +1430,7 @@ systemctl disable name.service
 
 
 
-### 8、Docker 设置elasticsearch密码
+### 5、Docker 设置elasticsearch密码
 
 | 序号 | 账号                   | 密码     |
 | ---- | ---------------------- | -------- |
@@ -1236,18 +1442,29 @@ systemctl disable name.service
 | 6    | remote_monitoring_user |          |
 
 - 在 `elasticsearch.yml` 中添加一下代码
-  - `xpack.security.enabled: true`
-  - `xpack.license.self_generated.type: basic`
-  - `xpack.security.transport.ssl.enabled: true`
+
+```yaml
+xpack.security.enabled: true
+xpack.license.self_generated.type: basic
+xpack.security.transport.ssl.enabled: true
+```
+
 - 在进入docker中的elasticsearch下的bin目录
-  - `docker exec -it elasticsearch /bin/bash`
-  - `cd bin`
+
+```shell
+docker exec -it elasticsearch /bin/bash
+cd bin
+```
+
 - 输入以下内容
-  - `elasticsearch-setup-passwords interactive`
+
+```shell
+elasticsearch-setup-passwords interactive
+```
 
 
 
-### 9、设置命令全局的别名
+### 6、设置命令全局的别名
 
 #### 全局(所有用户所有终端)
 
@@ -1286,7 +1503,7 @@ alias grep='grep --color=auto'
 
 
 
-### 10、Linux设置类似$HOME的目录的快捷目录
+### 7、Linux设置类似$HOME的目录的快捷目录
 
 - 第一步打开 `/etc/default/useradd` 这个文件
 - 然后在最后一行写下 `名字=/目录`
@@ -1295,50 +1512,47 @@ alias grep='grep --color=auto'
 
 
 
-### 11、Linux防火墙以及开放端口管理
+### 8、Linux防火墙以及开放端口管理
 
-- `systemctl status firewalld` 查看防火墙是否开启
+```shell
+# 查看防火墙是否开启
+systemctl status firewalld
+# 若没有开启则是开启状态,关闭则是 stop
+systemctl start firewalld
+# 查看所有开启的端口
+firewall-cmd --list-ports
 
-- `systemctl start firewalld`  若没有开启则是开启状态  关闭则是 stop
+# 防火墙开启端口访问
+# --zone 作用域 --add-port=80/tcp 添加端口 端口/通讯协议 --permanent  永久生效
+firewall-cmd --zone=public --add-port=80/tcp --permanent
 
-- `firewall-cmd --list-ports`  查看所有开启的端口
-
-- `firewall-cmd --zone=public --add-port=80/tcp --permanent`  防火墙开启端口访问
-
-  --zone 作用域 --add-port=80/tcp 添加端口 端口/通讯协议 --permanent  永久生效
-
-- `firewall-cmd --reload`  重启防火墙
-
-- `firewall-cmd --state`  查看防火墙状态 是否是running
-
-- `firewall-cmd --get-zones` 列出支持的zone
-
-- `firewall-cmd --get-services` 列出支持的服务 服务是放行的
-
-- `firewall-cmd --query-service ftp` 查看ftp服务是否支持，返回yes or no
-
-- `firewall-cmd --remove-service=ftp --permanent` 永久移除ftp服务
-
-- `firewall-cmd --zone=public --list-ports` 查看以开放的端口
-
-- `netstat -Inpt` 查看监听端口
-
-- `netstat -Inpt |grep 5672` 检查端口被那个进程占用
-
-- `ps 6832` 查看进程的详细信息
-
-- `kill -9 6832` 终止进程
+# 重启防火墙
+firewall-cmd --reload
+# 查看防火墙状态 是否是running
+firewall-cmd --state
+# 列出支持的zone
+firewall-cmd --get-zones
+# 列出支持的服务 服务是放行的
+firewall-cmd --get-services
+# 查看ftp服务是否支持，返回yes or no
+firewall-cmd --query-service ftp
+#永久移除ftp服务
+firewall-cmd --remove-service=ftp --permanent
+# 查看以开放的端口
+firewall-cmd --zone=public --list-ports
+# 查看监听端口
+netstat -Inpt
+# 检查端口被那个进程占用
+netstat -Inpt |grep 5672
+#查看进程的详细信息
+ps 6832
+# 终止进程
+kill -9 6832
+```
 
 
 
-### 12、Iptables防火墙
-
-#### 简介：
-
-防火墙分类
-
-- 硬件防火墙
-- 软件防火墙
+### 9、Iptables防火墙
 
 #### Iptables防火墙介绍
 
@@ -1377,11 +1591,11 @@ alias grep='grep --color=auto'
 - 启停命令
 
   ```shell
-  //临时停止|启动|查看状态|重新加载|重新启动
+  # 临时停止|启动|查看状态|重新加载|重新启动
   service iptables stop|start|status|reload|restart	
-  //开机是否自启动
+  # 开机是否自启动
   chkconfig iptables off|on
-  //永久保存规则
+  # 永久保存规则
   vim	/etc/sysconfig/iptables
   ```
 
@@ -1402,8 +1616,8 @@ alias grep='grep --color=auto'
   -j DROP					丢弃，没有任何提示信息
   -j REJECT				拒绝，有提示信息
   -j LOG					写日志     /var/log/messages    然后将数据包传递给下一条规则
-  nat表:
   
+  nat表:
   -j SNAT						源地址转换 POSTROUTING
   -j DNAT						目标地址转换 PREROUTING
   ```
@@ -1416,61 +1630,65 @@ alias grep='grep --color=auto'
 - 全部允许/拒绝/丢弃
 
 ```shell
-iptables -t filter -A INPUT -j DROP			//添加规则，丢弃所有进来的数据包
-iptables -t filter -A INPUT -j ACCEPT		//添加规则，允许所有进来的数据包
+# 添加规则，丢弃所有进来的数据包
+iptables -t filter -A INPUT -j DROP
+# 添加规则，允许所有进来的数据包
+iptables -t filter -A INPUT -j ACCEPT
 
-//指定位置插入规则，允许所有进来的数据包第1条规则
-iptables -t filter -I INPUT 1 -j ACCEPT	  
+# 指定位置插入规则，允许所有进来的数据包第1条规则
+iptables -t filter -I INPUT 1 -j ACCEPT
+# 添加规则，丢弃所有出去的数据包
+iptables -t filter -A OUTPUT -j DROP
 
-iptables -t filter -A OUTPUT -j DROP	  //添加规则，丢弃所有出去的数据包
-
-//指定位置插入规则，拒绝所有进来的数据包为第3条规则
+# 指定位置插入规则，拒绝所有进来的数据包为第3条规则
 iptables -t filter -I INPUT 3 -j REJECT	  
-
-iptables -t filter -L --line-numbers	  //查看规则编号
-iptables -t filter -R INPUT 1 -j ACCEPT		//覆盖已有规则
-
-iptables -t filter -D INPUT 3			//删除INPUT链的第3条规则
-iptables -t filter -F					//清空filter表的所有规则
-
-iptables -A INPUT -j LOG			//增加规则，先写日志，然后将数据包传递给下一条规则
-iptables -I INPUT 2 -j DROP			
-
-iptables -t filter -P INPUT DROP		//设置链上的默认规则
+# 查看规则编号
+iptables -t filter -L --line-numbers
+# 覆盖已有规则
+iptables -t filter -R INPUT 1 -j ACCEPT
+# 删除INPUT链的第3条规则
+iptables -t filter -D INPUT 3
+# 清空filter表的所有规则
+iptables -t filter -F
+# 增加规则，先写日志，然后将数据包传递给下一条规则
+iptables -A INPUT -j LOG
+iptables -I INPUT 2 -j DROP
+# 设置链上的默认规则
+iptables -t filter -P INPUT DROP
 iptables -D INPUT 1
 ```
 
 - 根据源和目标地址匹配
 
 ```shell
- // 匹配条件
-  -s 192.168.1.1/24	源地址
-  -d 192.168.1.2		目标地址
-  -p tcp|upd|icmp		协议
-  -i lo				input从lo接口进入得数据包
-  -o eth0				output从eth0出去的数据包
-  -p tcp --dport 80 	目标端口是80，需和-p tcp|upd|icmp连用
-  -p udp --dport 53	目标端口是53，协议是udp
+# 匹配条件
+# -s 192.168.1.1/24	源地址
+# -d 192.168.1.2		目标地址
+# -p tcp|upd|icmp		协议
+# -i lo				input从lo接口进入得数据包
+# -o eth0				output从eth0出去的数据包
+# -p tcp --dport 80 	目标端口是80，需和-p tcp|upd|icmp连用
+# -p udp --dport 53	目标端口是53，协议是udp
   
-  //允许源地址为10.1.1.3进入
-  iptables -t filter -A INPUT -s 10.1.1.3 -j ACCEPT
-  //不允许源地址为10.1.1.3进入
-  iptables -t filter -A INPUT ! -s 10.1.1.3 -j ACCEPT
-  //拒绝源地址为10.1.1.3进入
-  iptables -t filter -A INPUT -s 10.1.1.3 -j DROP
-  //丢弃到达目标地址为10.1.1.3的包
-  iptables -t filter -A OUTPUT -d 10.1.1.3 -j DROP
-  //丢弃到达目标地址为10.1.1.3的包
-  iptables -t filter -A OUTPUT ! -d 10.1.1.3 -j ACCEPT
-  //丢弃所有到目标地址10.1.1.2的包	
-  iptables -t filter -A INPUT -d 10.1.1.2 -j DROP
-  //源地址为10.1.1.2出去的包全部允许
-  iptables -t filter -A OUTPUT -s 10.1.1.2 -j ACCEPT
+# 允许源地址为10.1.1.3进入
+iptables -t filter -A INPUT -s 10.1.1.3 -j ACCEPT
+# 不允许源地址为10.1.1.3进入
+iptables -t filter -A INPUT ! -s 10.1.1.3 -j ACCEPT
+# 拒绝源地址为10.1.1.3进入
+iptables -t filter -A INPUT -s 10.1.1.3 -j DROP
+# 丢弃到达目标地址为10.1.1.3的包
+iptables -t filter -A OUTPUT -d 10.1.1.3 -j DROP
+# 丢弃到达目标地址为10.1.1.3的包
+iptables -t filter -A OUTPUT ! -d 10.1.1.3 -j ACCEPT
+# 丢弃所有到目标地址10.1.1.2的包	
+iptables -t filter -A INPUT -d 10.1.1.2 -j DROP
+# 源地址为10.1.1.2出去的包全部允许
+iptables -t filter -A OUTPUT -s 10.1.1.2 -j ACCEPT
 ```
 
   
 
-### 13、Vim 的使用
+### 10、Vim 的使用
 
 ![image-20220828030503848](https://image.kevinkda.cn/md/image-20220828030503848.png)
 
@@ -1479,21 +1697,16 @@ iptables -D INPUT 1
 ##### 语法：
 
 - `[range]s/目标字符串/替换字符串/[option]`
+- s是substitute的简写，代表执行替换字符操作
 
-##### [range]：
+###### [range]
 
-range 的值表示搜索范围，默认表示当前行
-
+- range 的值表示搜索范围，默认表示当前行
 - range的值如果为`1,10`表示从第一行到第10行
-- %表示整个文件
-  - 也可以写成`1,$`
+- %表示整个文件,也可以写成`1,$`
 - $表示从当前行到本文件末尾
 
-##### s：
-
-substitute的简写，代表执行替换字符操作
-
-##### [option]：
+###### [option]
 
 表示操作类型，默认只对第一个匹配的字符串进行替换
 
@@ -1515,7 +1728,7 @@ substitute的简写，代表执行替换字符操作
 
 
 
-### 14、在Windows环境下安装docker
+### 11、在Windows环境下安装docker
 
 1. 首先进入[官网](https://docs.docker.com/desktop/install/windows-install/)下载安装包
 2. 然后不要直接安装下载的安装包，需要根据文档提示下载并启用WSL服务
@@ -1524,7 +1737,7 @@ substitute的简写，代表执行替换字符操作
 
 
 
-### 15、Oracle Database Docker 镜像制作
+### 12、Oracle Database Docker 镜像制作
 
 #### 相关网址
 
@@ -1600,7 +1813,7 @@ Copyright (c) 2014,2021 Oracle and/or its affiliates.
 
 
 
-### 16、Docker部署Oracle19c
+### 13、Docker部署Oracle19c
 
 #### 相关链接
 
@@ -1707,7 +1920,7 @@ services:
 
 
 
-### 17、Linux下创建swap文件
+### 14、Linux下创建swap文件
 
 1. 创建一个足够大的文件
 
@@ -1733,7 +1946,7 @@ services:
 
 
 
-### 18、docker设置镜像加速器
+### 15、docker设置镜像加速器
 
 ```shell
 #修改/etc/docker/daemon.json文件
@@ -1750,7 +1963,7 @@ vi /etc/docker/daemon.json
 
 
 
-### 19、Linux安装docker-compose
+### 16、Linux安装docker-compose
 
 ​	[官网地址](https://docs.docker.com/compose/install/)
 
@@ -1773,7 +1986,7 @@ vi /etc/docker/daemon.json
 
 
 
-### 20、Linux环境下网络测速的方法
+### 17、Linux环境下网络测速的方法
 
 1. #### 下载安装包进行测试
 
@@ -1819,3 +2032,374 @@ vi /etc/docker/daemon.json
       打开 speedtest 测试结果的连接，可以显示测试结果的图示
       
       ![image-20220913112621876](https://image.kevinkda.cn/md/image-20220913112621876.png)
+
+
+
+### 18、Linux下使用curl发送get/post请求
+
+curl是一个非常实用的、用来与服务器之间传输数据的工具；支持的协议包括 (DICT, FILE, FTP, FTPS, GOPHER, HTTP, HTTPS, IMAP, IMAPS, LDAP, LDAPS, POP3, POP3S, RTMP, RTSP, SCP, SFTP, SMTP, SMTPS, TELNET and TFTP)，curl设计为无用户交互下完成工作；curl提供了一大堆非常有用的功能，包括代理访问、用户认证、ftp上传下载、HTTP POST、SSL连接、cookie支持、断点续传。
+
+- 发送get请求
+
+```shell
+# 不带参数
+curl ${url}
+# 带参数
+curl ${url}?a=1&b=2
+```
+
+- 发送post请求
+
+```shell
+# 普通请求
+curl -X POST -d 'a=1&b=2' ${url}
+# 发送json格式请求
+curl -H "Content-Type: application/json" -X POST -d '{"abc":123,"bcd":"nihao"}' URL
+curl -H "Content-Type: application/json" -X POST -d @test.json URL
+```
+
+其中，-H代表header头，-X是指定什么类型请求(POST/GET/HEAD/DELETE/PUT/PATCH)，-d代表传输什么数据。这几个是最常用的。
+
+- 查看所有curl命令： `man curl或者curl -h`
+- 请求头：`H,A,e`
+- 响应头：`I,i,D`
+- cookie：`b,c,j`
+- 传输：`F(POST),G(GET),T(PUT),X`
+- 输出：`o,O,w`
+- 断点续传：`r`
+- 调试：`v,--trace,--trace-ascii,--trace-time`
+
+
+
+### 19、Redis
+
+- Redis支持五种数据类型：string（字符串），hash（哈希），list（列表），set（集合）及zset(sorted set：有序集合)。
+
+#### Redis 常用命令集
+
+##### 系统相关
+
+```shell
+# 将数据同步保存到磁盘
+save
+# 将数据异步保存到磁盘
+bgsave
+# 返回上次成功将数据保存到磁盘的Unix时戳
+lastsave
+# 将数据同步保存到磁盘，然后关闭服务
+shundown
+############### 远程服务控制
+# 提供服务器的信息和统计
+info
+# 实时转储收到的请求
+monitor
+# 改变复制策略设置
+slaveof
+# 在运行时配置Redis服务器
+config
+############### 安全相关
+# 查看是否设置了密码
+CONFIG get requirepass
+# 设置密码
+CONFIG set requirepass "***"
+# 查看密码
+CONFIG get requirepass
+# 验证密码
+AUTH ***
+```
+
+##### 数据库相关
+
+```shell
+# 选择数据库
+select 1
+# 查看所有keys
+keys *
+# 查看前缀为"prefix_"的所有keys
+keys prefix_*
+# 清除当前数据库的所有keys
+flushdb
+# 清除所有数据库的所有keys
+flushall
+# 移动当前数据库中的key到dbindex数据库
+move(key, dbindex)
+# 返回当前数据库中key的数目
+dbsize
+```
+
+##### 订阅命令
+
+```shell
+# 订阅一个或多个符合给定模式的频道
+PSUBSCRIBE pattern [pattern ...]
+# 查看订阅与发布系统状态。
+PUBSUB subcommand [argument [argument ...]]
+# 将信息发送到指定的频道。
+PUBLISH channel message
+# 退订所有给定模式的频道。
+PUNSUBSCRIBE [pattern [pattern ...]]
+# 订阅给定的一个或多个频道的信息。
+SUBSCRIBE channel [channel ...]
+# 指退订给定的频道。
+UNSUBSCRIBE [channel [channel ...]]
+```
+
+##### 事务命令
+
+```shell
+# 取消事务，放弃执行事务块内的所有命令。
+DISCARD
+# 执行所有事务块内的命令。
+EXEC
+# 标记一个事务块的开始。
+MULTI
+# 取消 WATCH 命令对所有 key 的监视。
+UNWATCH
+# 监视一个(或多个) key ，如果在事务执行之前这个(或这些) key 被其他命令所改动，那么事务将被打断。
+WATCH key [key ...]
+```
+
+##### 脚本命令
+
+```shell
+# 执行Lua脚本
+EVAL script numkeys key [key ] arg [arg ]
+# 执行Lua脚本
+EVALSHA sha1 numkeys key [key ...\] arg [arg ...]
+# 查看指定脚本
+SCRIPT EXISTS script [script ...]
+# 从脚本缓存中一处所有脚本
+SCRIPT FLUSH
+# 杀死所有脚本
+SCRIPT KILL
+# 将脚本添加到脚本缓存中，但不执行
+SCRIPT LOAD script
+```
+
+##### Redis GEO
+
+- Redis GEO 主要用于存储地理位置信息，并对存储的信息进行操作，该功能在 Redis 3.2 版本新增。
+
+```shell
+# 添加地理位置的坐标。
+geoadd
+# 获取地理位置的坐标。
+geopos
+# 计算两个位置之间的距离。
+geodist
+# 根据用户给定的经纬度坐标来获取指定范围内的地理位置集合。
+georadius
+# 根据储存在位置集合里面的某个地点获取指定范围内的地理位置集合。
+georadiusbymember
+# 返回一个或多个位置对象的 geohash 值。
+geohash
+```
+
+##### 对key和value的操作
+
+```shell
+# 确认一个key是否存在
+exists(key)
+# 删除一个key
+del(key)
+# 返回值的类型
+type(key)
+# 返回满足给定pattern的所有key
+keys(pattern)
+# 随机返回key空间的一个
+randomkey
+# 重命名key
+keyrename(oldname, newname)
+# 设定一个key的活动时间（s）
+expire
+# 获得一个key的活动时间
+ttl
+# 按索引查询
+select(index)
+```
+
+##### String
+
+- String 是 redis 最基本的类型，一个 key 对应一个 value。
+- 一个键最大能存储 512MB。
+
+```shell
+# 给数据库中名称为key的string赋予值value
+set(key, value)
+# 返回数据库中名称为key的string的value
+get(key)
+# 给名称为key的string赋予上一次的value
+getset(key, value)
+# 返回库中多个string的value
+mget(key1, key2,…, key N)
+# 添加string，名称为key，值为value
+setnx(key, value)
+# 向库中添加string，设定过期时间time
+setex(key, time, value)
+# 批量设置多个string的值
+mset(key N, value N)
+# 如果所有名称为key i的string都不存在
+msetnx(key N, value N)
+# 名称为key的string增1操作
+incr(key)
+# 名称为key的string增加integer
+incrby(key, integer)
+# 名称为key的string减1操作
+decr(key)
+# 名称为key的string减少integer
+decrby(key, integer)
+# 名称为key的string的值附加value
+append(key, value)
+# 返回名称为key的string的value的子串
+substr(key, start, end)
+```
+
+##### Hash
+
+- Redis hash 是一个键值(key=>value)对集合。
+- Redis hash 是一个 string 类型的 field 和 value 的映射表，hash 特别适合用于存储对象。
+- 每个 hash 可以存储 232 -1 键值对（40多亿）。
+
+```shell
+# 向名称为key的hash中添加元素field
+hset(key, field, value)
+# 返回名称为key的hash中field对应的value
+hget(key, field)
+# 返回名称为key的hash中field i对应的value
+hmget(key, (fields))
+# 向名称为key的hash中添加元素field 
+hmset(key, (fields))
+# 将名称为key的hash中field的value增加integer
+hincrby(key, field, integer)
+# 名称为key的hash中是否存在键为field的域
+hexists(key, field)
+# 删除名称为key的hash中键为field的域
+hdel(key, field)
+# 返回名称为key的hash中元素个数
+hlen(key)
+# 返回名称为key的hash中所有键
+hkeys(key)
+# 返回名称为key的hash中所有键对应的value
+hvals(key)
+# 返回名称为key的hash中所有的键（field）及其对应的value
+hgetall(key)
+```
+
+##### List 
+
+- Redis 列表是简单的字符串列表，按照插入顺序排序。你可以添加一个元素到列表的头部（左边）或者尾部（右边）。
+- 列表最多可存储 232 - 1 元素 (4294967295, 每个列表可存储40多亿)。
+
+```shell
+# 在名称为key的list尾添加一个值为value的元素
+rpush(key, value)
+# 在名称为key的list头添加一个值为value的 元素
+lpush(key, value)
+# 返回名称为key的list的长度
+llen(key)
+# 返回名称为key的list中start至end之间的元素
+lrange(key, start, end)
+# 截取名称为key的list
+ltrim(key, start, end)
+# 返回名称为key的list中index位置的元素
+lindex(key, index)
+# 给名称为key的list中index位置的元素赋值
+lset(key, index, value)
+# 删除count个key的list中值为value的元素
+lrem(key, count, value)
+# 返回并删除名称为key的list中的首元素
+lpop(key)
+# 返回并删除名称为key的list中的尾元素
+rpop(key)
+# lpop命令的block版本
+blpop(key1, key2,… key N, timeout)
+# rpop的block版本
+brpop(key1, key2,… key N, timeout)
+# 返回并删除名称为srckey的list的尾元素，并将该元素添加到名称为dstkey的list的头部
+rpoplpush(srckey, dstkey)
+```
+
+##### Set
+
+- Redis 的 Set 是 string 类型的无序集合。
+- 集合是通过哈希表实现的，所以添加，删除，查找的复杂度都是 O(1)。
+- 若sadd了一个数据两次，根据集合内元素的唯一性，第二次插入的元素将被忽略
+- sadd命令
+  - 添加一个 string 元素到 key 对应的 set 集合中，成功返回 1，如果元素已经在集合中返回 0。
+  - sadd key member
+
+```shell
+# 向名称为key的set中添加元素member
+sadd(key, member)
+# 删除名称为key的set中的元素member
+srem(key, member)
+# 随机返回并删除名称为key的set中一个元素
+spop(key)
+# 移到集合元素
+smove(srckey, dstkey, member)
+# 返回名称为key的set的基数
+scard(key)
+# member是否是名称为key的set的元素
+sismember(key, member)
+# 求交集
+sinter(key1, key2,…key N)
+# 求交集并将交集保存到dstkey的集合
+sinterstore(dstkey, (keys))
+# 求并集
+sunion(key1, (keys))
+# 求并集并将并集保存到dstkey的集合
+sunionstore(dstkey, (keys))
+# 求差集
+sdiff(key1, (keys))
+# 求差集并将差集保存到dstkey的集合
+sdiffstore(dstkey, (keys))
+# 返回名称为key的set的所有元素
+smembers(key)
+# 随机返回名称为key的set的一个元素
+srandmember(key)
+```
+
+##### Zset
+
+- Redis zset 和 set 一样也是string类型元素的集合,且不允许重复的成员。
+
+- 不同的是每个元素都会关联一个double类型的分数。
+- Redis正是通过分数来为集合中的成员进行从小到大的排序。
+
+- zset的成员是唯一的,但分数(score)却可以重复。
+- zrange根据索引序列查询，zrangebyscore根据score值查询。
+
+- zadd命令
+  - 添加元素到集合，元素在集合中存在则更新对应score
+  - zadd key score member 
+
+
+
+#### Redis 性能测试
+
+##### 语法
+
+redis 性能测试的基本命令如下：
+
+```
+redis-benchmark [option] [option value]
+```
+
+##### redis 性能测试工具参数
+
+| 序号 | 选项               | 描述                                       | 默认值    |
+| :--- | :----------------- | :----------------------------------------- | :-------- |
+| 1    | -h                 | 指定服务器主机名                           | 127.0.0.1 |
+| 2    | -p                 | 指定服务器端口                             | 6379      |
+| 3    | -s                 | 指定服务器 socket                          |           |
+| 4    | -c                 | 指定并发连接数                             | 50        |
+| 5    | -n                 | 指定请求数                                 | 10000     |
+| 6    | -d                 | 以字节的形式指定 SET/GET 值的数据大小      | 2         |
+| 7    | -k                 | 1=keep alive 0=reconnect                   | 1         |
+| 8    | -r                 | SET/GET/INCR 使用随机 key, SADD 使用随机值 |           |
+| 9    | -P                 | 通过管道传输 <numreq> 请求                 | 1         |
+| 10   | -q                 | 强制退出 redis。仅显示 query/sec 值        |           |
+| 11   | --csv              | 以 CSV 格式输出                            |           |
+| 12   | -l（L 的小写字母） | 生成循环，永久执行测试                     |           |
+| 13   | -t                 | 仅运行以逗号分隔的测试命令列表。           |           |
+| 14   | -I（i 的大写字母） | Idle 模式。仅打开 N 个 idle 连接并等待。   |           |
