@@ -1245,6 +1245,101 @@ end open_pluggable_db;
 
 
 
+### 6、MySQL-Explain详解
+
+#### Explain介绍
+
+- 在select语句之前增加explain关键字，执行后MySQl就会返回执行计划的信息，而不是执行SQL。但是如果from中包含子查询，MySQL仍然会执行该子查询，并把子查询结果放入临时表中。
+
+#### Explain详解
+
+1) id列
+
+​	id列的编号就是select的序列号，有几个select就有几个id，并且id是按照select出现的顺序增长的，id列的值越大优先级越高。id相同则是按照执行计划列从上往下执行，id为空则是最后执行
+
+2) select_type列
+
+​	表示对应行是简单查询还是复杂查询
+
+- simple：不包含子查询和union的简单查询
+
+![img](https://image.kevinkda.cn/md/2f768fa6e05f4d89ab95c3b27a2886d5.png)
+
+- primary：复杂查询中最外层的select
+- subquery：包含在select中的子查询，但是不在from的子句中
+
+![img](https://image.kevinkda.cn/md/b14940b3b7cb49a796eeaad688d9fc88.png)
+
+- derived：包含在from子句中的子查询，MySQL会将结果放入一个临时表中，此表也叫衍生表
+
+![img](https://image.kevinkda.cn/md/a57be66c15684664add5f17aba02bbca.png)
+
+- union：在union中的第二个和最后的select，UNION RESULT为合并的结果
+
+![img](https://image.kevinkda.cn/md/78a6f4afee1346fb9176afcd684acd73.png)
+
+3) table列
+
+​	表示当前访问的是那张表。当from中有子查询时，table列的格式为`<derivedN>`，表示当前查询依赖id=N行的查询，所以首先执行id=N行的查询，如果上面select_type如上图union所示，当有union查询时，UNION RESULT的table列的值为`<union 1,2>`，1和2表示参与union的行id
+
+4) partitions列
+
+​	查询将匹配记录的区分。对于非分区表，该值为NULL。
+
+5) type列
+
+​	此列表示关联类型或访问类型。也就是MySQL决定如何查找表中的行。从优到差依次为：system > const > eq_ref > ref > range > index > all。
+
+​	NULL：MySQL能在优化阶段分解查询语句，在执行阶段不用再去访问表或者索引。
+
+![img](https://image.kevinkda.cn/md/b750ef4009b34fd6b4fb7f3b52243532.png)
+
+​	system、const：MySQL对查询的某部分进行右滑并把其转化成一哥常量（可以通过show warnings命令查看结果）。system是const的一个特例，表示表里只有一条元组匹配时为system。
+
+![img](https://image.kevinkda.cn/md/f2f32d2468ae435d9d19c26284647c5d.png)
+
+![img](https://image.kevinkda.cn/md/c85c851b0f50429b88cb60fd523afa77.png)
+
+​	eq_ref：主键或唯一键索引被连接使用，最多只会返回一条符合条件的记录。简单的select查询不会出现这种type。
+
+![img](https://image.kevinkda.cn/md/b9a94d9490df4a5ea55aaba5a8435d04.png)
+
+​	range：通常出现在范围查询中，比如in、between、大于、小于等。使用索引来检索给定范围的行。
+
+![img](https://image.kevinkda.cn/md/573979004689414d945f60538ccfbb62.png)
+
+​	index：扫描全表索引拿到结果，一般是扫描某个二级索引，二级索引一般比较少，所以通常比ALL快。
+
+![img](https://image.kevinkda.cn/md/9c220a48cb3e4a3f86bf9f1e1bbc0ba9.png)
+
+​	all：全表扫描，扫描聚簇索引的所有叶子节点。
+
+6) possible_keys列
+
+
+
+7) key列
+
+
+
+8) key_len列
+
+
+
+9) ref列
+
+
+
+10) rows列
+
+
+
+11) Extra列
+
+
+
+
+
 ## 四、Linux方面
 
 [VMwear安装Centos7](https://www.jianshu.com/p/ce08cdbc4ddb?utm_source=tuicool&utm_medium=referral)
