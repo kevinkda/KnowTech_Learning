@@ -1253,11 +1253,11 @@ end open_pluggable_db;
 
 #### Explain详解
 
-1) id列
+**1)** id列
 
 ​	id列的编号就是select的序列号，有几个select就有几个id，并且id是按照select出现的顺序增长的，id列的值越大优先级越高。id相同则是按照执行计划列从上往下执行，id为空则是最后执行
 
-2) select_type列
+**2)** select_type列
 
 ​	表示对应行是简单查询还是复杂查询
 
@@ -1278,65 +1278,98 @@ end open_pluggable_db;
 
 ![img](https://image.kevinkda.cn/md/78a6f4afee1346fb9176afcd684acd73.png)
 
-3) table列
+**3)** table列
 
 ​	表示当前访问的是那张表。当from中有子查询时，table列的格式为`<derivedN>`，表示当前查询依赖id=N行的查询，所以首先执行id=N行的查询，如果上面select_type如上图union所示，当有union查询时，UNION RESULT的table列的值为`<union 1,2>`，1和2表示参与union的行id
 
-4) partitions列
+**4)** partitions列
 
 ​	查询将匹配记录的区分。对于非分区表，该值为NULL。
 
-5) type列
+**5)** type列
 
 ​	此列表示关联类型或访问类型。也就是MySQL决定如何查找表中的行。从优到差依次为：system > const > eq_ref > ref > range > index > all。
 
-​	NULL：MySQL能在优化阶段分解查询语句，在执行阶段不用再去访问表或者索引。
+​	**NULL**：MySQL能在优化阶段分解查询语句，在执行阶段不用再去访问表或者索引。
 
 ![img](https://image.kevinkda.cn/md/b750ef4009b34fd6b4fb7f3b52243532.png)
 
-​	system、const：MySQL对查询的某部分进行右滑并把其转化成一哥常量（可以通过show warnings命令查看结果）。system是const的一个特例，表示表里只有一条元组匹配时为system。
+​	**system、const**：MySQL对查询的某部分进行右滑并把其转化成一个常量（可以通过show warnings命令查看结果）。system是const的一个特例，表示表里只有一条元组匹配时为system。
 
 ![img](https://image.kevinkda.cn/md/f2f32d2468ae435d9d19c26284647c5d.png)
 
 ![img](https://image.kevinkda.cn/md/c85c851b0f50429b88cb60fd523afa77.png)
 
-​	eq_ref：主键或唯一键索引被连接使用，最多只会返回一条符合条件的记录。简单的select查询不会出现这种type。
+​	**eq_ref**：主键或唯一键索引被连接使用，最多只会返回一条符合条件的记录。简单的select查询不会出现这种type。
 
 ![img](https://image.kevinkda.cn/md/b9a94d9490df4a5ea55aaba5a8435d04.png)
 
-​	range：通常出现在范围查询中，比如in、between、大于、小于等。使用索引来检索给定范围的行。
+​	**range**：通常出现在范围查询中，比如in、between、大于、小于等。使用索引来检索给定范围的行。
 
 ![img](https://image.kevinkda.cn/md/573979004689414d945f60538ccfbb62.png)
 
-​	index：扫描全表索引拿到结果，一般是扫描某个二级索引，二级索引一般比较少，所以通常比ALL快。
+​	**index**：扫描全表索引拿到结果，一般是扫描某个二级索引，二级索引一般比较少，所以通常比ALL快。
 
 ![img](https://image.kevinkda.cn/md/9c220a48cb3e4a3f86bf9f1e1bbc0ba9.png)
 
-​	all：全表扫描，扫描聚簇索引的所有叶子节点。
+​	**all**：全表扫描，扫描聚簇索引的所有叶子节点。
 
-6) possible_keys列
+**6)** possible_keys列
 
+​	此列显示在查询中可能用到的索引。如果该列为NULL，则表示没有相关索引，可以通过检查where子句看是否可以添加一个适当的索引来提高性能。
 
+**7)** key列
 
-7) key列
+​	此列显示MySQL在查询时实际用到的索引。在执行计划中可能出现possible_keys列有值，而key列为null，这种情况可能是表中数据不多，MySQL则认为索引对当前查询帮助不大而选择了全表查询。如果想要强制MySQL使用或忽视possible_keys列中的索引，在查询时可使用force index，ignore index。
 
+**8)** key_len列
 
+​	此列显示MySQL在索引里使用的字节数，通过此列可以算出具体使用了索引中的那些列。索引最大长度为768字节，当长度过大时，MySQL会做一个类似最左前缀处理，将前半部部分字符提取出做索引。当字段可以为null时，还需要一个字节去记录。
 
-8) key_len列
+key_len计算规则：
 
+1. 字符串：
 
+   char(n)：n个数字或者字母占n个字节，汉字占3n个字节
 
-9) ref列
+   varchar(n)：n个数字或者字母占n个字节，汉字占3n+2个字节，+2字节用来存储字符串长度。
 
+2. 数字类型：
 
+   tinyyint：1字节
 
-10) rows列
+   smallint：2字节
 
+   int：4字节
 
+   bigint：8字节
 
-11) Extra列
+3. 时间类型：
 
+   date：3字节
 
+   timestamp：4字节
+
+   datetime：8字节
+
+**9)** ref列
+
+​	此列显示key列记录的索引中，表查找值时使用到的列或常量。常见的有const、字段名
+
+**10)** rows列
+
+​	此列是MySQL在查询中估计要读取的行数。不是结果集的行数。
+
+**11)** Extra列
+
+​	此列是一些额外信息。常见的重要值如下：
+
+		1.	Using index：使用覆盖索引（如果select后面查询的字段都可以从这个索引的树中获取，不需要通过辅助索引树找到主键，再通过主键去主键索引树里获取其他字段值，这种情况一般可以说是用到了覆盖索引）
+  		2.	Using where：使用where语句来处理结果，并且查询的列未被索引覆盖。
+  		3.	Using index condition：查询的列不完全被索引覆盖，where条件中是一个范围查询。
+  		4.	Using temporary：MySQL需要创建一张临时表来处理查询。出现这种情况一般是要进行优化的。
+  		5.	Using filesort：将使用外部排序而不是索引排序，数据较小时从内存排序，否则需要在磁盘完成排序。
+  		6.	Select tables optimized away：使用某些聚合函数（max、min等）来访问存在索引的某个字段时。
 
 
 
