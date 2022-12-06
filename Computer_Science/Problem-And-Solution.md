@@ -136,6 +136,26 @@ class Test{
 
 
 
+### 7、运行VUE项目时报错需要升级vue-template-compiler
+
+#### 描述：
+
+运行vue项目时报错：
+
+This may cause things to work incorrectly. Make sure to use the same version for both.
+If you are using vue-loader@>=10.0, simply update vue-template-compiler.
+If you are using vue-loader@<10.0 or vueify, re-installing vue-loader/vueify should bump vue-template-compiler to the lat
+
+#### 原因：
+
+vue-template-compiler和vue版本不一致
+
+#### 解决:
+
+运行命令npm update
+
+
+
 
 ## 二、工具：
 

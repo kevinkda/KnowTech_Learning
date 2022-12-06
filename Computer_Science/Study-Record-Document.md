@@ -138,17 +138,17 @@ $ cnpm run dev
 
 ​	如果客户请求不包含sessionID，则为此客户创建一个session并且生成一个与此session相关的sessionID，这个sessionID将在本次响应中返回给客户端保存。
 
-![img](https://image.kevinkda.cn/md/image017(10-31-18-03-18).jpg)
+![img](C:/Users/AlanHuang/Desktop/image017(10-31-18-03-18).jpg)
 
 Session缓存优势明显，在日常开发过程中，大家基于这个优势，不可避免地存在session过度使用的情况，导致缓存未能正确清理，造成其他业务的误使用，从而引发一些业务问题，严重时可导致业务受理异常或业务数据不一致，比如下面的场景：
 
 ​	1、由于session缓存的生命周期较长，当操作员同时打开多个tab页时，A业务保存的缓存，B业务也能取到，被错误使用。只对某业务自己使用的信息，直接用同一个key来设值，被其他业务误用：
 
-![img](https://image.kevinkda.cn/md/image018(10-31-18-03-18).jpg)
+![img](C:/Users/AlanHuang/Desktop/image018(10-31-18-03-18).jpg)
 
 ​	2、缓存使用完后未清理，或者在清理之前业务有异常导致未能正确清理缓存，会有多余的缓存信息残留，被其他业务错误使用。缓存使用完后应该及时清理，并且需要考虑在异常情况下是否也可以正确清理：
 
-![img](https://image.kevinkda.cn/md/image019(10-31-18-03-18).jpg)
+![img](C:/Users/AlanHuang/Desktop/image019(10-31-18-03-18).jpg)
 
 ​	从使用session导致的问题看，严重时直接造成业务受理不正确，造成业务受理风险甚至生产故障，影响客户满意度。基于以上问题，在页面使用session的过程中，建议遵循以下原则：
 
@@ -1366,10 +1366,10 @@ key_len计算规则：
 
 		1.	Using index：使用覆盖索引（如果select后面查询的字段都可以从这个索引的树中获取，不需要通过辅助索引树找到主键，再通过主键去主键索引树里获取其他字段值，这种情况一般可以说是用到了覆盖索引）
   		2.	Using where：使用where语句来处理结果，并且查询的列未被索引覆盖。
-  		3.	Using index condition：查询的列不完全被索引覆盖，where条件中是一个范围查询。
-  		4.	Using temporary：MySQL需要创建一张临时表来处理查询。出现这种情况一般是要进行优化的。
-  		5.	Using filesort：将使用外部排序而不是索引排序，数据较小时从内存排序，否则需要在磁盘完成排序。
-  		6.	Select tables optimized away：使用某些聚合函数（max、min等）来访问存在索引的某个字段时。
+    		3.	Using index condition：查询的列不完全被索引覆盖，where条件中是一个范围查询。
+      		4.	Using temporary：MySQL需要创建一张临时表来处理查询。出现这种情况一般是要进行优化的。
+        		5.	Using filesort：将使用外部排序而不是索引排序，数据较小时从内存排序，否则需要在磁盘完成排序。
+          		6.	Select tables optimized away：使用某些聚合函数（max、min等）来访问存在索引的某个字段时。
 
 
 
