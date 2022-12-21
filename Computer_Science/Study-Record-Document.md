@@ -1366,9 +1366,9 @@ key_len计算规则：
 
 		1.	Using index：使用覆盖索引（如果select后面查询的字段都可以从这个索引的树中获取，不需要通过辅助索引树找到主键，再通过主键去主键索引树里获取其他字段值，这种情况一般可以说是用到了覆盖索引）
   		2.	Using where：使用where语句来处理结果，并且查询的列未被索引覆盖。
-    		3.	Using index condition：查询的列不完全被索引覆盖，where条件中是一个范围查询。
-      		4.	Using temporary：MySQL需要创建一张临时表来处理查询。出现这种情况一般是要进行优化的。
-        		5.	Using filesort：将使用外部排序而不是索引排序，数据较小时从内存排序，否则需要在磁盘完成排序。
+                		3.	Using index condition：查询的列不完全被索引覆盖，where条件中是一个范围查询。
+            		4.	Using temporary：MySQL需要创建一张临时表来处理查询。出现这种情况一般是要进行优化的。
+                      		5.	Using filesort：将使用外部排序而不是索引排序，数据较小时从内存排序，否则需要在磁盘完成排序。
           		6.	Select tables optimized away：使用某些聚合函数（max、min等）来访问存在索引的某个字段时。
 
 
@@ -2531,3 +2531,46 @@ redis-benchmark [option] [option value]
 | 12   | -l（L 的小写字母） | 生成循环，永久执行测试                     |           |
 | 13   | -t                 | 仅运行以逗号分隔的测试命令列表。           |           |
 | 14   | -I（i 的大写字母） | Idle 模式。仅打开 N 个 idle 连接并等待。   |           |
+
+
+
+### 20、Linux日志审计
+
+#### 相关连接
+
+[Linux日志审计系统命令](https://javaforall.cn/230931.html)
+
+[Linux系统加固](https://blog.csdn.net/qq_37561898/article/details/125359226)
+
+#### Linux中常见日志以及位置
+
+| 位置              | 名称                          |
+| ----------------- | ----------------------------- |
+| /var/log/cron     | 记录了系统定时任务相关的日志  |
+| /var/log/auth.log | 记录验证和授权方面的信息      |
+| /var/log/secure   | 同上，区别是系统不同          |
+| /var/log/btmp     | 登录失败记录，使用lastb查看   |
+| /var/log/wtmp     | 登录成功记录，使用last查看    |
+| /var/log/lastlog  | 最后一次登录，使用lastlog查看 |
+| /var/run/utmp     | 使用w、who、users命令查看     |
+
+​	/var/log/auth.log、/var/log/secure记录验证和授权方面的信息，只要涉及账号和密码的程序都会记录，比如SSH登录，su切换用户，sudo授权，甚至添加用户和修改用户密码都会记录在这个日志文件中
+
+#### 常用审计命令
+
+```shell
+# 定位多少IP在爆破root账号
+grep "Failed password for root" /var/log/secure | awk '{print $11}' | sort | uniq -c | sort -nr | more  
+
+# 定位有多少IP在爆破
+grep "Failed password" /var/log/secure|grep -E -o "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"|uniq -c
+
+# 爆破用户名的字典是什么
+grep "Failed password" /var/log/secure|perl -e 'while($_=<>){ /for(.*?) from/; print "$1\n";}'|uniq -c|sort -nr
+
+# 查看登录成功的IP有哪些
+grep "Accepted " /var/log/secure | awk '{print $11}' | sort | uniq -c | sort -nr | more
+
+# 登录成功的日志、用户名、IP
+grep "Accepted " /var/log/secure | awk '{print $1,$2,$3,$9,$11}' 
+```
