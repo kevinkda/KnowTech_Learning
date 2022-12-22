@@ -2574,3 +2574,90 @@ grep "Accepted " /var/log/secure | awk '{print $11}' | sort | uniq -c | sort -nr
 # 登录成功的日志、用户名、IP
 grep "Accepted " /var/log/secure | awk '{print $1,$2,$3,$9,$11}' 
 ```
+
+
+
+### 21、chmod命令详解
+
+#### 简介
+
+​	chmod命令主要用于修改、设置文件权限，chmod修改文件权限主要用两种方式：字母法和数字法
+
+#### 字母法
+
+##### 语法
+
+```shell
+# (u g o a)
+# u user 表示该文件所有者
+# g group 表示与该文件的所有者属于同一组者，即用户组
+# o other 表示其他用户组
+# a all 表示以上三者皆是
+
+# (+ - =)
+# + 增加权限
+# - 撤销权限
+# = 设定权限
+
+# (r w x)
+# r read 表示可读取，对于一个目录，如果没有r权限，那么就意味着不能通过ls查看这个目录的内容。
+# w write 表示可写入，对于一个目录，如果没有w权限，那么就意味着不能在目录下创建新的文件。
+# x excute 表示可执行，对于一个目录，如果没有x权限，那么就意味着不能通过cd进入这个目录。
+chmod (u g o a) (+ - =) (r w x) (文件名)
+```
+
+##### 用法
+
+```shell
+# 设置模式：要分别对u(user), g(group), o(other)设置权限。
+# chmod u+rwx, g+rwx, o+rwx filename 改命令说明对filename文件， 赋予user、group、other均有read、write、excute的权限
+chmod + 设置模式 + 文件名
+```
+
+#### 数字法
+
+数字法是基于字母法的表示
+
+##### 用法
+
+```shell
+# 数字组合一般包含三个数字
+# 第一个数字对应字母法的用户u（user）
+# 第二个数字对应字母法的用户g（group）
+# 第三个数字对应字母法的用户o（other）
+
+# r (read) ----------------> 4
+# w (write) ----------------> 2
+# x (excute) ----------------> 1
+chmod + 数字组合 + 文件名
+```
+
+##### 示例
+
+```shell
+# 数字法：
+chmod 777 文件名 
+# 对应字母法： 
+chmod u+rwx, g+rwx, o+rwx 文件名
+
+# 第一个数字7：代表用户 u 的权限 rwx， 4 ® + 2 (w) + 1 (x) = 7
+# 第二个数字7：代表用户 g 的权限 rwx, 4 ® + 2 (w) + 1 (x) = 7
+# 第三个数字7：代表用户 o 的权限 rwx, 4 ® + 2 (w) + 1 (x) = 7
+
+# 举例说明：
+# 数字法：
+chmod 755 filename 
+# 对应字母法： 
+chmod u+rwx, g+rx, o+rx filename
+
+# 数字法：
+chmod 751 filename 
+# 对应字母法： 
+chmod u+rwx, g+rx, o+x filename
+
+# 数字法：
+chmod 765 filename 
+# 对应字母法： 
+chmod u+rwx, g+rw, o+rx filename
+```
+
