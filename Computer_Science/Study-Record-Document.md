@@ -194,6 +194,40 @@ Session缓存优势明显，在日常开发过程中，大家基于这个优势�
 git log --pretty=tformat: --numstat | awk '{add += $1; subs += $2;loc+=$1 - $2} END { printf "added lines: %s, removed lines: %s, total lines: %s\n", add,subs,loc}'
 ```
 
+### 4、Git分支介绍及管理
+
+​	项目采用git flow开发规范
+
+#### main(生产分支)
+
+​	main分支是仓库的主分支，这个分支包含最近发布到生产环境的代码，最近发布的release，这个分支只能从其他分支合并，不能在这个分支直接修改。
+
+#### develop(开发分支)
+
+​	这个分支是我们的主开发分支，包含所有要发布到下一个release的代码，这个主要合并与其他分支，比如feature分支。
+
+#### feature(功能分支)
+
+​	feature分支主要是用来开发一个新的功能，一旦开发完成，直接合并回dev分支进入下一个release。
+
+#### release(发布分支)
+
+​	当你需要发布一个新功能的时候，要基于dev分支创建一个release分支，在release分支测试并修复bug，完成release后，把release合并到main和develop分支。
+
+#### hotfix(补丁分支)
+
+​	当我们在生产环境发现新的bug的时候，我们需要基于main分支创建一个hotfix分支，然后在hotfix分支上修复Bug，完成hotfix后，我们把hotfix分支合并回main和dev分支。
+
+#### 具体使用细节
+
+​	当我们新建git仓库之后，默认会创建一个主分支也就是main分支，由于main分支是用于发布生产环境，所有必须保证main上代码的稳定性，所以我们不能直接在main分支上修改提交。
+
+​	我们要基于main分支创建一个dev分支，dev分支用于保存开发好的相对稳定的功能，main分支和dev分支是仓库的常驻分支，一直会保留在仓库中;
+​	当新的开发任务来了之后，就要编写代码了，我们尽量不要在dev分支上写代码，要保证dev分支的相对稳定，所以这时我要就要基于dev 分支创建一个临时的开发分支 (feature)，然后在开发分支上编写代码等功能开发完之后我们再把开发分支合并到dev上;
+​	新功能合并到dev分支之后，我们想把新功能发布到生产环境，首先基于dev分支创建release分支，然后在release分支测试完成之后 (修复完上线前的bug)，把release分别合并到main分支和dev分支;release分支合并到main分支之后，在main分支上打标签用于发布;我们把代码发布到了生产环境，用户在使用的时候给我们反馈了一个bug，这时我们需要基于main分支创建一个hotfix 分支，用于修复bug，bug修好之后，把hotfix 分支分别合并到main分支和dev分支
+
+
+
 
 
 ## 三、数据库
@@ -379,18 +413,25 @@ alter table table1 drop index ind_id;
 ```mysql
 -- 普通创建用户并设置连接方式
 CREATE USER 'test1'@'localhost' IDENTIFIED BY 'test1';
+-- 赋予账号管理员权限
+grant all on *.* to 'weihu'@'%' with grant option;
 -- 创建用户并赋予权限
 grant select on 数据库.* to 用户名@登录主机 identified by "密码"
 -- 增加一个用户test密码为123，让他可以在任何主机上登录， 并对所有数据库有查询、插入、修改、删除的权限。
 grant select,insert,update,delete on *.* to test Identified by "123";
 -- 增加一个管理员用户
 grant all on *.* to user@localhost identified by "password";
+-- 最后刷新权限
+flush privileges;
 ```
 
 - 修改密码
 
 ```mysql
+-- 命令行方式
 -- mysqladmin -u用户名 -p旧密码 password 新密码
+-- sql的方式
+update user set password=password('521') where user='root' and host='localhost';
 ```
 
 
