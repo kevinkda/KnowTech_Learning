@@ -757,11 +757,25 @@ from V$DATAFILE;
 ```sql
 create pluggable database dev admin user dev identified by 123 file_name_convert =('/opt/oracle/oradata/ORCLCDB/pdbseed','/opt/oracle/oradata/orcl_root_dev');
 ```
+- 设置pdb自启动
+
+`${pdb} save state`是对于某个pdb而言。即你想让哪个pdb随着cdb启动，就设置哪一个。
+
+```sql
+alter pluggable database all save state;
+-- 查询自启动设置
+select con_name, instance_name, state from dba_pdb_saved_states;
+-- 取消自启动
+alter pluggable database all discard state;
+```
+
 - 启动或关闭一个创建好的PDB
 
 ```sql
 alter pluggable database dev open;
 alter pluggable database pdb1 close;
+-- 启动所有pdb
+alter pluggable database all open;
 ```
 - 切换到指定PDB
 
