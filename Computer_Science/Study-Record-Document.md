@@ -174,6 +174,28 @@ Session缓存优势明显，在日常开发过程中，大家基于这个优势�
 
 
 
+#### Java中正则的妙用 - 组
+
+ *  PROCESSING_EMAIL_HTML_IMAGE_REGEX 常量中的每一个括弧为一个组
+ *  PROCESS_EMAIL_HTML_IMAGE_REGEX_REPLACEMENT_PLACEHOLDER 常量中的$1 $3 $5代表上上面的第1个、第3个、第5个组
+ *  processContentHTMLImageTag方法则是将 PROCESSING_EMAIL_HTML_IMAGE_REGEX 常量中的第1个、第3个、第5个组给摘出来，即删除第2、第4组
+
+```java
+public class Regular {
+    public static final String PROCESSING_EMAIL_HTML_IMAGE_REGEX = "(src=\\\")(cid:)([\\w\\d]+\\.[A-Za-z]+)(@[A-Za-z0-9]+\\.[A-Za-z0-9]+)(\\\")";
+    public static final String PROCESS_EMAIL_HTML_IMAGE_REGEX_REPLACEMENT_PLACEHOLDER = "$1$3$5";
+
+    public String processContentHTMLImageTag(String contentText) {
+        return contentText.replaceAll(
+                MailConstants.PROCESSING_EMAIL_HTML_IMAGE_REGEX,
+                MailConstants.PROCESS_EMAIL_HTML_IMAGE_REGEX_REPLACEMENT_PLACEHOLDER
+        );
+    }
+}
+```
+
+
+
 ## 二、工具：
 
 ### 1、Postman客户端中文设置
@@ -1708,6 +1730,8 @@ firewall-cmd --list-ports
 # 防火墙开启端口访问
 # --zone 作用域 --add-port=80/tcp 添加端口 端口/通讯协议 --permanent  永久生效
 firewall-cmd --zone=public --add-port=80/tcp --permanent
+#关闭端口
+firewall-cmd --zone=public --remove-port=5672/tcp --permanent
 
 # 重启防火墙
 firewall-cmd --reload
@@ -2714,5 +2738,33 @@ chmod u+rwx, g+rx, o+x filename
 chmod 765 filename 
 # 对应字母法： 
 chmod u+rwx, g+rw, o+rx filename
+```
+
+
+
+### 22、Docker运行Java项目挂载使用外部配置文件
+
+#### 问题
+
+- 打包好的`Java`项目编译成`Docker`镜像，当你的配置文件需要做改动，这个时候你就需要在本地更新配置文件重新打包成`Docker`镜像
+
+#### 解决方案
+
+在Dockerfile的入口点加上`--spring.config.additional-location=/config/application.yml`
+
+**例如**
+
+```dockerfile
+FROM openjdk:8-jre-slim
+MAINTAINER AlanHuang
+
+ENV PARAMS="--spring.config.additional-location/config/application.yml"
+
+ENV TZ=PRC
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+ADD ./store*.jar /app.jar
+
+ENTRYPOINT ["sh","-c","java -jar $JAVA_OPTS /app.jar $PARAMS"]
 ```
 
