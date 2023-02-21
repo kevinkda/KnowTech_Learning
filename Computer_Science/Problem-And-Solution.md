@@ -426,7 +426,7 @@ sudo yum update --skip-broken
 
 
 
-### 运行docker-compose -v报错
+### 3、运行docker-compose -v报错
 
 #### 报错:  /usr/local/bin/docker-compose: line 1: {error:Document not found}: command not found
 
@@ -444,7 +444,7 @@ curl -L https://get.daocloud.io/docker/compose/releases/download/1.24.1/docker-c
 curl -L https://get.daocloud.io/docker/compose/releases/download/v1.24.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
 ```
 
-### CURL请求网页报错缺少CA证书
+### 4、CURL请求网页报错缺少CA证书
 
 #### 报错：
 
@@ -485,7 +485,7 @@ If this HTTPS server uses a certificate signed by a CA represented in
 
 
 
-### Docker内tomcat容器启动后无法访问页面
+### 5、Docker内tomcat容器启动后无法访问页面
 
 #### 问题：
 
@@ -496,7 +496,7 @@ If this HTTPS server uses a certificate signed by a CA represented in
 
 - webapps目录中为空，没有任何文件，故找不到页面
 
-#### 解决办法
+#### 解决办法：
 
 1. 如果映射`webapps`了文件夹到本地，那么需要copy容器中`/usr/local/tomcat/webapps.dist`中的文件到本地webapps中
 
@@ -517,4 +517,37 @@ cp /usr/local/tomcat/webapps.dist/* /usr/local/tomcat/webapps
 exit
 # 重启容器
 ```
+
+
+
+### 6、Nginx升级或者编译报错‘ngx_http_headers_in_t’ has no member named ‘cookies’
+
+#### 相关链接
+
+[Nginx升级报错](https://ask.csdn.net/questions/7825247)
+
+#### 问题：
+
+- Nginx 版本 1.23.*
+
+- Nginx编译升级时报错
+
+```
+In file included from /usr/include/dlfcn.h:25:0,
+from src/os/unix/ngx_linux_config.h:58,
+from src/core/ngx_config.h:26,
+from /root/aac/nginx-1.23.2/headers-more-nginx-module/src/ddebug.h:5,
+from /root/aac/nginx-1.23.2/headers-more-nginx-module/src/ngx_http_headers_more_headers_in.c:10:
+/root/aac/nginx-1.23.2/headers-more-nginx-module/src/ngx_http_headers_more_headers_in.c:162:18: error: ‘ngx_http_headers_in_t’ has no member named ‘cookies’
+```
+
+#### 问题原因：
+
+- ‘headers-more-nginx-module’模块的代码是以前留存的，不是最新的，在Nginx 1.23这个版本对代码不兼容
+
+#### 解决方案
+
+​	1.继续使用1.23.2进行编译，你需要去“headers-more-nginx-module”拉去最新的代码，作者最新代码已经修复了这个问题
+
+​	2.继续使用你手中的代码编译，目标版本使用Stable version的版本nginx-1.22.1,因为BUG是1.23.0引入的
 
