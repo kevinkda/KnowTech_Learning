@@ -1450,6 +1450,59 @@ key_len计算规则：
 
 
 
+### 7、10个高级SQL写法
+
+![image-20230320173713241](upload/image-20230320173713241.png)
+
+#### ORDER BY FIELD()自定义排序逻辑
+
+​	MySQL中的排序ORDER BY 除了可以用 ASC 和 DESC，还可以用 **ORDER BY FIELD(str,str1,…)** 来自定义字符串/数字来实现排序。
+
+```sql
+select * 
+from order_diy 
+order by field(title,'九阴真经', 
+'降龙十八掌','九阴白骨爪','双手互博','桃花岛主',
+'全真内功心法','蛤蟆功','销魂掌','灵白山少主')
+```
+
+​	如上，设置的自定义排序字段为 title，然后将自定义排序结果跟在title之后
+
+#### CASE 表达式
+
+​	**[ case when then else end ]** 表达式功能非常强大，可以帮助我们解决 **if else if** 这类问题。例如，在order_diy 表中加一列 level ，根据 money 判断大于 60 是高级，大于 30 是中级，其余为低级
+
+```sql
+select *,
+case when money > 60 then ‘高级’
+when money > 30 then '中级'
+else '低级' end level
+from order_diy
+```
+
+#### EXISTS 用法
+
+​	exists 后面跟着的是一个子查询语句，他的作用是根据著查询的数据，每一行都放到子查询中做条件验证，根据验证结果(true or flase)，true的话这一行就会保留。
+
+![image-20230320175651600](upload/image-20230320175651600.png)
+
+例如，想要找到 emp 表中 dept_name 与 dept 表中 dept_name 对应不上的员工数据，也就是 emp 表中第二行记录
+
+```sql
+select *
+from emp e
+where exists (
+	select *
+    from dept p
+    where p.dept_id = e.dept_id
+    and p.dept_name != e.dept_name
+);
+```
+
+
+
+
+
 ## 四、Linux方面
 
 [VMwear安装Centos7](https://www.jianshu.com/p/ce08cdbc4ddb?utm_source=tuicool&utm_medium=referral)
