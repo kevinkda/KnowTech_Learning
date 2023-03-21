@@ -1452,7 +1452,7 @@ key_len计算规则：
 
 ### 7、10个高级SQL写法
 
-![image-20230320173713241](upload/image-20230320173713241.png)
+![image-20230320173713241](https://image.kevinkda.cn/md/image-20230321195750672.png)
 
 #### ORDER BY FIELD()自定义排序逻辑
 
@@ -1484,9 +1484,9 @@ from order_diy
 
 ​	exists 后面跟着的是一个子查询语句，他的作用是根据著查询的数据，每一行都放到子查询中做条件验证，根据验证结果(true or flase)，true的话这一行就会保留。
 
-![image-20230320175651600](upload/image-20230320175651600.png)
+![image-20230320175651600](https://image.kevinkda.cn/md/image-20230320173713241.png)
 
-例如，想要找到 emp 表中 dept_name 与 dept 表中 dept_name 对应不上的员工数据，也就是 emp 表中第二行记录
+​	例如，想要找到 emp 表中 dept_name 与 dept 表中 dept_name 对应不上的员工数据，也就是 emp 表中第二行记录
 
 ```sql
 select *
@@ -1498,6 +1498,20 @@ where exists (
     and p.dept_name != e.dept_name
 );
 ```
+
+​	通过 exists 语法将外层 emp 表全部数据放到子查询中一一与 dept 表中得全部数据进行比较，只要有一行记录返回true，主查询与子查询交互过程如下所示
+
+![image-20230321195750672](https://image.kevinkda.cn/md/image-20230320175651600.png)
+
+- 第一条记录与子查询比较时，全部返回false。所以第一行不展示。
+- 第二行记录与子查询比较时，发现 `销售部们` 与 dept 表中第二行 `销售部` 对应不上，返回true，所以这条主查询得记录会返回。
+- 后面得记录同样执行以上得步骤
+
+#### GROUP_CONCAT(expr) 组连接函数
+
+​	组链接函数可以返回分组后指定字段得字符串连接形式，并且可以指定排序逻辑，以及连接字符串，默认为英文逗号连接。
+
+
 
 
 
