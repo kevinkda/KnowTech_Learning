@@ -480,34 +480,12 @@ show columns from tableName;
 - 创建数据表
 
 ```mysql
+-- DEFAULT 1：设置字段默认值
 create table test(
 `id` int NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT ‘主表id’,
 `name` string NOT NULL COMMENT ‘名称’
+`age` int NULL DEFAULT 18 COMMENT '年龄'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-```
-
-- 删除数据表
-
-```mysql
-drop table test;
-```
-
-- 清空数据表记录
-
-```mysql
--- 这种方式不会重置自动递增的id
-delete from test;
--- 这种方式则会重置自动递增的id
-truncate table test;
-```
-
-- 增加字段
-
-```mysql
--- 增加一个字段：
-alter table tabelName add column fieldName dateType;
--- 增加多个字段：
-alter table tabelName add column fieldName1 dateType,add columns fieldName2 dateType;
 ```
 
 - 创建临时表
@@ -530,7 +508,43 @@ create table table2 select * from table1;
 create table table2 select * from table1 where 1<>1;
 ```
 
-- 修改列的类型
+- 删除数据表
+
+```mysql
+drop table test;
+```
+
+- 修改数据表名
+
+```mysql
+-- ALTER TABLE <旧表名> RENAME TO <新表名>；
+alter talbe oldTableName reanme to newTalbeName；
+```
+
+- 清空数据表记录
+
+```mysql
+-- 这种方式不会重置自动递增的id
+delete from test;
+-- 这种方式则会重置自动递增的id
+truncate table test;
+```
+
+- 增加字段
+
+```mysql
+-- 增加一个字段：
+alter table tabelName add column fieldName dateType;
+-- 增加多个字段：
+alter table tabelName add column fieldName1 dateType,add columns fieldName2 dateType;
+-- 增加一个字段并指定在哪个字段之后
+-- FIRST 和 AFTER 为可选参数
+-- FIRST：将新添加的字段设置为表的第一个字段
+-- AFTER：将新添加的字段添加到指定的已存在的字段名的后面
+alter table tableName add column fieldName1 dateType after fieldNmae2;
+```
+
+- 修改字段
 
 ```mysql
 -- 修改列id的类型为int unsigned
@@ -538,6 +552,15 @@ alter table table1 modify id int unsigned;
 -- 修改列id的名字为sid，而且把属性修改为int unsigned
 alter table table1 change id sid int unsigned;
 ```
+
+- 删除字段
+
+```mysql
+-- ALTER TABLE <表名> DROP <字段名>；
+alter table tableName drop name;
+```
+
+
 
 
 
@@ -1322,7 +1345,7 @@ end open_pluggable_db;
 
 
 
-### 6、MySQL-Explain详解
+### 6、MySQL Explain详解(SQL调优)
 
 #### Explain介绍
 
@@ -1510,8 +1533,6 @@ where exists (
 #### GROUP_CONCAT(expr) 组连接函数
 
 ​	组链接函数可以返回分组后指定字段得字符串连接形式，并且可以指定排序逻辑，以及连接字符串，默认为英文逗号连接。
-
-
 
 
 
