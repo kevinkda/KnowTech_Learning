@@ -1543,7 +1543,7 @@ order by null;
 
 ​	查询结果：
 
-![image-20230324144611148](upload/image-20230324144611148.png)
+![image-20230324144611148](https://image.kevinkda.cn/md/image-20230324144611148.png)
 
 ​	通过 `group_conncat(title order by id desc separator '-')` 语句，指定分组链接title字段，并且按照 id 排序，设置连接字符串为 `-`
 
