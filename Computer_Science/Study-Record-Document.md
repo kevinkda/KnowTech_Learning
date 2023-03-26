@@ -1532,7 +1532,24 @@ where exists (
 
 #### GROUP_CONCAT(expr) 组连接函数
 
-​	组链接函数可以返回分组后指定字段得字符串连接形式，并且可以指定排序逻辑，以及连接字符串，默认为英文逗号连接。
+​	组连接函数可以返回分组后指定字段得字符串连接形式，并且可以指定排序逻辑，以及连接字符串，默认为英文逗号连接。
+
+```mysql
+select name,group_conncat(title order by id desc separator '-')
+from order_diy
+group by name
+order by null;
+```
+
+​	查询结果：
+
+![image-20230324144611148](upload/image-20230324144611148.png)
+
+​	通过 `group_conncat(title order by id desc separator '-')` 语句，指定分组链接title字段，并且按照 id 排序，设置连接字符串为 `-`
+
+#### 自连接查询
+
+​	自连接查询是比较常用的查询，可以轻松解决很多问题。这里具体的表结构和数据如下。
 
 
 
