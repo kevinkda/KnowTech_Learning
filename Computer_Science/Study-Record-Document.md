@@ -1158,6 +1158,7 @@ create user tssh identified by "XXXXX" default tablespace TSSH_15_DATA_MIN tempo
 - 更改用户密码
 
 ```sql
+-- 如果密码带有字符需要加上双引号
 alter user pdb identified by 321
 ```
 
