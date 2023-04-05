@@ -1219,6 +1219,25 @@ alter user testrac password expire;
 select username,account_status from dba_users where oracle_maintained='N';
 ```
 
+- 查看用户所属的profile
+
+```sql
+SELECT username,PROFILE FROM dba_users;
+```
+
+- 查看指定概要文件(default)的密码有效期设置
+
+```sql
+SELECT * FROM dba_profiles s WHERE s.profile='DEFAULT' AND resource_name='PASSWORD_LIFE_TIME';
+```
+
+- 修改密码有效期
+
+```sql
+-- 影响所有用户
+ALTER PROFILE DEFAULT LIMIT PASSWORD_LIFE_TIME UNLIMITED;
+```
+
 
 
 ##### 权限相关
@@ -1478,7 +1497,7 @@ key_len计算规则：
 
 ![image-20230320173713241](https://image.kevinkda.cn/md/image-20230321195750672.png)
 
-#### ORDER BY FIELD()自定义排序逻辑
+#### ORDER BY FIELD() - 自定义排序逻辑
 
 ​	MySQL中的排序ORDER BY 除了可以用 ASC 和 DESC，还可以用 **ORDER BY FIELD(str,str1,…)** 来自定义字符串/数字来实现排序。
 
@@ -1531,7 +1550,7 @@ where exists (
 - 第二行记录与子查询比较时，发现 `销售部们` 与 dept 表中第二行 `销售部` 对应不上，返回true，所以这条主查询得记录会返回。
 - 后面得记录同样执行以上得步骤
 
-#### GROUP_CONCAT(expr) 组连接函数
+#### GROUP_CONCAT(expr) - 组连接函数
 
 ​	组连接函数可以返回分组后指定字段得字符串连接形式，并且可以指定排序逻辑，以及连接字符串，默认为英文逗号连接。
 
@@ -1551,6 +1570,109 @@ order by null;
 #### 自连接查询
 
 ​	自连接查询是比较常用的查询，可以轻松解决很多问题。这里具体的表结构和数据如下。
+
+![image-20230403104806400](upload/image-20230403104806400.png)
+
+​	tree 表中通过 pid 和 id 进行父子级关联。如果现在需要按照父子级层级将 tree 表数据转换成 `一级职位 二级职位 三级职位` 三个列名进行展示，sql如下：
+
+```sql
+select t1.job_name '一级职位',
+	   t2.job_name '二级职位',
+	   t3.job_name '二级职位'
+from tree t1 join tree t2 on t1.id = t2.pid
+     left join tree t3 on t2.id = t3.pid
+where t1.pid = 0;
+```
+
+![image-20230403105701095](upload/image-20230403105701095.png)
+
+​	通过 `tree t1 join tree t2 on t1.id = t2.pid` 自连接 展示 `一级职位 二级职位`，再用 `left join tree t3 on t2.id = t3.pid` 自连接展示 `二级职位 三级职位`，最后通过 `where t1.pid = 0` 过滤非一级职位的展示。
+
+#### 更新 emp 表和 dept 表关联数据
+
+​	数据继续使用上面的 emp 表和 dept 表
+
+![image-20230403114927979](upload/image-20230403114927979.png)
+
+​		从表数据中可以看到 emp 表中的 jack 的部门名称和 dept 表中的部门名称不相符，现有需求需要将 jack 的部门名称更新成 dept  表中正确的名称，sql如下。
+
+```sql
+update emp, dept set emp.dept_name = dept.dept_name where emp.dept_id = dept.id;
+```
+
+![image-20230403142157376](upload/image-20230403142157376.png)
+
+​	sql中直接关联 emp 表和 dept 表并设置关联条件，然后更新 emp 表的 dept_name 为 dept 表中的 dept_name。
+
+#### ORDER BY - 空值 NULL 排序
+
+​	order by 子句中可以跟要排序的字段名称，但是当字段中存在 null 值得时候，会对排序结果造成影响。我们可以通过 `order by if(isnull(title), 1, 0)` 语法将 null 值转换成0或者1，来达到将null值放到最前面还是最后面进行排序的效果。这里继续用 order_diy 表举例，sql 如下：
+
+```sql
+select * from order_diy order by if(isnull(title), 1, 0), money
+```
+
+![image-20230403143617384](upload/image-20230403143617384.png)
+
+#### with rollup - 分组统计数据的基础上再进行统计汇总
+
+​	MySQL 中使用 with rollup 再分组统计数据的基础上再进行统计汇总，即用来得到 group by 的汇总信息，这里数据继续使用 order_diy 表举例，sql如下
+
+![image-20230403161717626](upload/image-20230403161717626.png)
+
+```mysql
+select name, sum(money) as money
+from order_diy group by name with rollup;
+```
+
+![image-20230403160059275](upload/image-20230403160059275.png)
+
+​	通过 `group by name with rollup` 语句，查询结果最后一列显示了分组统计的汇总结果。但是 name 字段汇总后显示为 null，我们可以通过 `coalesce(value…)` 比较函数，返回第一个非空参数。
+
+```mysql
+select coalesce(name, '总金额') name, sum(money) as money
+from order_diy group by name with rollup;
+```
+
+![image-20230403160250104](upload/image-20230403160250104.png)
+
+#### with as - 提取临时表别名
+
+​	with as 语法需要 MySQL 8.0+ 以上的版本，其作用主要是提取子查询，方便后续共用，更多的使用在数据分析的场景上。
+
+​	如果一整个查询语句中，多个子查询都需要使用同一个子查询的结果，那么就可以用 with as，将共用的子查询语句提取出来，加上别名。后续的查询语句可以直接使用，对于大量复杂的sql起到了优化作用。这里继续使用 order_diy 表进行举例，sql如下。
+
+![image-20230403161709749](upload/image-20230403161709749.png)
+
+```mysql
+with t1 as (select * from order_diy where money > 30)
+     t2 as (select * from order_diy where money > 60)
+select * from t1
+where t1.id not in (select id from t2) and t1.name = '周伯通';
+```
+
+![image-20230403161835692](upload/image-20230403161835692.png)
+
+​	这个sql查询的是 order_diy 表中 money 大于 30 但是小于 60 之间并且 name 是周伯通的数据。
+
+#### 存在就更新，不存在就插入
+
+MySQL 中通过 `on duplicate key update` 语法来是实现存在就更新，不存在就插入的逻辑。插入或者更新时，他会根据**表中主键索引或者唯一索引进行判断**，**如果主键索引或者唯一索引有冲突**，就会执行 `on duplicate key update` 后面的复制语句。这里通过 news 表距离，结构和数据如下，news_code 字段有唯一索引：
+
+![image-20230403164809819](upload/image-20230403164809819.png)
+
+```mysql
+-- 第一次执行添加语句
+insert into `news` ('news_title', 'news_auth', 'news_code')
+values ('新闻3', '小花', 'wx-003')
+on duplicate update news_title = '新闻3'
+-- 第二次执行修改语句
+insert into `news` ('news_title', 'news_auth', 'news_code')
+values ('新闻4', '小花', 'wx-003')
+on duplicate update news_title = '新闻4'
+```
+
+![image-20230403170326150](upload/image-20230403170326150.png)
 
 
 
