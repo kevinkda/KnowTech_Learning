@@ -1676,6 +1676,46 @@ on duplicate update news_title = '新闻4'
 
 
 
+### 8、修改ORACLE单个用户密码过期策略
+
+#### 相关链接
+
+[修改ORACLE密码过期策略](https://blog.csdn.net/weixin_42609714/article/details/124457520)
+
+#### 方案
+
+```sql
+-- ################ 修改单个用户密码过期策略
+-- 查看profile
+select profile,resource_name,limit from dba_profiles;
+select * from dba_profiles where profile='PASSWORD_UNLIMIT_PROFILE';
+-- 查看用户所属profile
+select username,profile from dba_users;
+-- 创建profile
+CREATE PROFILE "PASSWORD_UNLIMIT_PROFILE" LIMIT
+ COMPOSITE_LIMIT UNLIMITED
+ SESSIONS_PER_USER UNLIMITED
+ CPU_PER_SESSION UNLIMITED
+ CPU_PER_CALL UNLIMITED
+ LOGICAL_READS_PER_SESSION UNLIMITED
+ LOGICAL_READS_PER_CALL UNLIMITED
+ IDLE_TIME UNLIMITED
+ CONNECT_TIME UNLIMITED
+ PRIVATE_SGA UNLIMITED
+ FAILED_LOGIN_ATTEMPTS 10
+ PASSWORD_LIFE_TIME	180
+ PASSWORD_REUSE_TIME UNLIMITED
+ PASSWORD_REUSE_MAX	UNLIMITED
+ PASSWORD_VERIFY_FUNCTION NULL
+ PASSWORD_LOCK_TIME 1
+ PASSWORD_GRACE_TIME 7
+ INACTIVE_ACCOUNT_TIME UNLIMITED;
+-- 修改profile密码过期时间
+ALTER profile PASSWORD_UNLIMIT_PROFILE limit PASSWORD_LIFE_TIME UNLIMITED;
+-- 修改用户所属profile
+ALTER user SVC_CONFLUENCE profile PASSWORD_UNLIMIT_PROFILE;
+```
+
 
 
 ## 四、Linux方面
