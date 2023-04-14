@@ -551,3 +551,26 @@ from /root/aac/nginx-1.23.2/headers-more-nginx-module/src/ngx_http_headers_more_
 
 ​	2.继续使用你手中的代码编译，目标版本使用Stable version的版本nginx-1.22.1,因为BUG是1.23.0引入的
 
+
+
+### 解决Elasticsearch启动报错：node settings must not contain any index level settings
+
+#### 相关链接
+
+[解决ES启动报错](https://blog.csdn.net/Netceor/article/details/114077382)
+
+#### 问题
+
+- 启动Elasticsearch时报错导致启动失败：node settings must not contain any index level settings
+
+#### 问题原因
+
+- 在5.0以上版本[Elasticsearch](https://so.csdn.net/so/search?q=Elasticsearch&spm=1001.2101.3001.7020)中不支持包含任何索引级别设置。也就是不支持在elasticsearch.yml中配置index.xxx的语句
+
+- 错误是在安装ES的插件IK分词器中出现的，原因是我看到有些博客说要添加index.analysis.analyzer.ik.type : “ik”的语句，重启后会导致这种错误。
+
+#### 解决方案
+
+1.打开es的config目录下的elasticsearch.yml文件
+
+2.删除 `index.analysis.analyzer.ik.type : “ik”` 这一段
