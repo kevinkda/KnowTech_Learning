@@ -553,7 +553,7 @@ from /root/aac/nginx-1.23.2/headers-more-nginx-module/src/ngx_http_headers_more_
 
 
 
-### 解决Elasticsearch启动报错：node settings must not contain any index level settings
+### 7、解决Elasticsearch启动报错：node settings must not contain any index level settings
 
 #### 相关链接
 
@@ -574,3 +574,19 @@ from /root/aac/nginx-1.23.2/headers-more-nginx-module/src/ngx_http_headers_more_
 1.打开es的config目录下的elasticsearch.yml文件
 
 2.删除 `index.analysis.analyzer.ik.type : “ik”` 这一段
+
+
+
+### 8、记录一次Confluence跨域问题
+
+#### Problems in Installation
+
+##### Application Version
+
+- 8.1+
+
+1. 网络跨域问题
+   1. 因为给confluence配置了nginx，最开始，confluence可通过HTTP+IP+端口和HTTPS+域名+端口访问，结合日志里的CORS报错内容，判断出，两种访问方式只有一种可以成功并且正常使用confluence，这取决于nginx的配置。
+   2. Confluence 现仅可通过公网域名及HTTPS进行访问，否则跨域导致内容无法加载
+   3. HTTP+IP+端口、HTTPS+域名+端口，这两种访问方式即为两个域，如果用HTTP+IP+端口去使用confluence会导致请求转发到 HTTPS+域名+端口 这里，导致跨域；
+   4. Crowd HTTPS问题暂未解决，需使用HTTP走公网域名进行用户目录挂载；
