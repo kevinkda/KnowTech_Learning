@@ -562,8 +562,6 @@ alter table tableName drop name;
 
 
 
-
-
 ##### 数据库相关
 
 - 创建数据库
@@ -616,6 +614,8 @@ mysqldump --opt news author article > author.article.sql
 
 # 将数据库dbl和db2备份到news.sql文件
 mysqldump --databases db1 db2 > news.sql
+# 使用指定账号导出数据库
+mysqldump --databases db1 db2 > news.sql -uroot -p
 
 # 就是把host上的以名字user，口令pass的数据库dbname导入到文件file.dump中
 mysqldump -h host -u user -p pass --databases dbname > file.dump
@@ -632,6 +632,16 @@ mysqldump --all-databases > all-databases.sql
 mysql < all-databases.sql
 -- 导入表
 mysql > source news.sql;
+```
+
+
+
+##### Binlog相关
+
+- 查看某一个binlog的某一个节点的数据
+
+```shell
+mysqlbinlog --no-defaults -v -v --base64-output=decode-rows ./mysql-bin.000062 | grep -A 30 "230666661" --color
 ```
 
 
