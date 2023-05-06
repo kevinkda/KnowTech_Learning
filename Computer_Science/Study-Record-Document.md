@@ -250,6 +250,12 @@ git log --pretty=tformat: --numstat | awk '{add += $1; subs += $2;loc+=$1 - $2} 
 
 
 
+### 5、查看Windows电脑电池使用报告
+
+- 以管理员方式运行CMD
+- 执行命令`powercfg /batteryreport /output C:/Users/AlanHuang/Desktop/battery_report.html`
+- 前往桌面查看battery_report.html文件
+
 
 
 ## 三、数据库
@@ -3095,3 +3101,101 @@ ADD ./store*.jar /app.jar
 ENTRYPOINT ["sh","-c","java -jar $JAVA_OPTS /app.jar $PARAMS"]
 ```
 
+
+
+### 23、Docker固定容器IP
+
+#### 为已存在的容器固定IP
+
+如果需要为已经存在的容器指定IP地址，则可以通过以下步骤操作：
+
+1. 创建一个新的固定IP网络
+
+首先，需要使用以下命令创建一个新的固定IP网络。在这个例子中，我们将网络名设置为 "mynetwork"，IP地址范围为 "192.168.0.0/24"，默认网关为 "192.168.0.1"：
+
+```shell
+docker network create --subnet=192.168.0.0/24 --gateway=192.168.0.1 --ip-range=192.168.0.2/24 -d bridge mynetwork
+```
+
+2. 将容器加入新网络
+
+然后，将需要指定IP地址的容器加入这个新网络。使用以下命令将容器 "mycontainer" 加入到 "mynetwork" 网络中，并分配IP地址 "192.168.0.100"：
+
+```shell
+docker network connect --ip=192.168.0.100 mynetwork mycontainer
+```
+
+现在，容器 "mycontainer" 将在 "mynetwork" 网络中，它的IP地址为 "192.168.0.100"。
+
+请注意，如果容器已加入一个Docker网络中，则必须首先将其从该网络中删除，然后再将其加入到新网络中。使用以下命令将容器从当前Docker网络中删除：
+
+```shell
+docker network disconnect bridge mycontainer
+```
+
+然后再使用上面的命令将容器加入新网络中。
+
+最后，如果不再需要旧网络，则可以使用以下命令删除它：
+
+```shell
+docker network rm old_network
+```
+
+#### Docker Compose中定义容器的IP地址
+
+使用networks设置固定IP地址
+
+可以使用Docker Compose的networks设置容器的固定IP地址。例如，使用以下配置文件定义一个名为myapp的服务，并将其IP地址设置为192.168.0.100：
+
+```yml
+version: '3'
+services:
+  myapp:
+    build: .
+    networks:
+      mynetwork:
+        ipv4_address: 192.168.0.100
+networks:
+  mynetwork:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.0/24
+```
+
+在这个配置文件中，使用了Docker Compose的networks设置一个名为mynetwork的网络，并将其IP地址设置为192.168.0.100。然后，在myapp服务中，将networks参数设置为mynetwork，将myapp容器加入到这个网络中，并设置它的IP地址为192.168.0.100。最后，IPAM（IP地址管理）配置了一个IP地址段为192.168.0.0/24的子网，以供该网络使用。
+
+#### Dockerfile中设置IP地址
+
+另一种设置容器IP地址的方法是，在Dockerfile中设置IP地址。可以使用ENV命令设置容器的IP地址变量，然后以这个变量为参数启动容器。例如：
+
+Dockerfile:
+
+```dockerfile
+FROM ubuntu
+ENV MY_IP 192.168.0.100
+CMD ["/bin/bash", "-c", "echo My IP address is $MY_IP"]
+```
+
+docker-compose.yml:
+
+```yml
+version: '3'
+services:
+  myapp:
+    build: .
+    command: /bin/bash -c "echo My IP address is $MY_IP"
+```
+
+在这个例子中，Dockerfile中定义了一个名为MY_IP的变量，并设置为192.168.0.100。然后，在docker-compose.yml文件中，使用command参数启动容器，并将MY_IP变量替换到命令中。这样，在容器启动时就可以看到应该输出的IP地址了。
+
+#### 使用命令指定容器IP
+
+地址，可以使用Docker的--ip参数指定容器的IP地址。例如，使用以下命令运行一个名为mycontainer的容器，并将其IP地址设为192.168.0.100：
+
+```shell
+docker run -d --name=mycontainer --ip=192.168.0.100 myimage
+```
+
+请注意，此选项仅在使用Docker网络时才有效。如果容器未连接到Docker网络，则无法使用--ip选项指定IP地址。
