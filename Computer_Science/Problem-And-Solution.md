@@ -590,3 +590,23 @@ from /root/aac/nginx-1.23.2/headers-more-nginx-module/src/ngx_http_headers_more_
    2. Confluence 现仅可通过公网域名及HTTPS进行访问，否则跨域导致内容无法加载
    3. HTTP+IP+端口、HTTPS+域名+端口，这两种访问方式即为两个域，如果用HTTP+IP+端口去使用confluence会导致请求转发到 HTTPS+域名+端口 这里，导致跨域；
    4. Crowd HTTPS问题暂未解决，需使用HTTP走公网域名进行用户目录挂载；
+
+
+
+### 9、MySQL报错：配置文件“/etc/mysql/my.cnf”被忽略
+
+#### 问题：
+
+- MySQL日志中提示：`World-writable config file '/etc/mysql/my.cnf' is ignored`
+
+#### 问题原因：
+
+- 大概意思是权限全局可写，任何一个用户都可以写。mysql担心这种文件被其他用户恶意修改，所以忽略掉这个配置文件。导致无法进入，这也是mysql的安全机制之一。所以我们必须得改一些权限。设置其他用户不可写。
+
+#### 解决方案：
+
+```shell
+# 执行下方命令，然后重启MySQL
+chmod 644 /etc/my.cnf
+```
+

@@ -138,17 +138,11 @@ $ cnpm run dev
 
 ​	如果客户请求不包含sessionID，则为此客户创建一个session并且生成一个与此session相关的sessionID，这个sessionID将在本次响应中返回给客户端保存。
 
-![img](C:/Users/AlanHuang/Desktop/image017(10-31-18-03-18).jpg)
-
 Session缓存优势明显，在日常开发过程中，大家基于这个优势，不可避免地存在session过度使用的情况，导致缓存未能正确清理，造成其他业务的误使用，从而引发一些业务问题，严重时可导致业务受理异常或业务数据不一致，比如下面的场景：
 
 ​	1、由于session缓存的生命周期较长，当操作员同时打开多个tab页时，A业务保存的缓存，B业务也能取到，被错误使用。只对某业务自己使用的信息，直接用同一个key来设值，被其他业务误用：
 
-![img](C:/Users/AlanHuang/Desktop/image018(10-31-18-03-18).jpg)
-
 ​	2、缓存使用完后未清理，或者在清理之前业务有异常导致未能正确清理缓存，会有多余的缓存信息残留，被其他业务错误使用。缓存使用完后应该及时清理，并且需要考虑在异常情况下是否也可以正确清理：
-
-![img](C:/Users/AlanHuang/Desktop/image019(10-31-18-03-18).jpg)
 
 ​	从使用session导致的问题看，严重时直接造成业务受理不正确，造成业务受理风险甚至生产故障，影响客户满意度。基于以上问题，在页面使用session的过程中，建议遵循以下原则：
 
@@ -193,6 +187,20 @@ public class Regular {
     }
 }
 ```
+
+
+
+### 3、机器学习
+
+
+
+### 4、深度学习
+
+#### 深度学习（DeepLearning, DL）定义于架构
+
+​	深度学习、属于机器学习的子类。它的灵感来源于人类大脑的工作方式，是利用深度神经网络来解决特征表达的一种学习过程。深度神经网络本身并非是一个全新的概念，可理解为包含多个隐含层的神经网络结构。
+
+
 
 
 
@@ -255,6 +263,76 @@ git log --pretty=tformat: --numstat | awk '{add += $1; subs += $2;loc+=$1 - $2} 
 - 以管理员方式运行CMD
 - 执行命令`powercfg /batteryreport /output C:/Users/AlanHuang/Desktop/battery_report.html`
 - 前往桌面查看battery_report.html文件
+
+
+
+### 6、MySQL免安装版初始化
+
+#### 相关链接
+
+[MySQL免安装版配置](https://juejin.cn/post/6854573215290359821)
+
+[MySQL8.0.33免安装版下载地址](https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-8.0.33-winx64.zip)
+
+#### 安装流程
+
+##### 安装目录下新建my.ini文件
+
+- 安装目录为`mysql`文件夹的顶级目录，安装目录下不要新建`data`文件夹，后续的服务配置会生成
+- 安装目录下新建`my.ini`文件，写入以下内容（记得修改其中的路径）
+
+```ini
+[client]
+# 设置mysql客户端默认字符集
+default-character-set=utf8
+ 
+[mysqld]
+# 设置3306端口
+port = 3306
+# 设置mysql的安装目录
+basedir=D:\my_tool\mysql-8.0.21-winx64\mysql-8.0.21-winx64
+# 设置 mysql数据库的数据的存放目录
+datadir=D:\my_tool\mysql-8.0.21-winx64\mysql-8.0.21-winx64\data
+# 允许最大连接数
+max_connections=20
+# 服务端使用的字符集默认为8比特编码的latin1字符集
+character-set-server=utf8
+# 创建新表时将使用的默认存储引擎
+default-storage-engine=INNODB
+```
+
+##### 配置环境变量
+
+- 配置环境变量 `path` ，将安装目录下的 `bin` 目录配置到 `path` 中。
+- 即，例如 `mysql` 安装目录为 `D:\mysql` ，那么则配置成 `D:\mysql\bin`
+
+##### 启动CMD
+
+- 进入mysql安装目录下的bin目录
+
+```powershell
+cd D:\mysql\bin
+```
+
+- 将MySQL加入到Windows的服务中
+
+```shell
+mysqld --install
+```
+
+- 初始化数据库(初始化成功后会创建data文件夹、最后一行是生成的初始用户名和密码)
+
+```shell
+mysqld --initialize --user=root --console
+```
+
+- 启动mysql服务
+
+```shell
+net start mysql
+```
+
+- 进入MySQL修改初始密码
 
 
 
@@ -445,9 +523,11 @@ CREATE USER 'test1'@'localhost' IDENTIFIED BY 'test1';
 grant all on *.* to 'weihu'@'%' with grant option;
 -- 创建用户并赋予权限
 grant select on 数据库.* to 用户名@登录主机 identified by "密码"
+
 -- 增加一个用户test密码为123，让他可以在任何主机上登录， 并对所有数据库有查询、插入、修改、删除的权限。
 grant select,insert,update,delete on *.* to test Identified by "123";
 -- 增加一个管理员用户
+-- 如果报错最好使用先创建普通用户，然后去赋予管理员权限的方式
 grant all on *.* to user@localhost identified by "password";
 -- 最后刷新权限
 flush privileges;
@@ -1409,28 +1489,7 @@ set pause 'Press <Enter> to continue'
 
 
 
-
-
-### 5、 Oracle 19C设置PDB自启动
-
-在Oracle 19c中，在启动CDB的时候，PDB 是不会自动启动的，所以每次都要手工启动，故可以使用触发器的方式实现PDB开机自启
-
-```sql
--- 首先使用管理员账号连接sqlplus
-sqlplus / as sysdba
--- 创建触发器
-create or replace trigger open_pluggable_db
--- 写入触发器内容(直接粘贴)
-after startup 
-on database
-begin
-   execute immediate 'alter pluggable database all open';
-end open_pluggable_db;
-```
-
-
-
-### 6、MySQL Explain详解(SQL调优)
+### 5、MySQL Explain详解(SQL调优)
 
 #### Explain介绍
 
@@ -1558,7 +1617,7 @@ key_len计算规则：
 
 
 
-### 7、10个高级SQL写法
+### 6、10个高级SQL写法
 
 ![image-20230320173713241](https://image.kevinkda.cn/md/image-20230321195750672.png)
 
@@ -1741,7 +1800,7 @@ on duplicate update news_title = '新闻4'
 
 
 
-### 8、修改ORACLE单个用户密码过期策略
+### 7、修改ORACLE单个用户密码过期策略
 
 #### 相关链接
 
@@ -3111,10 +3170,10 @@ ENTRYPOINT ["sh","-c","java -jar $JAVA_OPTS /app.jar $PARAMS"]
 
 1. 创建一个新的固定IP网络
 
-首先，需要使用以下命令创建一个新的固定IP网络。在这个例子中，我们将网络名设置为 "mynetwork"，IP地址范围为 "192.168.0.0/24"，默认网关为 "192.168.0.1"：
+首先，需要使用以下命令创建一个新的固定IP网络。在这个例子中，我们将网络名设置为 "mynetwork"，IP地址范围为 "172.100.0.2/16"，默认网关为 "172.100.0.1"：
 
 ```shell
-docker network create --subnet=192.168.0.0/24 --gateway=192.168.0.1 --ip-range=192.168.0.2/24 -d bridge mynetwork
+docker network create --subnet=172.100.0.0/16 --gateway=172.100.0.1 --ip-range=172.100.0.2/16 -d bridge container-network
 ```
 
 2. 将容器加入新网络
@@ -3199,3 +3258,33 @@ docker run -d --name=mycontainer --ip=192.168.0.100 myimage
 ```
 
 请注意，此选项仅在使用Docker网络时才有效。如果容器未连接到Docker网络，则无法使用--ip选项指定IP地址。
+
+
+
+### 24、为Linux系统配置静态IP地址
+
+#### 详细步骤
+
+```shell
+# 编辑的配置文件需要对应到网卡
+# 即你要固定ens33这张网卡的ip，那么就把下方命令替换成vim /etc/sysconfig/network-scripts/ifcfg-ens33
+vim /etc/sysconfig/network-scripts/ifcfg-{网卡名}
+```
+
+#### 配置文件内容
+
+```properties
+# 修改：将dhcp修改为static，修改后为BOOTPROTO=static
+BOOTPROTO="static"
+# 修改为yes, 网卡开机自启动
+ONBOOT=yes
+# 新增：配置静态IP地址，按需配置
+IPADDR="xxx.xxx.xxx.xxx"
+# 新增：配置子网掩码
+NETMASK="255.xxx.xxx.xxx"
+# 新增：配置网关
+GATEWAY="xxx.xxx.xxx.xxx"
+# 新增：配置DNS
+DNS1="xxx.xxx.xxx.xxx"
+```
+
