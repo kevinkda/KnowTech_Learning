@@ -2,9 +2,9 @@
 
 [toc]
 
-## 一、代码
+## 一、Develop
 
-### 1、前端
+### 1、Node.js 相关
 
 #### nodeJS 的 npm 设置国内高速镜像之淘宝镜像的方法
 
@@ -26,9 +26,13 @@
 5、备注：
 　　NPM = NodeJS Package Manager
 
-#### Vue
+### 建议安装的包
 
-##### 项目构建
+- nrm：镜像源管理工具
+- create-react-app：react项目创建工具
+- vue-cli：Vue.js 开发的标准工具
+
+### 2、Vue项目构建
 
 ```bash
 # 全局安装 vue-cli
@@ -71,7 +75,7 @@ $ cnpm run dev
 
 
 
-##### 一些常用的依赖
+#### 一些常用的依赖
 
 - `npm config set registry https:*//registry**.npm**.taobao**.org*`  更换源至淘宝
 - `npm install-g cnpm --registry=https://registry.npm.taobao.org ` 设置淘宝镜像
@@ -88,14 +92,14 @@ $ cnpm run dev
 
 
 
-##### 项目打包
+#### 项目打包
 
 `npm run build`
 执行完后会在项目中下生成`dist`目录，一般包含 index.html 文件及 static 目录，static 目录包含了静态文件 js、css 以及图片目录 images。
 
 
 
-##### 项目结构
+#### 项目结构
 
 | build        | 项目构建(webpack)相关代码                                    |
 | ------------ | ------------------------------------------------------------ |
@@ -111,15 +115,13 @@ $ cnpm run dev
 
 
 
-### 2、后端
-
-#### mod(%)取模运算符的算法
+### 3、后端mod(%)取模运算符的算法
 
 例如a % b
 
 ![image-20220909180024124](https://image.kevinkda.cn/md/image-20220909180024124.png)
 
-#### Spring boot 和 Spring Cloud 各个版本对应关系
+### 4、Spring boot 和 Spring Cloud 各个版本对应关系
 
 | spring cloud        | spring boot                                   |
 | ------------------- | --------------------------------------------- |
@@ -132,7 +134,7 @@ $ cnpm run dev
 
 
 
-#### 缓存技术之session缓存管控
+### 5、缓存技术之session缓存管控
 
 ​	Session是服务器端使用的一种记录客户端状态的机制，一般Session存储在服务器的内存中，tomcat的StandardManager类将session存储在内存中；客户端只保存sessionID到cookie中，而不会保存session，session销毁只能通过invalidate或超时（默认30分钟），关掉浏览器并不会关闭session。当程序需要为某个客户端的请求创建一个session时，服务器首先检查这个客户端的请求里是否包含一个session标识（即sessionID）。如果已经包含一个sessionID说明以前已经为此客户端创建过session，服务器就按照sessionID把这个session检索出来使用。
 
@@ -156,7 +158,7 @@ Session缓存优势明显，在日常开发过程中，大家基于这个优势�
 
 
 
-#### 在Idea中打包项目
+### 6、在Idea中打包项目
 
 + 打开Project Structure界面(快捷键是F4或者F12)  选择Artifacts一栏
 + 点击＋号后选择`Web Application: Exploded`下的From Modules
@@ -168,7 +170,7 @@ Session缓存优势明显，在日常开发过程中，大家基于这个优势�
 
 
 
-#### Java中正则的妙用 - 组
+### 7、Java中正则的妙用 - 组
 
  *  PROCESSING_EMAIL_HTML_IMAGE_REGEX 常量中的每一个括弧为一个组
  *  PROCESS_EMAIL_HTML_IMAGE_REGEX_REPLACEMENT_PLACEHOLDER 常量中的$1 $3 $5代表上上面的第1个、第3个、第5个组
@@ -190,157 +192,11 @@ public class Regular {
 
 
 
-### 3、机器学习
+## 二、Database
 
 
 
-### 4、深度学习
-
-#### 深度学习（DeepLearning, DL）定义于架构
-
-​	深度学习、属于机器学习的子类。它的灵感来源于人类大脑的工作方式，是利用深度神经网络来解决特征表达的一种学习过程。深度神经网络本身并非是一个全新的概念，可理解为包含多个隐含层的神经网络结构。
-
-
-
-
-
-## 二、工具：
-
-### 1、Postman客户端中文设置
-
-+ 下载对应版本的 [app.zip](https://gitee.com/hlmd/PostmanCn/releases)
-+ 进入 Postman安装目录/版本/resources 目录
-+ 将app.zip 复制解压到resources中
-+ 重启Postman
-
-### 2、windows环境的Redis启动
-
-- 命令行窗口输入`redis-server.exe redis.windows.conf`
-- `Redis-cli.exe`用于连接客户端
-
-### 3、Git统计代码行数
-
-```shell
-git log --pretty=tformat: --numstat | awk '{add += $1; subs += $2;loc+=$1 - $2} END { printf "added lines: %s, removed lines: %s, total lines: %s\n", add,subs,loc}'
-```
-
-### 4、Git分支介绍及管理
-
-​	项目采用git flow开发规范
-
-#### main(生产分支)
-
-​	main分支是仓库的主分支，这个分支包含最近发布到生产环境的代码，最近发布的release，这个分支只能从其他分支合并，不能在这个分支直接修改。
-
-#### develop(开发分支)
-
-​	这个分支是我们的主开发分支，包含所有要发布到下一个release的代码，这个主要合并与其他分支，比如feature分支。
-
-#### feature(功能分支)
-
-​	feature分支主要是用来开发一个新的功能，一旦开发完成，直接合并回dev分支进入下一个release。
-
-#### release(发布分支)
-
-​	当你需要发布一个新功能的时候，要基于dev分支创建一个release分支，在release分支测试并修复bug，完成release后，把release合并到main和develop分支。
-
-#### hotfix(补丁分支)
-
-​	当我们在生产环境发现新的bug的时候，我们需要基于main分支创建一个hotfix分支，然后在hotfix分支上修复Bug，完成hotfix后，我们把hotfix分支合并回main和dev分支。
-
-#### 具体使用细节
-
-​	当我们新建git仓库之后，默认会创建一个主分支也就是main分支，由于main分支是用于发布生产环境，所有必须保证main上代码的稳定性，所以我们不能直接在main分支上修改提交。
-
-​	我们要基于main分支创建一个dev分支，dev分支用于保存开发好的相对稳定的功能，main分支和dev分支是仓库的常驻分支，一直会保留在仓库中;
-​	当新的开发任务来了之后，就要编写代码了，我们尽量不要在dev分支上写代码，要保证dev分支的相对稳定，所以这时我要就要基于dev 分支创建一个临时的开发分支 (feature)，然后在开发分支上编写代码等功能开发完之后我们再把开发分支合并到dev上;
-​	新功能合并到dev分支之后，我们想把新功能发布到生产环境，首先基于dev分支创建release分支，然后在release分支测试完成之后 (修复完上线前的bug)，把release分别合并到main分支和dev分支;release分支合并到main分支之后，在main分支上打标签用于发布;我们把代码发布到了生产环境，用户在使用的时候给我们反馈了一个bug，这时我们需要基于main分支创建一个hotfix 分支，用于修复bug，bug修好之后，把hotfix 分支分别合并到main分支和dev分支
-
-
-
-### 5、查看Windows电脑电池使用报告
-
-- 以管理员方式运行CMD
-- 执行命令`powercfg /batteryreport /output C:/Users/AlanHuang/Desktop/battery_report.html`
-- 前往桌面查看battery_report.html文件
-
-
-
-### 6、MySQL免安装版初始化
-
-#### 相关链接
-
-[MySQL免安装版配置](https://juejin.cn/post/6854573215290359821)
-
-[MySQL8.0.33免安装版下载地址](https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-8.0.33-winx64.zip)
-
-#### 安装流程
-
-##### 安装目录下新建my.ini文件
-
-- 安装目录为`mysql`文件夹的顶级目录，安装目录下不要新建`data`文件夹，后续的服务配置会生成
-- 安装目录下新建`my.ini`文件，写入以下内容（记得修改其中的路径）
-
-```ini
-[client]
-# 设置mysql客户端默认字符集
-default-character-set=utf8
- 
-[mysqld]
-# 设置3306端口
-port = 3306
-# 设置mysql的安装目录
-basedir=D:\my_tool\mysql-8.0.21-winx64\mysql-8.0.21-winx64
-# 设置 mysql数据库的数据的存放目录
-datadir=D:\my_tool\mysql-8.0.21-winx64\mysql-8.0.21-winx64\data
-# 允许最大连接数
-max_connections=20
-# 服务端使用的字符集默认为8比特编码的latin1字符集
-character-set-server=utf8
-# 创建新表时将使用的默认存储引擎
-default-storage-engine=INNODB
-```
-
-##### 配置环境变量
-
-- 配置环境变量 `path` ，将安装目录下的 `bin` 目录配置到 `path` 中。
-- 即，例如 `mysql` 安装目录为 `D:\mysql` ，那么则配置成 `D:\mysql\bin`
-
-##### 启动CMD
-
-- 进入mysql安装目录下的bin目录
-
-```powershell
-cd D:\mysql\bin
-```
-
-- 将MySQL加入到Windows的服务中
-
-```shell
-mysqld --install
-```
-
-- 初始化数据库(初始化成功后会创建data文件夹、最后一行是生成的初始用户名和密码)
-
-```shell
-mysqld --initialize --user=root --console
-```
-
-- 启动mysql服务
-
-```shell
-net start mysql
-```
-
-- 进入MySQL修改初始密码
-
-
-
-## 三、数据库
-
-
-
-### 1、修改账号远程登陆权限
+### 1、MySQL修改账号远程登陆权限
 
 - 方法一：
   - `use mysql;`
@@ -352,7 +208,7 @@ net start mysql
 
 
 
-### 2、MySQL管理：
+### 2、MySQL管理
 
 #### 优化相关建议
 
@@ -1842,7 +1698,77 @@ ALTER user SVC_CONFLUENCE profile PASSWORD_UNLIMIT_PROFILE;
 
 
 
-## 四、Linux方面
+### 8、MySQL免安装版初始化
+
+#### 相关链接
+
+[MySQL免安装版配置](https://juejin.cn/post/6854573215290359821)
+
+[MySQL8.0.33免安装版下载地址](https://cdn.mysql.com//Downloads/MySQL-8.0/mysql-8.0.33-winx64.zip)
+
+#### 安装流程
+
+##### 安装目录下新建my.ini文件
+
+- 安装目录为`mysql`文件夹的顶级目录，安装目录下不要新建`data`文件夹，后续的服务配置会生成
+- 安装目录下新建`my.ini`文件，写入以下内容（记得修改其中的路径）
+
+```ini
+[client]
+# 设置mysql客户端默认字符集
+default-character-set=utf8
+ 
+[mysqld]
+# 设置3306端口
+port = 3306
+# 设置mysql的安装目录
+basedir=D:\my_tool\mysql-8.0.21-winx64\mysql-8.0.21-winx64
+# 设置 mysql数据库的数据的存放目录
+datadir=D:\my_tool\mysql-8.0.21-winx64\mysql-8.0.21-winx64\data
+# 允许最大连接数
+max_connections=20
+# 服务端使用的字符集默认为8比特编码的latin1字符集
+character-set-server=utf8
+# 创建新表时将使用的默认存储引擎
+default-storage-engine=INNODB
+```
+
+##### 配置环境变量
+
+- 配置环境变量 `path` ，将安装目录下的 `bin` 目录配置到 `path` 中。
+- 即，例如 `mysql` 安装目录为 `D:\mysql` ，那么则配置成 `D:\mysql\bin`
+
+##### 启动CMD
+
+- 进入mysql安装目录下的bin目录
+
+```powershell
+cd D:\mysql\bin
+```
+
+- 将MySQL加入到Windows的服务中
+
+```shell
+mysqld --install
+```
+
+- 初始化数据库(初始化成功后会创建data文件夹、最后一行是生成的初始用户名和密码)
+
+```shell
+mysqld --initialize --user=root --console
+```
+
+- 启动mysql服务
+
+```shell
+net start mysql
+```
+
+- 进入MySQL修改初始密码
+
+
+
+## 三、Linux
 
 [VMwear安装Centos7](https://www.jianshu.com/p/ce08cdbc4ddb?utm_source=tuicool&utm_medium=referral)
 
@@ -3288,3 +3214,113 @@ GATEWAY="xxx.xxx.xxx.xxx"
 DNS1="xxx.xxx.xxx.xxx"
 ```
 
+
+
+### 25、使用OpenSSL生成各类证书
+
+#### 相关连接
+
+[OpenSSL官网](https://www.openssl.org/)
+
+#### 生成私钥
+
+```shell
+# 该命令将使用RSA算法生成一个私钥，并将其保存到名为`private.key`的文件中。您可以根据需要选择不同的算法和文件名。
+openssl genpkey -algorithm RSA -out private.key
+```
+
+#### 包含 SSL 证书和私钥的 Keystore 文件
+
+1.生成私钥和证书签署请求（CSR）：
+
+- 生成私钥：
+   ```bash
+   openssl genpkey -algorithm RSA -out private.key
+   ```
+- 生成证书签署请求（CSR）：
+   ```bash
+   openssl req -new -key private.key -out csr.csr
+   ```
+
+在生成私钥和 CSR 时，您需要提供一些相关信息，如组织名称、常用名称（通常为域名）等。
+
+2.通过自签名颁发机构（CA）或受信任的 CA 签署证书：您有两个选择来签署证书：  
+
+- a. 自签名证书（仅用于测试和开发）：
+  - 使用私钥和 CSR 生成自签名证书：
+```bash
+ openssl x509 -req -in csr.csr -signkey private.key -out certificate.crt
+```
+- b. 使用受信任的 CA 颁发机构签署证书：
+  - 将 CSR 提交给受信任的 CA 颁发机构，并按照他们的指示获得由 CA 签署的证书。
+
+3.创建 Keystore 文件：
+
+- 将私钥和证书合并到 PKCS12 文件中：
+```bash
+openssl pkcs12 -export -in certificate.crt -inkey private.key -out keystore.p12 -name "Alias"
+```
+
+在上述命令中，将 "Alias" 替换为您要为 Keystore 文件指定的别名。
+
+设置 Keystore 密码：在创建 Keystore 文件时，您需要设置一个密码来保护 Keystore。根据提示输入密码，并记住它
+
+
+
+## 四、工具
+
+### 1、Postman客户端中文设置
+
++ 下载对应版本的 [app.zip](https://gitee.com/hlmd/PostmanCn/releases)
++ 进入 Postman安装目录/版本/resources 目录
++ 将app.zip 复制解压到resources中
++ 重启Postman
+
+### 2、windows环境的Redis启动
+
+- 命令行窗口输入`redis-server.exe redis.windows.conf`
+- `Redis-cli.exe`用于连接客户端
+
+### 3、Git统计代码行数
+
+```shell
+git log --pretty=tformat: --numstat | awk '{add += $1; subs += $2;loc+=$1 - $2} END { printf "added lines: %s, removed lines: %s, total lines: %s\n", add,subs,loc}'
+```
+
+### 4、Git分支介绍及管理
+
+项目采用git flow开发规范
+
+#### main(生产分支)
+
+​	main分支是仓库的主分支，这个分支包含最近发布到生产环境的代码，最近发布的release，这个分支只能从其他分支合并，不能在这个分支直接修改。
+
+#### develop(开发分支)
+
+​	这个分支是我们的主开发分支，包含所有要发布到下一个release的代码，这个主要合并与其他分支，比如feature分支。
+
+#### feature(功能分支)
+
+​	feature分支主要是用来开发一个新的功能，一旦开发完成，直接合并回dev分支进入下一个release。
+
+#### release(发布分支)
+
+​	当你需要发布一个新功能的时候，要基于dev分支创建一个release分支，在release分支测试并修复bug，完成release后，把release合并到main和develop分支。
+
+#### hotfix(补丁分支)
+
+​	当我们在生产环境发现新的bug的时候，我们需要基于main分支创建一个hotfix分支，然后在hotfix分支上修复Bug，完成hotfix后，我们把hotfix分支合并回main和dev分支。
+
+#### 具体使用细节
+
+​	当我们新建git仓库之后，默认会创建一个主分支也就是main分支，由于main分支是用于发布生产环境，所有必须保证main上代码的稳定性，所以我们不能直接在main分支上修改提交。
+
+​	我们要基于main分支创建一个dev分支，dev分支用于保存开发好的相对稳定的功能，main分支和dev分支是仓库的常驻分支，一直会保留在仓库中;
+​	当新的开发任务来了之后，就要编写代码了，我们尽量不要在dev分支上写代码，要保证dev分支的相对稳定，所以这时我要就要基于dev 分支创建一个临时的开发分支 (feature)，然后在开发分支上编写代码等功能开发完之后我们再把开发分支合并到dev上;
+​	新功能合并到dev分支之后，我们想把新功能发布到生产环境，首先基于dev分支创建release分支，然后在release分支测试完成之后 (修复完上线前的bug)，把release分别合并到main分支和dev分支;release分支合并到main分支之后，在main分支上打标签用于发布;我们把代码发布到了生产环境，用户在使用的时候给我们反馈了一个bug，这时我们需要基于main分支创建一个hotfix 分支，用于修复bug，bug修好之后，把hotfix 分支分别合并到main分支和dev分支
+
+### 5、查看Windows电脑电池使用报告
+
+- 以管理员方式运行CMD
+- 执行命令`powercfg /batteryreport /output C:/Users/AlanHuang/Desktop/battery_report.html`
+- 前往桌面查看battery_report.html文件
