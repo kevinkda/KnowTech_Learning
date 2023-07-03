@@ -1,4 +1,4 @@
-![img](https://image.kevinkda.cn/md/image017(10-31-18-03-18).jpg)学习记录文档
+# 学习记录文档
 
 [toc]
 
@@ -6,7 +6,7 @@
 
 ### 1、Node.js 相关
 
-#### nodeJS 的 npm 设置国内高速镜像之淘宝镜像的方法
+#### 1.1.1 nodeJS 的 npm 设置国内高速镜像之淘宝镜像的方法
 
 1、我们知道 nodeJS 是老外搞出来的，服务器放在了国外，国内的小朋友访问起来会比较慢，阿里巴巴的淘宝给出了有力支持，现在我们就将 nodeJS 的镜像地址切换为国内的淘宝镜像。
 
@@ -26,13 +26,15 @@
 5、备注：
 　　NPM = NodeJS Package Manager
 
-### 建议安装的包
+#### 1.1.2 建议安装的包
 
 - nrm：镜像源管理工具
 - create-react-app：react项目创建工具
 - vue-cli：Vue.js 开发的标准工具
 
-### 2、Vue项目构建
+
+
+### 2、Vue 学习
 
 ```bash
 # 全局安装 vue-cli
@@ -73,9 +75,7 @@ $ cnpm run dev
 > Listening at http://localhost:8080
 ```
 
-
-
-#### 一些常用的依赖
+#### 1.2.1 一些有用的依赖
 
 - `npm config set registry https:*//registry**.npm**.taobao**.org*`  更换源至淘宝
 - `npm install-g cnpm --registry=https://registry.npm.taobao.org ` 设置淘宝镜像
@@ -90,16 +90,12 @@ $ cnpm run dev
 - `cnpm install ex6-promise`
 - `npm install css-loader style-loader –save-dev`
 
-
-
-#### 项目打包
+#### 1.2.2 项目打包
 
 `npm run build`
 执行完后会在项目中下生成`dist`目录，一般包含 index.html 文件及 static 目录，static 目录包含了静态文件 js、css 以及图片目录 images。
 
-
-
-#### 项目结构
+#### 1.2.3 项目结构
 
 | build        | 项目构建(webpack)相关代码                                    |
 | ------------ | ------------------------------------------------------------ |
@@ -121,6 +117,8 @@ $ cnpm run dev
 
 ![image-20220909180024124](https://image.kevinkda.cn/md/image-20220909180024124.png)
 
+
+
 ### 4、Spring boot 和 Spring Cloud 各个版本对应关系
 
 | spring cloud        | spring boot                                   |
@@ -141,6 +139,8 @@ $ cnpm run dev
 ​	如果客户请求不包含sessionID，则为此客户创建一个session并且生成一个与此session相关的sessionID，这个sessionID将在本次响应中返回给客户端保存。
 
 Session缓存优势明显，在日常开发过程中，大家基于这个优势，不可避免地存在session过度使用的情况，导致缓存未能正确清理，造成其他业务的误使用，从而引发一些业务问题，严重时可导致业务受理异常或业务数据不一致，比如下面的场景：
+
+![img](MarkdownImageUpload/image017(10-31-18-03-18).jpg)
 
 ​	1、由于session缓存的生命周期较长，当操作员同时打开多个tab页时，A业务保存的缓存，B业务也能取到，被错误使用。只对某业务自己使用的信息，直接用同一个key来设值，被其他业务误用：
 
@@ -189,6 +189,10 @@ public class Regular {
     }
 }
 ```
+
+
+
+
 
 
 
