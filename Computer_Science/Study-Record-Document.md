@@ -210,9 +210,9 @@ public class Regular {
 
 #### Gradle安装
 
-[SpringBoot 官方文档](https://docs.spring.io/spring-boot/docs/2.5.0/gradle-plugin/reference/htmlsingle/#getting-started)明确指出,目前 SpringBoot 的 Gradle 插件需要 gradle6.8 版本及以上，所以我们这里选择 7x 版本
+​	[SpringBoot 官方文档](https://docs.spring.io/spring-boot/docs/2.5.0/gradle-plugin/reference/htmlsingle/#getting-started)明确指出,目前 SpringBoot 的 Gradle 插件需要 gradle6.8 版本及以上，所以我们这里选择 7x 版本
 
-其中SpringBoot与Gradle存在版本兼容问题，Gradle与Idea也存在兼容问题，所以要选择Gradle6.8版本以及高于6.8版本的Gradle	
+​	其中SpringBoot与Gradle存在版本兼容问题，Gradle与Idea也存在兼容问题，所以要选择Gradle6.8版本以及高于6.8版本的Gradle	
 
 **Important Tips：**
 
@@ -230,7 +230,7 @@ public class Regular {
 
 #### 修改Maven下载源
 
-我们可以在gradle的init.d目录下创建以.gradle结尾的文件，.gradle文件可以实现在build开始之前执行，所以可以在这个文件配置一些你要预先加载的操作
+​	我们可以在gradle的init.d目录下创建以.gradle结尾的文件，.gradle文件可以实现在build开始之前执行，所以可以在这个文件配置一些你要预先加载的操作
 
 将以下内容复制到init.d目录下的init.gradle文件中：
 
@@ -243,16 +243,16 @@ public class Regular {
 allprojects {
     repositories {
         mavenLocal()
-        maven { name "Alibaba"; Url "https://maven.aliyun.com/repository/public"}
-        maven { name "Bstek"; Url "https://nexus.bsdn.org/content/groups/public"}
+        maven { name "Alibaba"; url "https://maven.aliyun.com/repository/public"}
+        maven { name "Bstek"; url "https://nexus.bsdn.org/content/groups/public"}
         mavenCentral()
     }
     
     buildscript {
         repositories {
-        	maven { name "Alibaba"; Url "https://maven.aliyun.com/repository/public"}
-        	maven { name "Bstek"; Url "https://nexus.bsdn.org/content/groups/public"}
-        	maven { name "M2"; Url "https://plugins.gradle.org/m2/"}
+        	maven { name "Alibaba"; url "https://maven.aliyun.com/repository/public"}
+        	maven { name "Bstek"; url "https://nexus.bsdn.org/content/groups/public"}
+        	maven { name "M2"; url "https://plugins.gradle.org/m2/"}
         }
     }
 }
@@ -265,13 +265,67 @@ allprojects {
 3. 把以.gradle结尾的文件放到 USER_HOME/.gradle/init.d/ 目录下（即放到C盘下的当前用户目录下的.gradle文件夹下的init.d文件夹下）
 4. 把以.gradle结尾的文件放到 GRADLE_HOME/init.d/ 目录下（即gradle安装目录下的init.d文件夹下）
 
-如果以上四种方式，存在两种，那么gradle会按照上面的顺序从1到4依次执行，如果给定目录下存在多个init脚本，会按拼音a-z顺序执行这些脚本，每个init脚本都存在一个对应的gradle实例，你在这个文件中调用的所有方法和属性，都会委托给这个gradle实例，每个init脚本都实现了Script接口。
+​	如果以上四种方式，存在两种，那么gradle会按照上面的顺序从1到4依次执行，如果给定目录下存在多个init脚本，会按拼音a-z顺序执行这些脚本，每个init脚本都存在一个对应的gradle实例，你在这个文件中调用的所有方法和属性，都会委托给这个gradle实例，每个init脚本都实现了Script接口。
+
+<h5>其他类型的Maven的Aliyun地址</h5>
+
+[阿里云云效Maven](https://developer.aliyun.com/mvn/guide)
+
+插件类的仓库地址，最好放到 `buildscript` 下 
+
+#### Gradle Wrapper
+
+​	Gradle Wrapper 实际上就是对Gradle的一层包装，用于解决实际开发中可能会遇到的不同项目需要不同版本的Gradle问题，例如：把自己代码共享给别人，`发现别人的没有安装Gradle、或者别人的Gradle版本太老旧。`
+
+<h5>如何使用Gradle Wrapper</h5>
+
+![image-20230712142433089](https://image.kevinkda.cn/md/image-20230712142433089.png)
+
+​	Gradle指令和Gradlew指令是不一样的，并且版本也有可能不一样。原因是因为Gradle指令使用的是本地安装的Gradle，Gradlew使用的是Gradle Wrapper中的Gradle，不过最终指令的使用方式是一样的。
+
+​	对于Gradlew指令时，我们也可以用一些参数来控制Wrapper的生产，比如依赖的版本等：
+
+| 参数名称                  | 参数说明                        | 参数示例                                                     |
+| ------------------------- | ------------------------------- | ------------------------------------------------------------ |
+| --gradle-version          | 用于指定使用的Gradle版本        | gradle wrapper --gradle-version=7.4.2                        |
+| --gradle-distribution-url | 用于指定下载的Gradle发行版的url | gradle wrapper --gradle-version 7.4.2 --distribution-type all |
+|                           |                                 |                                                              |
+
+<h5>GradleWrapper执行流程</h5>
+
+1.当我们第一次执行 ./gradlew build 命令的时候，gradlew 会读取 gradle-wrapper.properties 文件的配置信息
+
+2.准确的将指定版本的 gradle 下载并解压到指定的位置GRADLE_USER HOME目录下的wrapper/dists目录中
+
+3.并构建本地缓存(GRADLE_USER HOME目录下的caches目录中),下载再使用相同版本的gradle就不用下载了
+
+4.之后执行的 ./gradlew 所有命令都是使用指定的 gradle 版本
+
+![image-20230712144504200](https://image.kevinkda.cn/md/image-20230712144504200.png)
+
+<h5>何时使用Gradle Wrapper</h5>
+
+下载别人的项目或者使用操作以前自己写的不同版本的gradle项目时：用Gradle wrapper，也即：gradlew，什么时候使用本地gradle？新建一个项目时：使用gradle指令即可。
+
+#### Groovy
+
+Groovy 是 用于Java虚拟机的一种敏捷的动态语言，它是一种成熟的面向对象编程语言，既可以用于面向对象编程，又可以用作纯粹的脚本语言。使用该种语言不必编写过多的代码，同时又具有闭包和动态语言中的其他特性。
+
+Groovy是JVM的一个替代语言（替代是指可以用 Groovy 在Java平台上进行 Java 编程），使用方式基本与使用 Java代码的方式相同，该语言特别适合与Spring的动态语言支持一起使用，设计时充分考虑了Java集成，这使 Groovy 与 Java 代码的互操作很容易。（注意：不是指Groovy替代java，而是指Groovy和java很好的结合编程。）
+
+<h5>安装配置</h5>
+
+[Groovy下载地址](https://groovy.apache.org/download.html)
+
+![image-20230712172907286](https://image.kevinkda.cn/md/image-20230712172907286.png)
+
+![image-20230712172934787](https://image.kevinkda.cn/md/image-20230712172934787.png)
+
+
 
 
 
 ## 二、Database
-
-
 
 ### 1、MySQL修改账号远程登陆权限
 
