@@ -192,7 +192,80 @@ public class Regular {
 
 
 
+### 8、Gradle学习
 
+#### 常见的项目构建工具
+
+- Ant: 
+  - 优点: 使用灵活，速度快(快于 gradle 和 maven)
+  - 缺点:Ant没有强加任何编码约定的项目目录结构,开发人员需编写繁杂 XML 文件构建指令,对开发人员是一个挑战
+- Maven
+  - 优点: 遵循一套约定大于配置的项目目录结构，使用统一的 GAV 坐标进行依赖管理,侧重于包管理
+  - 缺点: 项目构建过程僵化,配置文件编写不够灵活、不方便自定义组件,构建速度慢于 gradle
+- Gradle
+  - 优点:集 Ant 脚本的灵活性+Maven 约定大于配置的项目目录优势,支持多种远程仓库和插件,侧重于大项目构建
+  - 缺点: 学习成本高、资料少、脚本灵活、版本兼容性差等
+
+![image-20230711223518153](https://image.kevinkda.cn/md/image-20230711223518153.png)
+
+#### Gradle安装
+
+[SpringBoot 官方文档](https://docs.spring.io/spring-boot/docs/2.5.0/gradle-plugin/reference/htmlsingle/#getting-started)明确指出,目前 SpringBoot 的 Gradle 插件需要 gradle6.8 版本及以上，所以我们这里选择 7x 版本
+
+其中SpringBoot与Gradle存在版本兼容问题，Gradle与Idea也存在兼容问题，所以要选择Gradle6.8版本以及高于6.8版本的Gradle	
+
+**Important Tips：**
+
+- 打开Idea安装目录下的\plugins\gradle\lib，能查看Idea与Gradle相对应的Gradle版本号
+- 选择Spring Boot时一定要注意Spinrg Boot 和JDK 的版本
+
+具体安装步骤参考以下文档：
+
+- [官方文档](https://gradle.org/install/)
+- [Gradle环境配置](https://zhuanlan.zhihu.com/p/522238682)
+
+#### Gradle和Maven项目结构
+
+![image-20230711234024582](https://image.kevinkda.cn/md/image-20230711234024582.png)
+
+#### 修改Maven下载源
+
+我们可以在gradle的init.d目录下创建以.gradle结尾的文件，.gradle文件可以实现在build开始之前执行，所以可以在这个文件配置一些你要预先加载的操作
+
+将以下内容复制到init.d目录下的init.gradle文件中：
+
+- 项目所需要的架包会前往repositories中区下载
+- 而buildscript是给build.gradle使用的
+- mavenLocal() 即为maven本地仓库
+- mavenCentral() 即为maven重要仓库
+
+```groovy
+allprojects {
+    repositories {
+        mavenLocal()
+        maven { name "Alibaba"; Url "https://maven.aliyun.com/repository/public"}
+        maven { name "Bstek"; Url "https://nexus.bsdn.org/content/groups/public"}
+        mavenCentral()
+    }
+    
+    buildscript {
+        repositories {
+        	maven { name "Alibaba"; Url "https://maven.aliyun.com/repository/public"}
+        	maven { name "Bstek"; Url "https://nexus.bsdn.org/content/groups/public"}
+        	maven { name "M2"; Url "https://plugins.gradle.org/m2/"}
+        }
+    }
+}
+```
+
+<h5>启用init.gradle文件的方法：</h5>
+
+1. 在命令行指定文件，例如：`gradle -init-script yourdir/init,gradle -q taskName`。你可以多输入此命令来指定多个init文件
+2. 把init.gradle文件放到 USER_HOME/.gradle/ 目录下（即放到C盘下的当前用户目录下的.gradle文件夹下）
+3. 把以.gradle结尾的文件放到 USER_HOME/.gradle/init.d/ 目录下（即放到C盘下的当前用户目录下的.gradle文件夹下的init.d文件夹下）
+4. 把以.gradle结尾的文件放到 GRADLE_HOME/init.d/ 目录下（即gradle安装目录下的init.d文件夹下）
+
+如果以上四种方式，存在两种，那么gradle会按照上面的顺序从1到4依次执行，如果给定目录下存在多个init脚本，会按拼音a-z顺序执行这些脚本，每个init脚本都存在一个对应的gradle实例，你在这个文件中调用的所有方法和属性，都会委托给这个gradle实例，每个init脚本都实现了Script接口。
 
 
 
@@ -601,6 +674,61 @@ mysqlbinlog --no-defaults -v -v --base64-output=decode-rows ./mysql-bin.000062 |
 [Oracle新特性](https://blog.csdn.net/weixin_31758621/article/details/116294855)
 
 [OraclePDB管理](https://blog.csdn.net/xin_shou123/article/details/123879415)
+
+#### 体系架构
+
+![image-20230711164235043](https://image.kevinkda.cn/md/image-20230711164235043.png)
+
+​	从Oracle数据库架构的本身，充分体现了数据库这种数据库管理机制中，引用程序与数据的独立性，同时也体现了在软件设计中，结构化，模块化，分层分工，重用，效率等基本问题的解决办法。
+
+##### 实例 Instance
+
+![image-20230711164630986](https://image.kevinkda.cn/md/image-20230711164630986.png)
+
+- PGA（Process Global Area）：
+  - 用于保存服务器进程的数据和控制信息。
+  - 当用户进程要连接到Oracle数据库服务器时，会在实例中分配相应的服务器进程。
+- SGA（System Global Area）：
+  - 主要为了减少对磁盘的访问，提高计算机系统性能。
+  - 系统全局区，分为一下三个部分；
+  - Shared Pool（共享池）：
+    - 大小由 SHARED_POOL_SIZE 决定
+    - 库缓存（库高速缓存）：存储并共享经过分析的最近执行的SQL和PL/SQL程序代表。通过内存中缓存SQL，能有效降低执行一组应用语句的服务开销
+    - 字典缓存（数据字典高速缓存）：在系统运行的过程中，不断查询与更新数据库数据字典信息。实例的字典缓存存储了最多使用的数据字典的信息，提高了系统内部操作性能。
+  - Database Buffer Cache（数据块告诉缓存区）：
+    - DB_BLOCK_BUFFERS：buffer的数目
+    - DB_BLOCK_SIZE：每个buffer的大小
+    - 是最大的服务器内存区，存储应用事务最近查询的数据库信息，读出来的数据、真实的数据缓存、索引
+  - Redo Log Buffer（日志缓存区）：
+    - LOG_BUFFER：每个buffer的大小
+    - 加速日志写的进程，为了写日志的缓存
+- 后台进程
+  - SMON
+  - PMON
+  - DBWR
+    - 数据库写进程
+    - DBWR有搁置空闲（time out）
+  - LGWR
+  - CKPT
+    - 周期性的数据库写进程执行一次检查点，将内存中全部修改数据写回到数据库的数据文件中
+  - ARCH
+  - RECO
+
+##### 存储结构
+
+物理存储结构：实际数据的存储单元
+
+![image-20230711171048623](https://image.kevinkda.cn/md/image-20230711171048623.png)
+
+- 参数文件
+- 控制文件
+  - 记录内容：数据文件信息，日志文件信息，数据库创建时间，SCN；控制文件数量和存储位置：一遍需要三个，分布在不通的硬盘上
+- 数据文件
+- 日志文件
+
+逻辑存储结构：数据概念上的组织
+
+
 
 #### CDB与PDB
 
