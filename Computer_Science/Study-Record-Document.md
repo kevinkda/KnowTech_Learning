@@ -307,11 +307,18 @@ allprojects {
 
 下载别人的项目或者使用操作以前自己写的不同版本的gradle项目时：用Gradle wrapper，也即：gradlew，什么时候使用本地gradle？新建一个项目时：使用gradle指令即可。
 
-#### Groovy
+#### Groovy学习
 
 Groovy 是 用于Java虚拟机的一种敏捷的动态语言，它是一种成熟的面向对象编程语言，既可以用于面向对象编程，又可以用作纯粹的脚本语言。使用该种语言不必编写过多的代码，同时又具有闭包和动态语言中的其他特性。
 
 Groovy是JVM的一个替代语言（替代是指可以用 Groovy 在Java平台上进行 Java 编程），使用方式基本与使用 Java代码的方式相同，该语言特别适合与Spring的动态语言支持一起使用，设计时充分考虑了Java集成，这使 Groovy 与 Java 代码的互操作很容易。（注意：不是指Groovy替代java，而是指Groovy和java很好的结合编程。）
+
+<h5><a href="http://www.groovy-lang.org/objectorientation.html#_modifiers_on_a_property">Groovy与Java的主要区别</a></h5>
+
+- 没有可见性修饰符的类或方法自动是公共的(可以使用一个特殊的注释来实现包的私有可见性)
+- 没有可见性修饰符的字段将自动转换为属性，不需要显式的 getter 和 setter 方法
+- 如果属性声明为 fnal，则不会生成 setter
+- 一个源文件可能包含一个或多个类（但是如果一个文件不包含类定义的代码，则将其视为脚本）。脚本只是具有一些特殊约定的类,它们的名称与源文件相同(所以不要在脚本中包含与脚本源文件名相同的类定义)。
 
 <h5>安装配置</h5>
 
@@ -320,6 +327,52 @@ Groovy是JVM的一个替代语言（替代是指可以用 Groovy 在Java平台�
 ![image-20230712172907286](https://image.kevinkda.cn/md/image-20230712172907286.png)
 
 ![image-20230712172934787](https://image.kevinkda.cn/md/image-20230712172934787.png)
+
+<h5>Groovy概要</h5>
+
+![image-20230712232018904](https://image.kevinkda.cn/md/image-20230712232018904.png)
+
+**类型转换**：当需要时，类型之间会自动发生类型转换：字符串（String）、基本类型如 （int）和类型的包装类（如 nteger）
+
+**类说明**: 如果在一个 groovy 文件中没有任何类定义，它将**被当做 script 来处理**，也就意味着这个文件将被透明的转换为**一个Script 类型的类**，这个自动转换得到的类将使用原始的 groovy 文件名作为类的名字。groovy 文件的内容被打包进run 方法，另外在新产生的类中被加入一个 main 方法以进行外部执行该脚本。
+
+<h5>Groovy字符串操作</h5>
+
+Groovy使用字符串时，单引号、双引号使用起来有不同的效果
+
+- 单引号：不支持变量引用，不支持换行操作
+- 双引号：支持变量引用，不支持换行操作
+- 单引号模板字符串：不支持变量引用，支持换行操作
+- 双引号模板字符串：支持变量引用，支持换行操作
+
+![image-20230713002157590](https://image.kevinkda.cn/md/image-20230713002157590.png)
+
+<h5>Groovy三大语句结构</h5>
+
+[官方文档](http://www.groovy-lang.org/semantics.html#_conditional_structures)
+
+<h5>Groovy类型以及权限修饰符</h5>
+
+1. 原生数据类型
+
+| 原生    | 包装      |
+| ------- | --------- |
+| boolean | Boolean   |
+| char    | Character |
+| short   | Short     |
+| int     | Integer   |
+| long    | Long      |
+| float   | Float     |
+| double  | Double    |
+
+2. 类、内部类、抽象类、接口
+3. 注解
+4. Trait：带有方法实现的接口
+5. 权限修饰符：private、public、protected
+
+<h5>Groovy集合操作</h5>
+
+Groovy支持List、Map集合操作，并且拓展了Java中的API，具体参考[官方文档](http://www.groovy-lang.org/syntax.html#_number_type_suffixes)
 
 
 
