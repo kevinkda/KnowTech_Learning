@@ -374,7 +374,119 @@ Groovy使用字符串时，单引号、双引号使用起来有不同的效果
 
 Groovy支持List、Map集合操作，并且拓展了Java中的API，具体参考[官方文档](http://www.groovy-lang.org/syntax.html#_number_type_suffixes)
 
+![image-20230713162219072](https://image.kevinkda.cn/md/image-20230713162219072.png)
 
+<h5>Groovy类导入</h5>
+
+[官方文档](http://www.groovy-lang.org/structure.html#_imports)
+
+<h5>Groovy异常处理</h5>
+
+[官方文档](http://www.groovy-lang.org/semantics.html#_try_catch_finally)
+
+<h5>Groovy闭包</h5>
+
+[官方文档](http://www.groovy-lang.org/closures.html)
+
+定义：是一个开放的、匿名的代码块，它可以接受参数、也可以有返回值。闭包可以引用其周围作用域中声明的变量。
+
+语法：
+
+```groovy
+{ [closureParameters -> ] statemets }
+```
+
+调用：
+
+1. 将闭包赋值给一个变量
+2. 变量名()、变量名.call()
+
+示例：
+
+```groovy
+def running = { who ->
+    println("$who start")
+}
+
+running("code")
+running().call("code")
+
+//____________分割_______________
+def running(Closure closure) {
+    println("running start")
+    println("running end")
+}
+
+running({println("running")})
+
+//____________分割_______________
+def caculate(num1,num2,Closure closure){
+    closure(num1,num2)
+}
+
+caculate(10,15,{k,v -> println("$k + $v = ${k+v}")})
+// 闭包作为方法的最后一个参数，那么闭包可以写在方法外边
+caculate(10,15){k,v -> println("$k + $v = ${k+v}")}
+//____________分割_______________
+def caculate(Closure closure){
+    def num1 = 10
+    def num2 = 15
+    closure(num1,num2)
+}
+
+caculate(){k,v -> println("$k + $v = ${k+v}")}
+caculate{k,v -> println("$k + $v = ${k+v}")}
+```
+
+#### Gretty 项目部署
+
+[官网地址](http://akhikhl.github.io/gretty-doc/index.html)
+
+Tips：Gradle 6.x版本以前对Gretty支持比较友好
+
+Gretty核心功能：
+
+- 底层支持jerry，tomcat等Servlet容器
+- 支持热部署、Https、调试
+
+<h5>具体使用</h5>
+
+1. 项目引入Gretty
+
+```groovy
+plugins {
+    id 'war'
+    id 'org.gretty' version '2.2.0'
+}
+```
+
+2. 指定maven仓库
+
+```groovy
+repositories {
+    jcenter()
+    mavenCentral()
+}
+```
+
+3. Gretty 插件设置
+
+```groovy
+gretty {
+	httpPort = 8888
+    contextPath = "/web"
+    debugPort = 5005
+    debugSuspend = true
+    httpsEnabled = true
+    // 热部署
+    manageClassReload = true
+    // 如果不指定默认容器，则默认使用Jetty
+    // servletContainer = 'tomcat'
+    httpsPort = 4431
+}
+```
+
+4. 执行命令：gradle appRun
 
 
 
