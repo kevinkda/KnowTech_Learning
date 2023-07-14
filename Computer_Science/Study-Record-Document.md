@@ -488,6 +488,26 @@ gretty {
 
 4. 执行命令：gradle appRun
 
+#### Gradle项目生命周期
+
+Gradle项目的生命周期分为三大阶段：Initialization -> Configuration -> Execution
+
+![image-20230715000734926](https://image.kevinkda.cn/md/image-20230715000734926.png)
+
+#### Gradle中的setting文件
+
+作用：主要作用是在项目初始化阶段确定要引入那些工程，需要加入到项目构建中，为构建项目工程树做准备。
+
+工程树：Gradle中有工程树的概念，类似于Maven中的Project和Module
+
+![image-20230715001221629](https://image.kevinkda.cn/md/image-20230715001221629.png)
+
+
+
+
+
+
+
 
 
 ## 二、Database
