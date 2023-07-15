@@ -502,6 +502,30 @@ Gradle项目的生命周期分为三大阶段：Initialization -> Configuration 
 
 ![image-20230715001221629](https://image.kevinkda.cn/md/image-20230715001221629.png)
 
+内容：里面主要定义了当前Gradle项目以及子Project的项目名称
+
+位置：必须放在根工程下
+
+名字：为setting.gradle文件，不能发生变化
+
+对应实例：与org.gradle.api.initialization.Settings 实例是一一对应的关系。每个项目只有一个settings文件。
+
+关注：只需关注文件中的 include 方法。
+
+一个子工程只有再settings文件中配置了才会被gradle识别，构建时才会被包含
+
+```groovy
+// 根项目名称
+rootProject.name = 'gradle_tree'
+// 子模块名称
+include 'sub_01'
+include 'sub_02'
+include 'sub_03'
+// 包含的子工程下的子工程名称
+include 'sub_01:subProject01'
+include 'sub_02:subProject02'
+```
+
 
 
 
