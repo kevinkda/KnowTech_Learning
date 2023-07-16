@@ -438,7 +438,7 @@ caculate(){k,v -> println("$k + $v = ${k+v}")}
 caculate{k,v -> println("$k + $v = ${k+v}")}
 ```
 
-#### Gretty 项目部署
+#### Gretty项目部署
 
 [官网地址](http://akhikhl.github.io/gretty-doc/index.html)
 
@@ -528,7 +528,159 @@ include 'sub_02:subProject02'
 
 
 
+#### Gradle的Task
 
+```groovy
+tasks.named('test') {
+    // 任务配置段，在配置阶段执行
+    println "this is task example"
+    // 任务的行为：在执行阶段执行
+    doFirst {
+        println "task first task"
+    }
+    doLast {
+        println "task last task"
+    }
+}
+```
+
+运行任务
+
+```shell
+gradle -i test
+```
+
+任务的doFirst、doLast都可以在任务的外部定义
+
+```groovy
+tasks.named('test') {
+    // 任务配置段，在配置阶段执行
+    println "this is task example"
+}
+
+test.doFirst {
+	println "task first task"
+}
+test.doLast {
+	println "task last task"
+}
+```
+
+**底层原理解析**：无论是定义任务自身的 action，还是添加的 doLast、doFirst 方法，其实底层都被放入到一个 Action 的 List中了，最初这个action List 是空的，当我们设置了 ation[任务自身的行为]，它先将 actin 添加到列表中，此时列表中只有一个action，后续执行doFirst的时候 doFirst在 action 前面添加,执行 doLast 的时候 doLast 在 action 后面添加。doFirst永远添加在 actions List 的第一位，保证添加的 Action 在现有的 action List 元素的最前面；doLast 永远都是在 action List末尾添加，保证其添加的 Action 在现有的 ction List 元素的最后面。一个往前面添加一个往后面添加，最后这个 actionList 就按顺序形成了 doFirst、 doSelf、 doLast 三部分的 Actions,就达到 doFirst、 doSelf、doLast 二部分的 Actions 顺序执行的目的。
+
+![image-20230716215239588](https://image.kevinkda.cn/md/image-20230716215239588.png)
+
+Tips：其中<<代表dolast，在Gradle5.x版本之后就废弃了。
+
+<h5>任务的依赖方式</h5>
+
+- 参数方式依赖
+
+```groovy
+taks 'A' {
+    doLast {
+        println "task A"
+    }
+}
+
+taks 'B' {
+    doLast {
+        println "task B"
+    }
+}
+
+taks 'C'(dependsOn: ['A','B']) {
+    doLast {
+        println "task C"
+    }
+}
+```
+
+- 内部依赖
+
+```groovy
+taks 'C' {
+    dependsOn = ['A','B']
+    doLast {
+        println "task C"
+    }
+}
+// ==================
+taks 'C' {
+    doLast {
+        println "task C"
+    }
+}
+c.dependsOn = ['A','B']
+```
+
+- 外部依赖
+
+```groovy
+// subproject01 工程
+taks 'A' {
+    doLast {
+        println "task A"
+    }
+}
+// subproject02 工程
+taks 'B' {
+    dependsOn(":subproject01:A")
+    doLast {
+        println "task B"
+    }
+}
+```
+
+Tips1：当一个Task依赖多个Task的时候，被依赖的Task之间如果没有依赖关系，那么它们的执行顺序是随机的。
+
+Tips2：重复依赖的任务只会执行一次，比如：
+
+
+
+<h5>任务的执行</h5>
+
+语法：gradle [taskanme] [--option-name]
+
+| 分类     | 解释                                                         |
+| -------- | ------------------------------------------------------------ |
+| 常见任务 | gradle build：构建项目:编译、测试、打包等操作
+gradle run：运行一个服务,需要 application 插件支持，并且指定了主启动类才能运行
+gradle clean：请求当前项目的 build 目录
+gradle init：初始化 gradle 项目使用
+gradle wrapper：生成 wrapper 文件夹的
+ - gradle wrapper 升级 wrapper 版本号：gradle wrapper -gradle-version=4.4
+ - gradle wrapper -gradle-version 5.2.1 --distribution-type all：关联源码用 |
+| 项目报告 | gradle projects：列出所选项目及子项目列表，以层次结构的形式显示
+gradle tasks：列出所选项目[当前 project,不包含父、子]的已分配给任务组的那些任务
+gradle tasks -all：列出所选项目的所有任务
+gradle tasks -group="build setup"：列出所选项目中指定分组中的任务
+gradle help -task someTask：显示某个任务的详细信息
+gradle dependencies：查看整个项目的依赖信息，以依赖树的方式显示
+gradle properties：列出所选项目的属性列表 |
+| 调试选项 | -h,--help：查看帮助信息
+-v,--version：打]印Gradle、Groovy、 AntJVM 和操作系统版本信息
+-S,-full-stacktrace：打印出所有异常的完整(非常详细)堆栈跟踪信息
+-s,-stacktrace：打印出用户异常的堆栈跟踪(例如编译错误)。
+-Dorg.gradle,daemon.debug=true：调试 Gradle 守护进程
+-Dorg.gradle.debug=true：调试 Gradle 客户端（非 daemon）进程
+-Dorg.gradle.debug.port=(port number)：指定启用调试时要侦听的端口号。默认值为 5005 |
+| 性能选项 | -build-cache,--no-build-cache：尝试重用先前版本的输出。默认关闭(off)。
+-max-workers：设置 Gradle 可以使用的 woker数。默认值是处理器数
+-parallel,-no-parallel：并行执行项目。有关此选项的限制，请参阅并行项目执行默认设置为关闭(off) |
+| 守护进程 | -daemon,--no-daemon：使用守护进程运行构建。默认是 onGradle
+-foreground：在前台进程中启动 Gradle 守护进程
+-Dorg.gradle.daemon.idletimeout=(number of milliseconds)：Gradle Daemon 将在这个空闲时间的毫秒数之后停止自己。默认值为 1000000(3 小时)。 |
+| 日志选项 | -Dorg.gradle.logging.level=(quiet,warn,lifecycle,info,debug)：通过 Gradle 属性设置日志记录级别。
+-q,-quiet：只能记录错误信息
+-w,--warn：设置日志级别为 warn
+-i,--info：将日志级别设置为 info
+-d,-debug：登录调试模式(包括正常的堆栈跟踪） |
+| 其他     | -x:-x 等价于：-exclude-task:常见 gradle -x test clean build
+-rerun-tasks：强制执行任务，忽略up-to-date ,常见 gradle build -rerun-tasks
+-continue：忽略前面失败的任务.继续执行,而不是在遇到第一个失败时立即停止执行。每个遇到的故障都将在构建结束时报告，常见: gradle build -continue。
+gradle init -type pom：将 maven 项目转换为 gradle 项目(根目录执行）
+gradle [taskName]：执行自定义任务 |
 
 
 
