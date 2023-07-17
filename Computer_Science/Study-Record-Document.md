@@ -140,7 +140,7 @@ $ cnpm run dev
 
 Session缓存优势明显，在日常开发过程中，大家基于这个优势，不可避免地存在session过度使用的情况，导致缓存未能正确清理，造成其他业务的误使用，从而引发一些业务问题，严重时可导致业务受理异常或业务数据不一致，比如下面的场景：
 
-![img](MarkdownImageUpload/image017(10-31-18-03-18).jpg)
+![img](https://image.kevinkda.cn/md/image017(10-31-18-03-18).jpg)
 
 ​	1、由于session缓存的生命周期较长，当操作员同时打开多个tab页时，A业务保存的缓存，B业务也能取到，被错误使用。只对某业务自己使用的信息，直接用同一个key来设值，被其他业务误用：
 
@@ -2011,12 +2011,12 @@ key_len计算规则：
 
 ​	此列是一些额外信息。常见的重要值如下：
 
-		1.	Using index：使用覆盖索引（如果select后面查询的字段都可以从这个索引的树中获取，不需要通过辅助索引树找到主键，再通过主键去主键索引树里获取其他字段值，这种情况一般可以说是用到了覆盖索引）
-  		2.	Using where：使用where语句来处理结果，并且查询的列未被索引覆盖。
-                		3.	Using index condition：查询的列不完全被索引覆盖，where条件中是一个范围查询。
-            		4.	Using temporary：MySQL需要创建一张临时表来处理查询。出现这种情况一般是要进行优化的。
-                      		5.	Using filesort：将使用外部排序而不是索引排序，数据较小时从内存排序，否则需要在磁盘完成排序。
-          		6.	Select tables optimized away：使用某些聚合函数（max、min等）来访问存在索引的某个字段时。
+1.	Using index：使用覆盖索引（如果select后面查询的字段都可以从这个索引的树中获取，不需要通过辅助索引树找到主键，再通过主键去主键索引树里获取其他字段值，这种情况一般可以说是用到了覆盖索引）
+2.	Using where：使用where语句来处理结果，并且查询的列未被索引覆盖。
+3.	Using index condition：查询的列不完全被索引覆盖，where条件中是一个范围查询。
+4.	Using temporary：MySQL需要创建一张临时表来处理查询。出现这种情况一般是要进行优化的。
+5.	Using filesort：将使用外部排序而不是索引排序，数据较小时从内存排序，否则需要在磁盘完成排序。
+6.	Select tables optimized away：使用某些聚合函数（max、min等）来访问存在索引的某个字段时。
 
 
 
@@ -2098,7 +2098,7 @@ order by null;
 
 ​	自连接查询是比较常用的查询，可以轻松解决很多问题。这里具体的表结构和数据如下。
 
-![image-20230403104806400](upload/image-20230403104806400.png)
+![image-20230403104806400](https://image.kevinkda.cn/md/image-20230403105701095.png)
 
 ​	tree 表中通过 pid 和 id 进行父子级关联。如果现在需要按照父子级层级将 tree 表数据转换成 `一级职位 二级职位 三级职位` 三个列名进行展示，sql如下：
 
@@ -2111,7 +2111,7 @@ from tree t1 join tree t2 on t1.id = t2.pid
 where t1.pid = 0;
 ```
 
-![image-20230403105701095](upload/image-20230403105701095.png)
+![image-20230403105701095](https://image.kevinkda.cn/md/image-20230403143617384.png)
 
 ​	通过 `tree t1 join tree t2 on t1.id = t2.pid` 自连接 展示 `一级职位 二级职位`，再用 `left join tree t3 on t2.id = t3.pid` 自连接展示 `二级职位 三级职位`，最后通过 `where t1.pid = 0` 过滤非一级职位的展示。
 
@@ -2119,7 +2119,7 @@ where t1.pid = 0;
 
 ​	数据继续使用上面的 emp 表和 dept 表
 
-![image-20230403114927979](upload/image-20230403114927979.png)
+![image-20230403114927979](https://image.kevinkda.cn/md/image-20230403114927979.png)
 
 ​		从表数据中可以看到 emp 表中的 jack 的部门名称和 dept 表中的部门名称不相符，现有需求需要将 jack 的部门名称更新成 dept  表中正确的名称，sql如下。
 
@@ -2127,7 +2127,7 @@ where t1.pid = 0;
 update emp, dept set emp.dept_name = dept.dept_name where emp.dept_id = dept.id;
 ```
 
-![image-20230403142157376](upload/image-20230403142157376.png)
+![image-20230403142157376](https://image.kevinkda.cn/md/image-20230403160059275.png)
 
 ​	sql中直接关联 emp 表和 dept 表并设置关联条件，然后更新 emp 表的 dept_name 为 dept 表中的 dept_name。
 
@@ -2139,20 +2139,20 @@ update emp, dept set emp.dept_name = dept.dept_name where emp.dept_id = dept.id;
 select * from order_diy order by if(isnull(title), 1, 0), money
 ```
 
-![image-20230403143617384](upload/image-20230403143617384.png)
+![image-20230403143617384](https://image.kevinkda.cn/md/image-20230403104806400.png)
 
 #### with rollup - 分组统计数据的基础上再进行统计汇总
 
 ​	MySQL 中使用 with rollup 再分组统计数据的基础上再进行统计汇总，即用来得到 group by 的汇总信息，这里数据继续使用 order_diy 表举例，sql如下
 
-![image-20230403161717626](upload/image-20230403161717626.png)
+![image-20230403161717626](https://image.kevinkda.cn/md/image-20230403142157376.png)
 
 ```mysql
 select name, sum(money) as money
 from order_diy group by name with rollup;
 ```
 
-![image-20230403160059275](upload/image-20230403160059275.png)
+![image-20230403160059275](https://image.kevinkda.cn/md/image-20230403161717626.png)
 
 ​	通过 `group by name with rollup` 语句，查询结果最后一列显示了分组统计的汇总结果。但是 name 字段汇总后显示为 null，我们可以通过 `coalesce(value…)` 比较函数，返回第一个非空参数。
 
@@ -2161,7 +2161,7 @@ select coalesce(name, '总金额') name, sum(money) as money
 from order_diy group by name with rollup;
 ```
 
-![image-20230403160250104](upload/image-20230403160250104.png)
+![image-20230403160250104](https://image.kevinkda.cn/md/image-20230403160250104.png)
 
 #### with as - 提取临时表别名
 
@@ -2169,7 +2169,7 @@ from order_diy group by name with rollup;
 
 ​	如果一整个查询语句中，多个子查询都需要使用同一个子查询的结果，那么就可以用 with as，将共用的子查询语句提取出来，加上别名。后续的查询语句可以直接使用，对于大量复杂的sql起到了优化作用。这里继续使用 order_diy 表进行举例，sql如下。
 
-![image-20230403161709749](upload/image-20230403161709749.png)
+![image-20230403161709749](https://image.kevinkda.cn/md/image-20230403161709749.png)
 
 ```mysql
 with t1 as (select * from order_diy where money > 30)
@@ -2178,7 +2178,7 @@ select * from t1
 where t1.id not in (select id from t2) and t1.name = '周伯通';
 ```
 
-![image-20230403161835692](upload/image-20230403161835692.png)
+![image-20230403161835692](https://image.kevinkda.cn/md/image-20230403161835692.png)
 
 ​	这个sql查询的是 order_diy 表中 money 大于 30 但是小于 60 之间并且 name 是周伯通的数据。
 
@@ -2186,7 +2186,7 @@ where t1.id not in (select id from t2) and t1.name = '周伯通';
 
 MySQL 中通过 `on duplicate key update` 语法来是实现存在就更新，不存在就插入的逻辑。插入或者更新时，他会根据**表中主键索引或者唯一索引进行判断**，**如果主键索引或者唯一索引有冲突**，就会执行 `on duplicate key update` 后面的复制语句。这里通过 news 表距离，结构和数据如下，news_code 字段有唯一索引：
 
-![image-20230403164809819](upload/image-20230403164809819.png)
+![image-20230403164809819](https://image.kevinkda.cn/md/image-20230403164809819.png)
 
 ```mysql
 -- 第一次执行添加语句
@@ -2199,7 +2199,7 @@ values ('新闻4', '小花', 'wx-003')
 on duplicate update news_title = '新闻4'
 ```
 
-![image-20230403170326150](upload/image-20230403170326150.png)
+![image-20230403170326150](https://image.kevinkda.cn/md/image-20230403170326150.png)
 
 
 
