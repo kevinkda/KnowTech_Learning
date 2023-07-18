@@ -273,6 +273,25 @@ allprojects {
 
 插件类的仓库地址，最好放到 `buildscript` 下 
 
+<h5>Gradle.properties</h5>
+
+```properties
+# 开启守护进程，下一次构建的时候，会连接这个守护进程进行构建，而不是重新fork一个进程进行构建
+org.gradle.daemon=true
+# 设置JVM堆内存大小
+org.gradle.jvmargs=-Xmx4096m -XX:MaxPermSize=1024m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
+# 并行编译
+org.gradle.parallel=true
+# 按需加载
+org.gradle.configureondemand=true
+# 开启gradle缓存
+org.gradle.caching=true
+```
+
+
+
+
+
 #### Gradle Wrapper
 
 ​	Gradle Wrapper 实际上就是对Gradle的一层包装，用于解决实际开发中可能会遇到的不同项目需要不同版本的Gradle问题，例如：把自己代码共享给别人，`发现别人的没有安装Gradle、或者别人的Gradle版本太老旧。`
@@ -640,6 +659,8 @@ Tips2：重复依赖的任务只会执行一次，比如：
 
 <h5>任务的执行</h5>
 
+[官方文档](https://docs.gradle.org/current/userguide/command_line_interface.html#sec:command_line_executing_tasks)
+
 语法：gradle [taskanme] [--option-name]
 
 ```shell
@@ -694,6 +715,12 @@ gradle properties：列出所选项目的属性列表
 gradle init -type pom：将 maven 项目转换为 gradle 项目(根目录执行） 
 gradle [taskName]：执行自定义任务
 ```
+
+Gradle默认各指令之间相互的依赖关系
+
+![image-20230719004133258](https://image.kevinkda.cn/md/image-20230719004133258.png)
+
+
 
 
 
