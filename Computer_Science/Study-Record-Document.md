@@ -724,6 +724,48 @@ Gradle默认各指令之间相互的依赖关系
 
 
 
+### 9、将Maven项目配置并上传到JFrog
+
+#### 相关链接
+
+[从JFrog上传和下载制品](https://blog.csdn.net/weixin_40816738/article/details/121530665)
+
+[Maven在settings.xml中存储加密密码](https://blog.csdn.net/it_freshman/article/details/125084861)
+
+#### 1.生成配置
+
+生成Artifactory仓库上传配置文件，选择仓库，点击‘Set Me Up’查看部署配置
+
+![img](https://image.kevinkda.cn/md/acd89fe1071649fba4f319e2ba31e6ff.png)
+
+![在这里插入图片描述](https://image.kevinkda.cn/md/cc07f3722c5a4ff39999ebc6e7882fa9.png)
+
+#### 2.拷贝配置
+
+拷贝配置到项目中的POM文件，添加配置DistributionManagement
+
+注意id和url要配置正确, 与setting文件的一致. 如果不是使用虚拟库来部署, 这里的url就指定私库, 但是id要与setting中的server一致, 因为会通过id去找用户密码
+
+![image-20230720010525432](https://image.kevinkda.cn/md/image-20230720010525432.png)
+
+#### 3.配置settings.xml文件
+
+将下图中的servers配置给写入settins.xml文件中，注意：下图中的id一项需要和第二步中的id一致
+
+![image-20230720010655180](https://image.kevinkda.cn/md/image-20230720010655180.png)
+
+#### 4.执行上传
+
+执行命令
+
+```shell
+mvn deploy
+```
+
+或者
+
+![在这里插入图片描述](https://image.kevinkda.cn/md/1ef2f535132149d8b67a9a4fcb69ae62.png)
+
 
 
 ## 二、Database
