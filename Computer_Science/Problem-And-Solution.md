@@ -156,6 +156,30 @@ vue-template-compiler和vue版本不一致
 
 
 
+### 8、运行Maven命令deploy时报错Execution default of goal org.apache.maven.plugins:maven-gpg-plugin:3.0.1:sign failed.
+
+#### 描述：
+
+在执行Maven的deploy命令将项目上传到jfrog时报错：Execution default of goal org.apache.maven.plugins:maven-gpg-plugin:3.0.1:sign failed.
+
+#### 解决：
+
+```xml
+<!--  跳过gpg安全-->
+<plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-gpg-plugin</artifactId>
+	<version>1.6</version>
+	<configuration>
+		<skip>true</skip>
+	</configuration>
+</plugin>
+```
+
+
+
+
+
 
 ## 二、工具：
 
