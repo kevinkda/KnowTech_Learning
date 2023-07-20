@@ -720,6 +720,66 @@ Gradle默认各指令之间相互的依赖关系
 
 ![image-20230719004133258](https://image.kevinkda.cn/md/image-20230719004133258.png)
 
+<h5>任务的定义方式</h5>
+
+任务定义方式，总体分为两大类，一种是通过Project中的task方法，另一种是通过tasks对象的create或者register方法。
+
+```groovy
+task('A',{ // 任务名称，闭包都作为参数
+    println "task a"
+})
+
+task('B'){ // 闭包作为最后一个参数可以直接从中括号中拿出来
+    println "task b"
+}
+
+task C { // groovy语法支持省略方法括号
+    println "taks c"
+}
+// 以上三种方法本质上是一种方法
+
+def map = new HashMap<String,Object>();
+map.put("aciton",{println "task d"})// action属性可以设置为闭包
+taks(map,"D");
+
+task.create("E"){ // 使用 task 的create方法
+    println "task e"
+}
+
+task.register("F"){ // register执行是延迟创建，即只有当task被需要的时候才会创建
+    println "task f"
+}
+```
+
+<h5>任务的属性</h5>
+
+| 配置项      | 描述                                           | 默认值      |
+| ----------- | ---------------------------------------------- | ----------- |
+| type        | 基于一个存在的task来创建，和java中的类继承相似 | DefaultTask |
+| overwrite   | 是否替换一个存在的task，这个和type配合使用     | false       |
+| dependsOn   | 用于配置任务的依赖                             | []          |
+| action      | 添加到任务中的一个Action或者一个闭包           | null        |
+| description | 任务的描述                                     | null        |
+| group       | 任务的分组                                     | null        |
+
+```groovy
+// 1.F是任务名，以参数的方式指定任务的属性信息
+task(grou: "alan", description: "this is task F","F")
+
+// 2.H是任务名，任务定义的同时，直接在内部指定属性信息
+task("H"){
+    group("alan")
+    description("this is task H")
+}
+
+// 3.Y是任务名，给已有的任务 在外部指定属性信息
+task("Y"){}
+y.group = "alan"
+y.description = "this is task Y"
+```
+
+
+
 
 
 
