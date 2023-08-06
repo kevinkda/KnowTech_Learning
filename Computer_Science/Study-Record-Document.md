@@ -2457,6 +2457,155 @@ net start mysql
 
 
 
+### 9、MySQL开启慢日志
+
+开启慢查询日志，可以让MySQL记录下查询超过指定时间的语句，通过定位分析性能的瓶颈，才能更好的优化数据库系统的性能。
+
+#### 参数
+
+slow_query_log 慢查询开启状态
+slow_query_log_file 慢查询日志存放的位置（这个目录需要MySQL的运行帐号的可写权限，一般设置为MySQL的数据存放目录）
+long_query_time 查询超过多少秒才记录
+
+#### 步骤
+
+**查看慢查询相关参数**
+
+```mysql
+mysql> show variables like 'slow_query%';
++---------------------------+----------------------------------+
+| Variable_name             | Value                            |
++---------------------------+----------------------------------+
+| slow_query_log            | OFF                              |
+| slow_query_log_file       | /mysql/data/localhost-slow.log   |
++---------------------------+----------------------------------+
+
+mysql> show variables like 'long_query_time';
++-----------------+-----------+
+| Variable_name   | Value     |
++-----------------+-----------+
+| long_query_time | 10.000000 |
++-----------------+-----------+
+```
+
+**设置参数**
+
+方法一：全局变量设置
+将 slow_query_log 全局变量设置为“ON”状态
+
+```
+mysql> set global slow_query_log='ON'; 
+```
+
+设置慢查询日志存放的位置
+
+```
+mysql> set global slow_query_log_file='/usr/local/mysql/data/slow.log';
+```
+
+查询超过1秒就记录
+
+```
+mysql> set global long_query_time=1;
+```
+
+方法二：配置文件设置
+修改配置文件my.cnf，在[mysqld]下的下方加入
+
+```
+[mysqld]
+slow_query_log = ON
+slow_query_log_file = /usr/local/mysql/data/slow.log
+long_query_time = 1
+```
+
+3.重启MySQL服务
+
+```
+service mysqld restart
+```
+
+4.查看设置后的参数
+
+```
+mysql> show variables like 'slow_query%';
++---------------------+--------------------------------+
+| Variable_name       | Value                          |
++---------------------+--------------------------------+
+| slow_query_log      | ON                             |
+| slow_query_log_file | /usr/local/mysql/data/slow.log |
++---------------------+--------------------------------+
+
+mysql> show variables like 'long_query_time';
++-----------------+----------+
+| Variable_name   | Value    |
++-----------------+----------+
+| long_query_time | 1.000000 |
++-----------------+----------+
+```
+
+
+
+### 10、Elasticsearch操作
+
+#### 新增
+
+- 新增索引
+
+```elm
+PUT /system_log
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 1
+  },
+  "mappings": {
+    "properties": {
+      "Type": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "Time": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "User": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "Event": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+
+
+
+
 ## 三、Linux
 
 [VMwear安装Centos7](https://www.jianshu.com/p/ce08cdbc4ddb?utm_source=tuicool&utm_medium=referral)
