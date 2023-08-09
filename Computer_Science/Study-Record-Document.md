@@ -1222,7 +1222,7 @@ mysqlbinlog --no-defaults -v -v --base64-output=decode-rows ./mysql-bin.000062 |
 
 
 
-### 4、Oracle管理
+### 3、Oracle管理
 
 #### 相关链接
 
@@ -1278,12 +1278,59 @@ mysqlbinlog --no-defaults -v -v --base64-output=decode-rows ./mysql-bin.000062 |
 ![image-20230711171048623](https://image.kevinkda.cn/md/image-20230711171048623.png)
 
 - 参数文件
+
 - 控制文件
+  
   - 记录内容：数据文件信息，日志文件信息，数据库创建时间，SCN；控制文件数量和存储位置：一遍需要三个，分布在不通的硬盘上
+  - 三个控制文件不是冗余的，任意一个坏了都要修复
+  
 - 数据文件
+
 - 日志文件
 
-逻辑存储结构：数据概念上的组织
+  - 存储数据库改变的事务数据，DSL
+  - 系统冲突或其它系统故障后，日志文件中的信息可用于恢复事务，是保护数据库的关键
+  - 每个Oracle数据库至少有两个日志文件
+
+  ![image-20230808173504256](https://image.kevinkda.cn/md/image-20230808173504256.png)
+
+  日志文件组和成员
+
+  ![image-20230808173533558](https://image.kevinkda.cn/md/image-20230808173533558.png)
+
+逻辑结构和物理结构：
+
+![image-20230808173703526](https://image.kevinkda.cn/md/image-20230808173703526.png)
+
+- 段类型
+
+![image-20230808174351337](https://image.kevinkda.cn/md/image-20230808174351337.png)![image-20230808174405099](https://image.kevinkda.cn/md/image-20230808174405099.png)
+
+- 逻辑存储结构 - 数据块
+  - 最小的磁盘存取单元，当操作一个数据库时，Oracle使用数据块存储和提取磁盘上的数据
+  - 由一个或多个O/S块组成
+  - 在数据库创建时设定大小，块大小必须等于O/S块大小或它的倍数
+
+![image-20230808174703009](https://image.kevinkda.cn/md/image-20230808174703009.png)
+
+![image-20230808174717958](https://image.kevinkda.cn/md/image-20230808174717958.png)
+
+![image-20230808174817563](https://image.kevinkda.cn/md/image-20230808174817563.png)
+
+- 索引（Index）
+  - B-Tree索引
+
+![image-20230808175115452](https://image.kevinkda.cn/md/image-20230808175115452.png)
+
+
+
+
+
+- 回滚段（RollBack）
+
+- 临时段（TEMP）
+
+
 
 
 
@@ -2004,6 +2051,249 @@ select * from global_name;
 
 
 
+##### 日志相关
+
+
+在Oracle数据库中，与日志（Log）相关的操作主要涉及到归档日志（Archive Logs）和重做日志（Redo Logs）。以下是一些与这些日志相关的常用操作：
+
+归档日志操作：
+
+1. 启用归档模式：
+
+   ```sql
+   ALTER DATABASE ARCHIVELOG;
+   ```
+
+2. 禁用归档模式：
+
+   ```sql
+   ALTER DATABASE NOARCHIVELOG;
+   ```
+
+3. 手动切换日志：
+
+   ```sql
+   ALTER SYSTEM ARCHIVE LOG CURRENT;
+   ```
+
+4. 手动归档日志文件：
+
+   ```sql
+   ALTER SYSTEM ARCHIVE LOG <log_sequence_number>;
+   ```
+
+5. 列出所有归档日志文件：
+
+   ```sql
+   SELECT * FROM V$ARCHIVED_LOG;
+   ```
+
+6. 删除过期的归档日志文件：
+
+   ```sql
+   DELETE EXPIRED ARCHIVELOG ALL;
+   ```
+
+重做日志操作：
+
+1. 添加新的重做日志组：
+
+   ```sql
+   ALTER DATABASE ADD LOGFILE GROUP <group_number> ('path_to_logfile') SIZE <size>;
+   ```
+
+2. 切换到下一个重做日志组：
+
+   ```sql
+   ALTER SYSTEM SWITCH LOGFILE;
+   ```
+
+3. 强制切换到下一个重做日志组：
+
+   ```sql
+   ALTER SYSTEM SWITCH LOGFILE FORCE;
+   ```
+
+4. 强制归档当前重做日志组：
+
+   ```sql
+   ALTER SYSTEM ARCHIVE LOG CURRENT;
+   ```
+
+5. 查看当前活动的重做日志组：
+
+   ```sql
+   SELECT * FROM V$LOG;
+   ```
+
+6. 查看重做日志的内容：
+
+   ```sql
+   SELECT * FROM V$LOG_HISTORY WHERE <conditions>;
+   ```
+
+查询重做日志信息：
+
+1. 查看当前活动的重做日志组：
+
+   ```sql
+   SELECT * FROM V$LOG;
+   ```
+
+2. 查看数据库的重做日志状态：
+
+   ```sql
+   SELECT * FROM V$LOGFILE;
+   ```
+
+3. 查看数据库的重做日志组及其文件信息：
+
+   ```sql
+   SELECT GROUP#, THREAD#, MEMBER FROM V$LOGFILE;
+   ```
+
+4. 查看重做日志的内容和顺序号：
+
+   ```sql
+   SELECT SEQUENCE#, FIRST_CHANGE#, NEXT_CHANGE# FROM V$LOG_HISTORY WHERE <conditions>;
+   ```
+
+5. 查看重做日志切换的历史：
+
+   ```sql
+   SELECT * FROM V$LOG_HISTORY WHERE <conditions>;
+   ```
+
+6. 查看某个时间段内的重做日志信息：
+
+   ```sql
+   SELECT * FROM V$ARCHIVED_LOG WHERE FIRST_TIME BETWEEN TO_DATE('start_date', 'yyyy-mm-dd hh24:mi:ss') AND TO_DATE('end_date', 'yyyy-mm-dd hh24:mi:ss');
+   ```
+
+7. 查看当前会话正在使用的重做日志信息：
+
+   ```sql
+   SELECT * FROM V$SESSION WHERE <conditions>;
+   ```
+
+8. 查看归档日志文件的信息：
+
+   ```sql
+   SELECT * FROM V$ARCHIVED_LOG;
+   ```
+
+
+
+
+##### RMAN备份相关
+
+Oracle RMAN（Recovery Manager）是一个用于数据库备份和恢复的工具，具有丰富的命令集。以下是一些常用的RMAN命令，用于备份、恢复、检查和管理Oracle数据库：
+
+备份操作：
+
+1. 备份整个数据库：
+
+   ```
+   BACKUP DATABASE;
+   ```
+
+2. 备份特定表空间
+
+   ```
+   BACKUP TABLESPACE <tablespace_name>;
+   ```
+
+3. 备份特定数据文件
+
+   ```
+   BACKUP DATAFILE <file_number>;
+   ```
+
+4. 备份指定时间点之前的数据：
+
+   ```
+   BACKUP DATABASE UNTIL TIME 'YYYY-MM-DD:HH24:MI:SS';
+   ```
+
+恢复操作：
+
+1. 恢复整个数据库：
+
+   ```
+   RECOVER DATABASE;
+   ```
+
+2. 恢复特定表空间**：**
+
+   ```
+   RECOVER TABLESPACE <tablespace_name>;
+   ```
+
+3. 应用指定日志序列号之前的归档日志：
+
+   ```
+   RECOVER DATABASE UNTIL SEQUENCE <sequence_number>;
+   
+   -- 查询恢复的归档日志号
+   select * from v$log;
+   -- 根据归档日志号恢复
+   RUN {
+     SET UNTIL SEQUENCE '07-AUG-23';
+     RESTORE DATABASE;
+     RECOVER DATABASE;
+   }
+   ```
+
+4. 打开数据库并重做日志应用**：**
+
+   ```
+   ALTER DATABASE OPEN RESETLOGS;
+   
+   ALTER DATABASE OPEN NORESETLOGS;
+   ```
+
+备份和恢复控制文件：
+
+1. 备份控制文件**：**
+
+   ```
+   BACKUP CURRENT CONTROLFILE;
+   ```
+
+2. 恢复控制文件**：**
+
+   ```
+   RESTORE CONTROLFILE FROM 'backup_location';
+   ```
+
+其他操作**：**
+
+1. 列出数据库备份**：**
+
+   ```
+   LIST BACKUP;
+   ```
+
+2. 列出数据库的日志序列号和时间信息**：**
+
+   ```
+   LIST ARCHIVELOG ALL;
+   ```
+
+3. 删除过期备份**：**
+
+   ```
+   DELETE EXPIRED BACKUP;
+   ```
+
+4. 删除过期归档日志**：**
+
+   ```
+   DELETE EXPIRED ARCHIVELOG ALL;
+   ```
+
+
+
 ##### 其他设置
 
 - 查看表字段
@@ -2034,7 +2324,7 @@ set pause 'Press <Enter> to continue'
 
 
 
-### 5、MySQL Explain详解(SQL调优)
+### 4、MySQL Explain详解(SQL调优)
 
 #### Explain介绍
 
@@ -2162,7 +2452,7 @@ key_len计算规则：
 
 
 
-### 6、10个高级SQL写法
+### 5、10个高级SQL写法
 
 ![image-20230320173713241](https://image.kevinkda.cn/md/image-20230321195750672.png)
 
@@ -2345,7 +2635,7 @@ on duplicate update news_title = '新闻4'
 
 
 
-### 7、修改ORACLE单个用户密码过期策略
+### 6、修改ORACLE单个用户密码过期策略
 
 #### 相关链接
 
@@ -2387,7 +2677,7 @@ ALTER user SVC_CONFLUENCE profile PASSWORD_UNLIMIT_PROFILE;
 
 
 
-### 8、MySQL免安装版初始化
+### 7、MySQL免安装版初始化
 
 #### 相关链接
 
@@ -2457,7 +2747,7 @@ net start mysql
 
 
 
-### 9、MySQL开启慢日志
+### 8、MySQL开启慢日志
 
 开启慢查询日志，可以让MySQL记录下查询超过指定时间的语句，通过定位分析性能的瓶颈，才能更好的优化数据库系统的性能。
 
@@ -2546,7 +2836,7 @@ mysql> show variables like 'long_query_time';
 
 
 
-### 10、Elasticsearch操作
+### 9、Elasticsearch操作
 
 #### 新增
 
@@ -2604,7 +2894,93 @@ PUT /system_log
 
 
 
+### 10、记录一次服务器宕机后恢复Oracle的操作
 
+#### 经过
+
+- 某一日9点，发现微信没有收到某个服务器的定时任务的执行的信息，然后打开各种服务的网页发现打开都很慢并且无法登录，经过排查以后发现是NAS宕机，导致服务器所有的服务的数据文件丢失。恢复并重启NAS以后，启动数据库服务时发现Oracle无法正常启动，报错redo02.log中有错误，有写入丢失，无法启动
+
+#### 恢复
+
+- 查看oracle的alert日志
+
+```shell
+tail -200 $ORACLE_BASE/diag/rdbms/orcl01/ORCL01/trace/alert_ORCL01.log
+```
+
+- 进入数据库查看重做日志
+
+```sql
+-- 发现数据都在mounted状态，如果不在这个状态，建议调整到这个状态
+SQL> show pdbs
+
+    CON_ID CON_NAME                       OPEN MODE  RESTRICTED
+---------- ------------------------------ ---------- ----------
+         2 PDB$SEED                       MOUNTED
+         3 DEMO                           MOUNTED
+         4 DEV                            MOUNTED
+         5 SVCRES                         MOUNTED
+SQL> set lines 300 pages 300
+SQL> col member for a40
+-- 通过`select * from v$logfile` 查看了重做日志
+SQL> select * from v$logfile;
+
+    GROUP# STATUS  TYPE    MEMBER                                   IS_     CON_ID
+---------- ------- ------- ---------------------------------------- --- ----------
+         3         ONLINE  /opt/oracle/oradata/ORCL01/redo03.log    NO           0
+         2         ONLINE  /opt/oracle/oradata/ORCL01/redo02.log    NO           0
+         1         ONLINE  /opt/oracle/oradata/ORCL01/redo01.log    NO           0
+-- 通过`select * from v$log` 查看了重做日志的详细信息，包括了后续恢复到出错前要用到的归档日志序列号`SEQUENCE#`，或者恢复时间点`FIRST_TIM`
+SQL> select * from v$log;
+
+    GROUP#    THREAD#  SEQUENCE#      BYTES  BLOCKSIZE    MEMBERS ARC STATUS           FIRST_CHANGE# FIRST_TIM NEXT_CHANGE# NEXT_TIME     CON_ID
+---------- ---------- ---------- ---------- ---------- ---------- --- ---------------- ------------- --------- ------------ --------- ----------
+         1          1        367  209715200        512          1 NO  INACTIVE              58854455 07-AUG-23     59036643 07-AUG-23          0
+         3          1        366  209715200        512          1 NO  INACTIVE              58673242 06-AUG-23     58854455 07-AUG-23          0
+         2          1        368  209715200        512          1 NO  CURRENT               59036643 07-AUG-23   1.8447E+19                    0
+-- 然后通过转换查看这些重做日志的具体时间
+SQL> select SEQUENCE#,to_char(first_time,'yyyy-mm-dd hh24:mi:ss') from v$log;
+ SEQUENCE# TO_CHAR(FIRST_TIME,
+---------- -------------------
+       367 2023-08-07 01:00:53
+       366 2023-08-06 21:10:26
+       368 2023-08-07 05:00:34
+```
+
+- 使用RMAN工具进行恢复
+
+```shell
+# 进入rman工具
+rman target /
+
+# 使用以下两种方式进行恢复
+RUN
+{
+  SET UNTIL TIME '${FIRST_TIM}';
+  RESTORE DATABASE;
+  RECOVER DATABASE;
+}
+
+RUN
+{
+  SET UNTIL SEQUENCE '${SEQUENCE#}';  -- 替换 n 为目标序列号
+  RESTORE DATABASE;
+  RECOVER DATABASE;
+}
+
+# 成功以后，可能需要应用额外的归档日志文件或者重做日志文件。使用以下命令来完成此步骤：
+RECOVER DATABASE USING BACKUP CONTROLFILE UNTIL CANCEL;
+
+# 最后，尝试打开数据库
+# 以下命令，如果你已经执行了数据库恢复操作，并希望从这个点开始一个全新的日志序列，你可以使用 RESETLOGS 选项来打开数据库。这将创建一个新的日志序列，并且旧的归档日志将被标记为无效。
+ALTER DATABASE OPEN RESETLOGS;
+# 以下命令，如果你希望保留之前的日志序列，并希望继续使用这些日志进行数据库操作，你可以使用 NORESETLOGS 选项来打开数据库。这样可以保留之前的归档日志序列，但在某些情况下可能会导致数据不一致。
+ALTER DATABASE OPEN NORESETLOGS;
+```
+
+
+
+ 
 
 ## 三、Linux
 
