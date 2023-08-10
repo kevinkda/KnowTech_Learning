@@ -830,7 +830,7 @@ mvn deploy
 
 ## 二、Database
 
-### 1、MySQL修改账号远程登陆权限
+### 1. MySQL修改账号远程登陆权限
 
 - 方法一：
   - `use mysql;`
@@ -842,7 +842,7 @@ mvn deploy
 
 
 
-### 2、MySQL管理
+### 2. MySQL管理
 
 #### 优化相关建议
 
@@ -1222,7 +1222,7 @@ mysqlbinlog --no-defaults -v -v --base64-output=decode-rows ./mysql-bin.000062 |
 
 
 
-### 3、Oracle管理
+### 3. Oracle管理
 
 #### 相关链接
 
@@ -2382,7 +2382,7 @@ set pause 'Press <Enter> to continue'
 
 
 
-### 4、MySQL Explain详解(SQL调优)
+### 4. MySQL Explain详解(SQL调优)
 
 #### Explain介绍
 
@@ -2510,7 +2510,7 @@ key_len计算规则：
 
 
 
-### 5、10个高级SQL写法
+### 5. 10个高级SQL写法
 
 ![image-20230320173713241](https://image.kevinkda.cn/md/image-20230321195750672.png)
 
@@ -2693,7 +2693,7 @@ on duplicate update news_title = '新闻4'
 
 
 
-### 6、修改ORACLE单个用户密码过期策略
+### 6. 修改ORACLE单个用户密码过期策略
 
 #### 相关链接
 
@@ -2735,7 +2735,7 @@ ALTER user SVC_CONFLUENCE profile PASSWORD_UNLIMIT_PROFILE;
 
 
 
-### 7、MySQL免安装版初始化
+### 7. MySQL免安装版初始化
 
 #### 相关链接
 
@@ -2805,7 +2805,7 @@ net start mysql
 
 
 
-### 8、MySQL开启慢日志
+### 8. MySQL开启慢日志
 
 开启慢查询日志，可以让MySQL记录下查询超过指定时间的语句，通过定位分析性能的瓶颈，才能更好的优化数据库系统的性能。
 
@@ -2894,7 +2894,7 @@ mysql> show variables like 'long_query_time';
 
 
 
-### 9、Elasticsearch操作
+### 9. Elasticsearch操作
 
 #### 新增
 
@@ -2952,7 +2952,7 @@ PUT /system_log
 
 
 
-### 10、记录一次服务器宕机后恢复Oracle的操作
+### 10. 记录一次服务器宕机后恢复Oracle的操作
 
 #### 经过
 
@@ -3034,6 +3034,71 @@ RECOVER DATABASE USING BACKUP CONTROLFILE UNTIL CANCEL;
 ALTER DATABASE OPEN RESETLOGS;
 # 以下命令，如果你希望保留之前的日志序列，并希望继续使用这些日志进行数据库操作，你可以使用 NORESETLOGS 选项来打开数据库。这样可以保留之前的归档日志序列，但在某些情况下可能会导致数据不一致。
 ALTER DATABASE OPEN NORESETLOGS;
+```
+
+
+
+### 11. MySQL主从同步
+
+#### 参考信息
+
+[MySQL主从同步以及常见问题](https://www.cnblogs.com/cfas/p/16733598.html#autoid-4-0-0)
+
+#### 环境信息
+
+- 主库：10.21.0.1，sync/123456
+- 从库：10.21.0.2
+
+#### 配置信息
+
+```cnf
+# 修改主从库的my.cnf文件
+# 主库从库的server-id需要为不同的id
+server-id=1
+binlog_format=ROW
+log_bin_trust_function_creators=ON
+log_bin=/var/log/mysql-bin
+log_error=/var/log/mysql-error.log
+
+# 如果需要设置只同步某些数据库可以在从库的my.cnf中加上此配置
+replicate_wild_do_table = 要同步的数据库名.%
+replicate_wild_ignore_table = 要忽略的数据库名.%
+```
+
+#### 用户准备
+
+```sql
+mysql> CREATE USER sync IDENTIFIED BY '123456';
+mysql> GRANT SELECT, SHOW VIEW, REPLICATION SLAVE, REPLICATION CLIENT ON . TO 'sync'@'%';
+mysql> FLUSH PRIVILEGES;
+```
+
+#### 数据拉平
+
+使用此方式进行数据导入时，保证目标数据库中数据表与源数据库中数据表一致，同时，目标数据库中数据表保证为空表
+
+```shell
+mysqldump --default-character-set=utf8mb4 --host=192.168.91.131 -uroot -p123456 --opt --set-gtid-purged=OFF 从库需要导入数据的数据库名 | mysql --host=从库IP地址 --port=3306 -uroot -p123456 --default-character-set=utf8mb4 -C 从库需要导入数据的数据库名
+```
+
+#### 主库设置
+
+```sql
+-- 获取主库的binlog文件和当前位置，即查询结果的 File、Position 字段，例如：File字段值为 binlog.XXXXXXXX，Position 字段值为 YYYYYYYY
+show master status\G;
+```
+
+#### 从库设置
+
+```sql
+-- 设置同步的信息
+CHANGE MASTER TO MASTER_HOST = '10.21.0.1', MASTER_USER = 'sync',MASTER_PASSWORD = '123456', MASTER_PORT = 3306, MASTER_LOG_FILE='binlog.000014',MASTER_LOG_POS=178;
+-- 开启同步
+start slave;
+-- 查看同步情况
+show slave status\G;
+-- 停止同步
+stop slave;
 ```
 
 
