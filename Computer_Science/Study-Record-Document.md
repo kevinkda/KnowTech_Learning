@@ -4,9 +4,9 @@
 
 ## 一、Develop
 
-### 1、Node.js 相关
+### 1. Node.js 相关
 
-#### 1.1.1 nodeJS 的 npm 设置国内高速镜像之淘宝镜像的方法
+#### nodeJS 的 npm 设置国内高速镜像之淘宝镜像的方法
 
 1、我们知道 nodeJS 是老外搞出来的，服务器放在了国外，国内的小朋友访问起来会比较慢，阿里巴巴的淘宝给出了有力支持，现在我们就将 nodeJS 的镜像地址切换为国内的淘宝镜像。
 
@@ -26,7 +26,7 @@
 5、备注：
 　　NPM = NodeJS Package Manager
 
-#### 1.1.2 建议安装的包
+#### 建议安装的包
 
 - nrm：镜像源管理工具
 - create-react-app：react项目创建工具
@@ -34,7 +34,7 @@
 
 
 
-### 2、Vue 学习
+### 2. Vue 学习
 
 ```bash
 # 全局安装 vue-cli
@@ -75,7 +75,7 @@ $ cnpm run dev
 > Listening at http://localhost:8080
 ```
 
-#### 1.2.1 一些有用的依赖
+#### 一些有用的依赖
 
 - `npm config set registry https:*//registry**.npm**.taobao**.org*`  更换源至淘宝
 - `npm install-g cnpm --registry=https://registry.npm.taobao.org ` 设置淘宝镜像
@@ -90,12 +90,12 @@ $ cnpm run dev
 - `cnpm install ex6-promise`
 - `npm install css-loader style-loader –save-dev`
 
-#### 1.2.2 项目打包
+#### 项目打包
 
 `npm run build`
 执行完后会在项目中下生成`dist`目录，一般包含 index.html 文件及 static 目录，static 目录包含了静态文件 js、css 以及图片目录 images。
 
-#### 1.2.3 项目结构
+#### 项目结构
 
 | build        | 项目构建(webpack)相关代码                                    |
 | ------------ | ------------------------------------------------------------ |
@@ -111,7 +111,7 @@ $ cnpm run dev
 
 
 
-### 3、后端mod(%)取模运算符的算法
+### 3. 后端mod(%)取模运算符的算法
 
 例如a % b
 
@@ -119,7 +119,7 @@ $ cnpm run dev
 
 
 
-### 4、Spring boot 和 Spring Cloud 各个版本对应关系
+### 4. Spring boot 和 Spring Cloud 各个版本对应关系
 
 | spring cloud        | spring boot                                   |
 | ------------------- | --------------------------------------------- |
@@ -132,7 +132,7 @@ $ cnpm run dev
 
 
 
-### 5、缓存技术之session缓存管控
+### 5. 缓存技术之session缓存管控
 
 ​	Session是服务器端使用的一种记录客户端状态的机制，一般Session存储在服务器的内存中，tomcat的StandardManager类将session存储在内存中；客户端只保存sessionID到cookie中，而不会保存session，session销毁只能通过invalidate或超时（默认30分钟），关掉浏览器并不会关闭session。当程序需要为某个客户端的请求创建一个session时，服务器首先检查这个客户端的请求里是否包含一个session标识（即sessionID）。如果已经包含一个sessionID说明以前已经为此客户端创建过session，服务器就按照sessionID把这个session检索出来使用。
 
@@ -158,7 +158,7 @@ Session缓存优势明显，在日常开发过程中，大家基于这个优势�
 
 
 
-### 6、在Idea中打包项目
+### 6. 在Idea中打包项目
 
 + 打开Project Structure界面(快捷键是F4或者F12)  选择Artifacts一栏
 + 点击＋号后选择`Web Application: Exploded`下的From Modules
@@ -170,7 +170,7 @@ Session缓存优势明显，在日常开发过程中，大家基于这个优势�
 
 
 
-### 7、Java中正则的妙用 - 组
+### 7. Java中正则的妙用 - 组
 
  *  PROCESSING_EMAIL_HTML_IMAGE_REGEX 常量中的每一个括弧为一个组
  *  PROCESS_EMAIL_HTML_IMAGE_REGEX_REPLACEMENT_PLACEHOLDER 常量中的$1 $3 $5代表上上面的第1个、第3个、第5个组
@@ -192,7 +192,7 @@ public class Regular {
 
 
 
-### 8、Gradle学习
+### 8. Gradle学习
 
 #### 常见的项目构建工具
 
@@ -784,7 +784,7 @@ y.description = "this is task Y"
 
 
 
-### 9、将Maven项目配置并上传到JFrog
+### 9. 将Maven项目配置并上传到JFrog
 
 #### 相关链接
 
@@ -825,6 +825,95 @@ mvn deploy
 或者
 
 ![在这里插入图片描述](https://image.kevinkda.cn/md/1ef2f535132149d8b67a9a4fcb69ae62.png)
+
+
+
+### 10. Java Map Struts 技巧
+
+#### 指定不同属性映射
+
+```java
+/**
+ * 请求入参转为Alipay的业务Model
+ * @param request
+ * @return
+ */
+@Mappings({
+    @Mapping(target = "totalAmount", source ="oraTotalAmount"),
+    @Mapping(target = "price", source ="oraPrice"),
+})
+AlipayTradeAppPayModel requestToModel(AlipayAppRequest request);
+```
+
+#### 金额映射
+
+```java
+/**
+ * 请求入参转为Alipay的业务Model
+ * @param request
+ * @return
+ */
+@Mappings({
+        @Mapping(target = "totalAmount",
+                expression = "java(com.api.business.alipay.utils.CurrencyUtils.changeF2Y(request.getOraTotalAmount()))")
+})
+AlipayTradeWapPayModel requestToModel(AlipayWapRequest request);
+
+/**
+ * 应答出参映射
+ * @param model
+ * @return
+ */
+@Mappings({
+        @Mapping(target = "oraTotalAmount",
+                expression = "java(com.api.business.alipay.utils.CurrencyUtils.changeY2F(request.getTotalAmount()))")
+})
+AlipayWapResponse modelToResponse(AlipayTradeWapPayResponse model);
+
+/**
+ * 请求对象中的集合，集合中的对象GoodsDetail的金额映射
+ */
+@Mappings({
+        @Mapping(target = "price",
+                expression = "java(com.api.business.alipay.utils.CurrencyUtils.changeF2Y(goodsDetail.getOraPrice()))")
+})
+com.alipay.api.domain.GoodsDetail goodsDetailToGoodsDetail(GoodsDetail goodsDetail);
+```
+
+
+
+### 11. xxl-job使用问题
+
+#### 配置入参格式
+
+代码中获取参数的方法为：
+
+```java
+public abstract class BaseJobHandler extends IJobHandler {
+    public Map<String, String> getJobParams() {
+        return getJobParams(XxlJobContext.getXxlJobContext().getJobParam());
+    }
+
+    public Map<String, String> getJobParams(String jobParam) {
+        Map<String, String> param = new HashMap<>(8);
+        if (StringUtil.isNonBlank(jobParam)) {
+            Arrays.stream(jobParam.split(",")).forEach((s) -> {
+                String[] arr = s.split("=");
+                param.put(arr[0].trim(), arr[1].trim());
+            });
+        }
+        return param;
+    }
+}
+```
+
+配置参数的格式为：
+
+```java
+param1=value1,param2=value2
+例如：
+RUN_DATE=2021-09-03,MAX_TRADE_DAY=-1
+```
 
 
 
