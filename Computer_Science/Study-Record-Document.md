@@ -917,6 +917,66 @@ RUN_DATE=2021-09-03,MAX_TRADE_DAY=-1
 
 
 
+### 12. React加载完成后执行方法
+
+ 在React中，如果你希望在组件加载完成后执行某个方法，你可以使用生命周期方法或React的`useEffect`钩子（如果你正在使用函数组件）。以下是两种方法的示例：
+
+**使用生命周期方法 (类组件)**：
+
+在类组件中，你可以使用`componentDidMount`生命周期方法，它会在组件挂载后被调用。你可以在这个方法内执行你的操作。例如：
+
+```javascript
+import React, { Component } from 'react';
+
+class MyComponent extends Component {
+  componentDidMount() {
+    // 在组件加载完成后执行你的方法
+    this.myMethod();
+  }
+
+  myMethod() {
+    // 在这里执行你的操作
+  }
+
+  render() {
+    return (
+      // JSX内容
+    );
+  }
+}
+
+export default MyComponent;
+```
+
+**使用 useEffect 钩子 (函数组件)**：
+
+在函数组件中，你可以使用React的`useEffect`钩子来达到类似的效果。`useEffect`允许你在组件加载后执行副作用操作。以下是一个示例：
+
+```javascript
+import React, { useEffect } from 'react';
+
+function MyComponent() {
+  useEffect(() => {
+    // 在组件加载完成后执行你的方法
+    myMethod();
+  }, []); // 空的依赖数组表示只在组件挂载时执行一次
+
+  function myMethod() {
+    // 在这里执行你的操作
+  }
+
+  return (
+    // JSX内容
+  );
+}
+
+export default MyComponent;
+```
+
+无论你选择使用类组件的`componentDidMount`方法还是函数组件的`useEffect`钩子，都可以在组件加载完成后执行你的方法。
+
+
+
 ## 二、Database
 
 ### 1. MySQL修改账号远程登陆权限
@@ -3175,6 +3235,8 @@ mysqldump --default-character-set=utf8mb4 --host=192.168.91.131 -uroot -p123456 
 ```sql
 -- 获取主库的binlog文件和当前位置，即查询结果的 File、Position 字段，例如：File字段值为 binlog.XXXXXXXX，Position 字段值为 YYYYYYYY
 show master status\G;
+-- 刷新log日志，自此刻开始产生一个新编号的binlog日志文件
+flush logs;
 ```
 
 #### 从库设置
