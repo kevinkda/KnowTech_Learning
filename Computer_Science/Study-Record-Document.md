@@ -977,6 +977,26 @@ export default MyComponent;
 
 
 
+### 13、NVM的使用
+
+#### 常用命令
+
+```shell
+nvm off                     // 禁用node.js版本管理(不卸载任何东西)
+nvm on                      // 启用node.js版本管理
+nvm install <version>       // 安装node.js的命名 version是版本号 例如：nvm install 8.12.0
+nvm uninstall <version>     // 卸载node.js是的命令，卸载指定版本的nodejs，当安装失败时卸载使用
+nvm ls                      // 显示所有安装的node.js版本
+nvm list available          // 显示可以安装的所有node.js的版本
+nvm use <version>           // 切换到使用指定的nodejs版本
+nvm v                       // 显示nvm版本
+nvm install stable          // 安装最新稳定版
+```
+
+
+
+
+
 ## 二、Database
 
 ### 1. MySQL修改账号远程登陆权限
@@ -2392,7 +2412,7 @@ select * from global_name;
 
 
 
-##### RMAN备份相关
+##### RMAN相关
 
 Oracle RMAN（Recovery Manager）是一个用于数据库备份和恢复的工具，具有丰富的命令集。以下是一些常用的RMAN命令，用于备份、恢复、检查和管理Oracle数据库：
 
@@ -4812,3 +4832,30 @@ git log --pretty=tformat: --numstat | awk '{add += $1; subs += $2;loc+=$1 - $2} 
 - 以管理员方式运行CMD
 - 执行命令`powercfg /batteryreport /output C:/Users/AlanHuang/Desktop/battery_report.html`
 - 前往桌面查看battery_report.html文件
+
+
+
+## 五、中间件
+
+### 1、Nginx中前端请求不在同一个主机上后端无法跳转或报错
+
+现象：前端部署到Docker1的Nginx中，后端部署到Docker2中，当访问前端时，只能访问登录页面，登录成功后的跳转始终无法跳转。
+
+原因：这可能是由于跨域请求问题导致的。需要确保在Nginx中配置允许跨域请求，并且后端服务的CORS（跨域资源共享）设置正确。
+
+解决：
+
+1. 在后端配置正确的CORS
+2. 在Nginx配置中添加以下内容
+
+```nginx
+location / {
+    # 由于后端和nginx不在同一个主机上，这会导致请求存在跨域问题
+    # 增加一下内容以解决跨域问题
+    add_header 'Access-Control-Allow-Origin' '*';
+    add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE';
+    add_header 'Access-Control-Allow-Headers' 'DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization';
+    add_header 'Access-Control-Allow-Credentials' 'true';
+}
+```
+
