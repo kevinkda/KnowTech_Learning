@@ -412,21 +412,43 @@ ALTER DATABASE character set INTERNAL_USE ZHS16GBK;
 
 ### 8、MySQL 自增间隔修改
 
-#### 问题描述
+#### 参考
+
+- [MySQL数据库自增主键的间隔不为1的解决方法](https://blog.csdn.net/riemann_/article/details/100671854)
+
+#### 问题描述一
 
 - 今天数据库表自增列的间隔突然变成了3,怎么都搞不定，现象就是，数据库表自增主键不按照1，2，3，4来自增了
 
-#### 原因
+#### 原因一
 
 - MySQL的auto_increment_increment设置的值不为1
 
-#### 解决方案
+#### 解决方案一
 
 ```sql
 -- 查看MySQL的auto_increment_increment的值
 show VARIABLES like '%increment%'
 -- 设置MySQL的auto_increment_increment的值为1
-set @@auto_increment_increment = 1;
+set @@global.auto_increment_offset = 1;
+set @@auto_increment_offset = 1;
+SET @@auto_increment_increment=1;
+```
+
+#### 问题描述二
+
+- 通过解决方案一设置完成以后，发现自增主键还是不按照1，2，3的顺序来。
+
+#### 原因二
+
+- MySQL的my.cnf配置文件中对于自增的配置错误
+
+#### 解决方案二
+
+```mysql
+# 在mysql的my.cnf的配置文件中将以下两项修改为如下内容并重启mysql
+auto_increment_offset=1
+auto_increment_increment=1
 ```
 
 
