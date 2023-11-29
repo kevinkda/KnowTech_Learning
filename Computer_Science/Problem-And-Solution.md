@@ -384,12 +384,12 @@ ALTER SYSTEM SET db_create_file_dest = '/u01/app/oracle/oradata/orcl';
 
 ### 7、Oracle字符集相关问题设置
 
-#### 问题描述：
+#### 问题描述
 
 - 字符集乱码等问题
 - `ORA-12712: new character set must be a superset of old character set`
 
-#### 原因：
+#### 原因
 
 - 设置问题
 
@@ -407,6 +407,29 @@ ORA-12712: new character set must be a superset of old character set
 ALTER DATABASE character set INTERNAL_USE ZHS16GBK;
 -- 然后重启数据库即可，不过最好先做备份哦！
 ```
+
+
+
+### 8、MySQL 自增间隔修改
+
+#### 问题描述
+
+- 今天数据库表自增列的间隔突然变成了3,怎么都搞不定，现象就是，数据库表自增主键不按照1，2，3，4来自增了
+
+#### 原因
+
+- MySQL的auto_increment_increment设置的值不为1
+
+#### 解决方案
+
+```sql
+-- 查看MySQL的auto_increment_increment的值
+show VARIABLES like '%increment%'
+-- 设置MySQL的auto_increment_increment的值为1
+set @@auto_increment_increment = 1;
+```
+
+
 
 
 
