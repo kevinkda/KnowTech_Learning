@@ -4963,7 +4963,7 @@ ENTRYPOINT ["sh","-c","java -jar $JAVA_OPTS /app.jar $PARAMS"]
 首先，需要使用以下命令创建一个新的固定IP网络。在这个例子中，我们将网络名设置为 "mynetwork"，IP地址范围为 "172.100.0.2/16"，默认网关为 "172.100.0.1"：
 
 ```shell
-docker network create --subnet=172.100.0.0/16 --gateway=172.100.0.1 --ip-range=172.100.0.2/16 -d bridge container-network
+docker network create --subnet=172.100.0.0/16 --gateway=172.100.0.1 --ip-range=172.100.0.0/16 -d bridge container-network
 ```
 
 2. 将容器加入新网络
