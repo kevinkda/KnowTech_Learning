@@ -12,9 +12,9 @@
 
 
 
-## 系统软件
+## 系统相关
 
-### 软件清单
+### 系统软件
 
 | 软件名称              | 解释                         | 备注 |
 | --------------------- | ---------------------------- | ---- |
@@ -56,6 +56,14 @@
 | Q-Dir                 | 文件夹多开                   |      |
 | Snipaste              | 截图工具                     |      |
 | Obsidian              | 开源Markdown语法的流程图工具 |      |
+| 腾讯桌面助手独立版    | 桌面美化工具                 |      |
+| Navicat Premium 16    | 数据库连接工具               |      |
+
+### 系统和Office激活
+
+1. 参考Github的[MAS](https://github.com/massgravel/Microsoft-Activation-Scripts)
+
+2. Office激活也可以使用硬盘中的Office Tool6.4.0
 
 
 
@@ -110,3 +118,8 @@
 1. 安装Python39、Python310
 2. [配置环境变量](https://blog.csdn.net/qq_40584683/article/details/126954120)
 3. [配置多版本python](https://blog.csdn.net/weixin_45100742/article/details/133322422)
+
+### MySQL
+
+1. 本地mysql要使用[免安装版](https://downloads.mysql.com/archives/community/)
+2. 配置[参考](https://blog.csdn.net/qq_45344586/article/details/129286105)
