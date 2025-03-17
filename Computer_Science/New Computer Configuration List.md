@@ -123,3 +123,8 @@
 
 1. 本地mysql要使用[免安装版](https://downloads.mysql.com/archives/community/)
 2. 配置[参考](https://blog.csdn.net/qq_45344586/article/details/129286105)
+
+### MongoDB
+
+1. 本地MongoDB使用免安装版
+2. 配置[参考](https://blog.csdn.net/qq_46092061/article/details/119811965)
