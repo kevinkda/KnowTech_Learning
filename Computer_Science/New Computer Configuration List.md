@@ -58,6 +58,9 @@
 | Obsidian              | 开源Markdown语法的流程图工具 |      |
 | 腾讯桌面助手独立版    | 桌面美化工具                 |      |
 | Navicat Premium 16    | 数据库连接工具               |      |
+| CUDA                  | 让显卡处理高性能计算         |      |
+| Appium                | 移动端自动化测试             |      |
+| Allure                | 测试报告工具                 |      |
 
 ### 系统和Office激活
 
@@ -115,7 +118,7 @@
 
 ### Python
 
-1. 安装Python39、Python310
+1. [安装Python39、Python310](https://www.python.org/downloads/release/python-3110/)
 2. [配置环境变量](https://blog.csdn.net/qq_40584683/article/details/126954120)
 3. [配置多版本python](https://blog.csdn.net/weixin_45100742/article/details/133322422)
 
@@ -128,3 +131,19 @@
 
 1. 本地MongoDB使用免安装版
 2. 配置[参考](https://blog.csdn.net/qq_46092061/article/details/119811965)
+
+### CUDA
+1. [安装教程](blog.csdn.net/YYDS_WV/article/details/137825313)
+2. 自25年4月2日起不换显卡的话，应该安装的CUDA版本应该是12.8
+
+### Appium
+
+1. [安装教程](https://zhuanlan.zhihu.com/p/746925640)
+
+2. 安装资源硬盘里有
+
+3. 要是要连接手机的话还需要安装[Appium Inspector](https://juejin.cn/post/7231429790615453756)
+
+### Allure
+
+1. [安装教程](https://blog.csdn.net/weixin_46474921/article/details/127387709)
