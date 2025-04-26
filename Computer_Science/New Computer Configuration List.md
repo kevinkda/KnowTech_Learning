@@ -61,6 +61,8 @@
 | CUDA                  | 让显卡处理高性能计算         |      |
 | Appium                | 移动端自动化测试             |      |
 | Allure                | 测试报告工具                 |      |
+| Jmeter                | 接口压测工具                 |      |
+| HexHub                | 可以管理mysql，docker，ssh   |      |
 
 ### 系统和Office激活
 
@@ -147,3 +149,7 @@
 ### Allure
 
 1. [安装教程](https://blog.csdn.net/weixin_46474921/article/details/127387709)
+
+### HexHub
+
+1.[地址](https://www.hexhub.cn/)
