@@ -63,6 +63,8 @@
 | Allure                | 测试报告工具                 |      |
 | Jmeter                | 接口压测工具                 |      |
 | HexHub                | 可以管理mysql，docker，ssh   |      |
+| Windows Terminal      | 聚合的windows终端            |      |
+| UV                    | Python包管理工具             |      |
 
 ### 系统和Office激活
 
@@ -123,6 +125,7 @@
 1. [安装Python39、Python310](https://www.python.org/downloads/release/python-3110/)
 2. [配置环境变量](https://blog.csdn.net/qq_40584683/article/details/126954120)
 3. [配置多版本python](https://blog.csdn.net/weixin_45100742/article/details/133322422)
+4. [UV下载安装配置](https://zhuanlan.zhihu.com/p/1938636637249700959)
 
 ### MySQL
 
